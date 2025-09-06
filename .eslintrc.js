@@ -1,0 +1,23 @@
+module.exports = {
+  root: true,
+  extends: ['next/core-web-vitals'],
+  rules: {
+    quotes: ['error', 'single'],
+    semi: ['error', 'never'],
+    indent: ['error', 2],
+    'jsx-quotes': ['error', 'prefer-single'],
+    'max-len': ['error', { code: 160 }],
+    'react/jsx-one-expression-per-line': 'off',
+    'react/prop-types': 'off',
+    'no-multi-spaces': ['error'],
+    'import/no-unresolved': 'off',
+    'import/prefer-default-export': 'off',
+    'import/extensions': 'off',
+    'no-restricted-exports': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'react/jsx-closing-bracket-location': 'off',
+    'implicit-arrow-linebreak': 'off',
+    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
+  },
+}

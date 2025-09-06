@@ -1,9 +1,11 @@
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    domains: ["noveltykingmedia.s3.us-east-2.amazonaws.com"],
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
