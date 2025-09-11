@@ -19,6 +19,7 @@ const noLayoutRoutes = [
   '/404',
   '/options',
   '/signup',
+  '/admin',
 ]
 
 const theme = {

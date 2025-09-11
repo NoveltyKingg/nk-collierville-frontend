@@ -18,81 +18,6 @@ const PROMOTION_ITEMS = [
   { id: 3, text: 'Express Delivery on bulk orders', icon: <TruckIcon /> },
 ]
 
-const ITEMS = [
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-]
-
 const Home = () => {
   const { getPromotionalBanners, promotionalBanners, promotionalLoading } =
     useGetPromotionalBanners()
@@ -175,7 +100,7 @@ const Home = () => {
       </Card>
 
       <Card className='!mx-[40px]'>
-        <NewArrivals items={ITEMS} loading={false} />
+        <NewArrivals items={[]} loading={false} />
       </Card>
     </Flex>
   )

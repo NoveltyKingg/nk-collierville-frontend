@@ -6,6 +6,8 @@ import useGetNewArrivals from '../hooks/useGetNewArrivals'
 const NewArrivals = ({ loading }) => {
   const scrollContainerRef = useRef()
   const { getNewArrivals, newArrivalsData } = useGetNewArrivals()
+  
+  const newArrivals = Array.isArray(newArrivalsData) ? newArrivalsData : []
 
   useEffect(() => {
     getNewArrivals()
@@ -30,8 +32,8 @@ const NewArrivals = ({ loading }) => {
       </div>
     ))
 
-  const renderItems = () =>
-    newArrivalsData?.map((item, idx) => (
+  const renderItems = () => {
+    return newArrivals.map((item, idx) => (
       <div
         key={idx}
         className='min-w-[200px] max-w-[260px] flex-shrink-0 border border-[#f5f5f5] rounded-lg shadow-sm bg-white p-4 snap-center cursor-pointer'>
@@ -46,6 +48,7 @@ const NewArrivals = ({ loading }) => {
         </div>
       </div>
     ))
+  }
 
   return (
     <div className='relative w-full items-center'>
