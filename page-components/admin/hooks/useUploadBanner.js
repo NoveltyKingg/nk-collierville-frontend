@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import useRequest from '@/request'
 
-const usePostBanner = () => {
+const useUploadBanner = () => {
   const [{ data, loading }, trigger] = useRequest(
     { method: 'POST', url: '/home/uploadBanners' },
     { manual: true },
@@ -13,10 +13,10 @@ const usePostBanner = () => {
       if (!body) {
         body = new FormData()
         const list = Array.isArray(files) ? files : []
-        list.forEach((f) => { 
-          const maybe = f && (f.originFileObj || f)
-          if (maybe) {
-            const fileBlob = maybe
+        list.forEach((file) => { 
+          const fileObject = file && (file.originFileObj || file)
+          if (fileObject) {
+            const fileBlob = fileObject
             body.append('banners', fileBlob)
           }
         })
@@ -24,16 +24,13 @@ const usePostBanner = () => {
 
       if (!body.has('banners')) {
         message.error('No files selected')
-        return false
+        return
       }
 
       await trigger({ data: body })
       message.success('Images uploaded successfully!')
-      return true
     } catch (err) {
-      console.error(err)
       message.error(err?.data?.message || 'Upload failed. Please try again.')
-      return false
     }
   }
 
@@ -44,4 +41,4 @@ const usePostBanner = () => {
   }
 }
 
-export default usePostBanner
+export default useUploadBanner

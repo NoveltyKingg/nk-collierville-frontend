@@ -8,9 +8,8 @@ import {
   SettingOutlined,
   PictureOutlined,
 } from '@ant-design/icons'
-import { useRouter } from 'next/router'
-import Header from '@/page-components/_app/layout/header'
-import HomeBanners from './home-banners'
+import { useRouter } from 'next/router' 
+import DynamicComponentLoader from './components/DynamicComponentLoader'
 
 const { Sider, Content } = Layout
 
@@ -54,8 +53,7 @@ const AdminPanel = () => {
   }, [tab])
 
   return (
-    <div className='flex flex-col min-h-screen'>
-      <Header />
+    <div className='flex flex-col min-h-screen'> 
       <Layout style={{ minHeight: 'calc(100vh - 64px)' }}>
         <Sider 
           onCollapse={setCollapsed} 
@@ -78,16 +76,7 @@ const AdminPanel = () => {
           />
         </Sider>
         <Content className='p-6'>
-          {selectedKey === 'home-banners' && <HomeBanners />}
-          {selectedKey === 'promotional-banners' && <div>Promotional Banners Component</div>}
-          {selectedKey === 'clearance-banners' && <div>Clearance Banners Component</div>}
-          {selectedKey === 'barcodes' && <div>Bar Codes Component</div>}
-          {selectedKey === 'all-products' && <div>All Products Component</div>}
-          {selectedKey === 'sub-categories' && <div>Sub Categories Component</div>}
-          {selectedKey === 'varities' && <div>Varities Component</div>}
-          {selectedKey === 'customers' && <div>Customers Component</div>}
-          {selectedKey === 'orders' && <div>Orders Component</div>}
-          {selectedKey === 'statements' && <div>Statements Component</div>}
+          <DynamicComponentLoader selectedKey={selectedKey} />
         </Content>
       </Layout>
     </div>

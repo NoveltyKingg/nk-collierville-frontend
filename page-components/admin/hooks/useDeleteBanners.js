@@ -8,47 +8,25 @@ const useDeleteBanners = () => {
   )
 
   const deleteBanners = async ({ imageUrl, imageUrls } = {}) => {
-    try {
-      console.log('useDeleteBanners called with:', { imageUrl, imageUrls })
-
-      let imageUrlsArray = []
+    try {  
+      const imagesToDelete = imageUrls?.length > 0 ? imageUrls : imageUrl ? [imageUrl] : []
       
-      if (Array.isArray(imageUrls) && imageUrls.length > 0) {
-        imageUrlsArray = imageUrls
-      } else if (imageUrl) {
-        imageUrlsArray = [imageUrl]
-      } else {
+      if (imagesToDelete.length === 0) {
         message.error('No image specified to delete')
-        return false
-      }
+        return
+      } 
 
-      console.log('Sending DELETE request with array:', imageUrlsArray)
-      const res = await trigger({ data: imageUrlsArray })
-      console.log('Delete response:', res)
-
-      const ok = res?.status === 200 || res?.data?.success
-      if (ok) {
-        console.log('Delete successful')
-        return true
-      }
-
-      console.log('Delete failed:', res?.data?.message)
-      message.error(res?.data?.message || 'Failed to delete banner')
-      return false
-    } catch (err) {
-      console.error('Delete error:', err)
+      await trigger({ data: imagesToDelete })
+      message.success('Banner deleted successfully!')
+    } catch (err) { 
       message.error(err?.data?.message || 'Failed to delete banner')
-      return false
     }
   }
 
   return {
     deleteBanners,
     deleting: loading,
-    response: data,
   }
 }
 
 export default useDeleteBanners
-
-
