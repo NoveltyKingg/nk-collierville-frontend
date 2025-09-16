@@ -27,7 +27,7 @@ request.interceptors.request.use((oldAxiosConfig) => {
     indexes: false,
   }
 
-  axiosConfig.baseURL = process.env.NEXT_PUBLIC_REST_BASE_API_URL || 'https://backend.noveltykingwholesale.com'
+  axiosConfig.baseURL = process.env.NEXT_PUBLIC_REST_BASE_API_URL
   if (token) {
     axiosConfig.headers.authorization = `Bearer ${token}`
   }

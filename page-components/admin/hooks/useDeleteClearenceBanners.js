@@ -1,9 +1,9 @@
 import { message } from 'antd'
 import useRequest from '@/request'
 
-const useDeleteBanners = () => {
+const useDeleteClearenceBanners = () => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'DELETE', url: '/home/deleteBanners' },
+    { method: 'DELETE', url: '/home/clearance/deleteBanners' },
     { manual: true },
   )
 
@@ -23,9 +23,9 @@ const useDeleteBanners = () => {
       } 
 
       await trigger({ data: imagesToDelete })
-      message.success('Banner deleted successfully!')
+      message.success('Clearance banner deleted successfully!')
     } catch (err) { 
-      message.error(err?.data?.message || 'Failed to delete banner')
+      message.error(err?.data?.message || 'Failed to delete clearance banner')
     }
   }
 
@@ -35,4 +35,4 @@ const useDeleteBanners = () => {
   }
 }
 
-export default useDeleteBanners
+export default useDeleteClearenceBanners

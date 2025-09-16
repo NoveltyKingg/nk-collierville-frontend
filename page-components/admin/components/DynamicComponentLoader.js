@@ -1,42 +1,88 @@
-import React, { Suspense, lazy } from 'react'
+import React from 'react'
 import { Spin } from 'antd'
+import dynamic from 'next/dynamic'
 
 const componentMap = {
-  'home-banners': () => import('./HomeBanners'),
-  'promotional-banners': () => import('./PromotionalBanners'),
-  'clearance-banners': () => import('./ClearanceBanners'),
-  'barcodes': () => import('./Barcodes'),
-  'all-products': () => import('./AllProducts'),
-  'sub-categories': () => import('./SubCategories'),
-  'varities': () => import('./Varities'),
-  'customers': () => import('./Customers'),
-  'orders': () => import('./Orders'),
-  'statements': () => import('./Statements'),
+  'home-banners': dynamic(() => import('./HomeBanners'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'promotional-banners': dynamic(() => import('./PromotionalBanners'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'clearance-banners': dynamic(() => import('./ClearanceBanners'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'barcodes': dynamic(() => import('./Barcodes'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'all-products': dynamic(() => import('./AllProducts'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'sub-categories': dynamic(() => import('./SubCategories'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'varities': dynamic(() => import('./Varities'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'customers': dynamic(() => import('./Customers'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'orders': dynamic(() => import('./Orders'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
+  'statements': dynamic(() => import('./Statements'), {
+    loading: () => (
+      <div className='flex justify-center items-center h-64'>
+        <Spin size='large' />
+      </div>
+    )
+  }),
 }
- 
-const lazyComponents = Object.keys(componentMap).reduce((acc, key) => {
-  acc[key] = lazy(componentMap[key])
-  return acc
-}, {})
 
 const DynamicComponentLoader = ({ selectedKey, ...props }) => { 
-  if (!selectedKey || !lazyComponents[selectedKey]) {
+  if (!selectedKey || !componentMap[selectedKey]) {
     return null
   }
 
-  const LazyComponent = lazyComponents[selectedKey]
+  const DynamicComponent = componentMap[selectedKey]
 
-  return (
-    <Suspense 
-      fallback={
-        <div className='flex justify-center items-center h-64'>
-          <Spin size='large' />
-        </div>
-      }
-    >
-      <LazyComponent {...props} />
-    </Suspense>
-  )
+  return <DynamicComponent {...props} />
 }
 
 export default DynamicComponentLoader

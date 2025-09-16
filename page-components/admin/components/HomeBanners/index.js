@@ -16,13 +16,9 @@ const HomeBanners = () => {
   const { fetchBanners, banners, loading } = useGetBanners()
   const { deleteBanners, deleting } = useDeleteBanners()
 
-  const handleDeleteBannerClick = async (bannerId, imageUrl) => {
-    try {
-      await deleteBanners({ imageUrl })
-      fetchBanners()
-    } catch (error) {
-      console.error('Delete failed:', error)
-    }
+  const handleDeleteBannerClick = (bannerId, imageUrl) => {
+    deleteBanners({ imageUrl })
+    fetchBanners()
   }
 
   useEffect(() => {
@@ -67,7 +63,7 @@ const HomeBanners = () => {
       return false
     },
     onChange: ({ fileList: newFileList }) => {
-      setFileList(newFileList.slice(-1))
+      setFileList(newFileList)
     },
     onRemove: (file) => {
       const index = fileList.indexOf(file)
@@ -126,11 +122,18 @@ const HomeBanners = () => {
             <Row gutter={[12, 12]} align='middle'>
               <Col xs={24} sm={6} md={4}>
                 <div className='relative group cursor-pointer' onClick={() => item.image && handleImagePreview(item.image)}>
-                  <img 
-                    src={item.image || ''} 
-                    alt={`Banner ${item.id}`}
-                    className='w-full h-28 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200'
-                  />
+                  {item.image ? (
+                    <Image 
+                      src={item.image} 
+                      alt={`Banner ${item.id}`}
+                      className='w-full h-28 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200'
+                      preview={false}
+                    />
+                  ) : (
+                    <div className='w-full h-28 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center'>
+                      <span className='text-gray-400 text-sm'>No Image</span>
+                    </div>
+                  )}
                   <div className='absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 rounded-lg flex items-center justify-center'>
                     <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
                       <EyeOutlined className='text-white text-2xl' />
