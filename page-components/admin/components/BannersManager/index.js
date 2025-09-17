@@ -1,29 +1,73 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Input, Typography, Space, Upload, message, Card, Row, Col, Modal, Image } from 'antd'
-import { DeleteOutlined, UploadOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
-import useUploadClearenceBanner from '../../hooks/useUploadClearenceBanner'
+import React, { useEffect, useState } from 'react'
+import { Button, Input, Typography, Space, Upload, message, Card, Row, Col, Image } from 'antd'
+import { DeleteOutlined, UploadOutlined, CheckOutlined } from '@ant-design/icons'
+import useGetBanners from '../../hooks/useGetBanners'
+import useUploadBanner from '../../hooks/useUploadBanner'
+import useDeleteBanners from '../../hooks/useDeleteBanners'
 import useGetClearenceBanners from '../../hooks/useGetClearenceBanners'
+import useUploadClearenceBanner from '../../hooks/useUploadClearenceBanner'
 import useDeleteClearenceBanners from '../../hooks/useDeleteClearenceBanners'
+import useGetPromotionalBanners from '../../hooks/useGetPromotionalBanners'
+import useUploadPromotionalBanner from '../../hooks/useUploadPromotionalBanner'
+import useDeletePromotionalBanners from '../../hooks/useDeletePromotionalBanners'
 
 const { Title } = Typography
 
-const ClearanceBanners = () => {
+const BannersManager = ({ selectedKey }) => {
   const [fileList, setFileList] = useState([])
-  const { postBanners, uploading } = useUploadClearenceBanner() 
-  const [previewVisible, setPreviewVisible] = useState(false)
-  const [previewImage, setPreviewImage] = useState('')
 
-  const { fetchClearenceBanners, clearenceBanners, loading } = useGetClearenceBanners()
-  const { deleteBanners, deleting } = useDeleteClearenceBanners()
+  const isHomeBanners = selectedKey === 'home-banners'
+  const isClearanceBanners = selectedKey === 'clearance-banners'
+
+  const { postBanners, uploading } = isHomeBanners 
+    ? useUploadBanner() 
+    : isClearanceBanners 
+    ? useUploadClearenceBanner() 
+    : useUploadPromotionalBanner()
+
+  const getHook = isHomeBanners 
+    ? useGetBanners() 
+    : isClearanceBanners 
+    ? useGetClearenceBanners() 
+    : useGetPromotionalBanners()
+
+  const { deleteBanners, deleting } = isHomeBanners 
+    ? useDeleteBanners() 
+    : isClearanceBanners 
+    ? useDeleteClearenceBanners() 
+    : useDeletePromotionalBanners()
+
+  const items = isHomeBanners 
+    ? getHook.banners 
+    : isClearanceBanners 
+    ? getHook.clearenceBanners 
+    : getHook.promotionalBanners
+
+  const fetchItems = isHomeBanners 
+    ? getHook.fetchBanners 
+    : isClearanceBanners 
+    ? getHook.fetchClearenceBanners 
+    : getHook.fetchPromotionalBanners
+
+  const title = isHomeBanners 
+    ? 'Home Page Banners' 
+    : isClearanceBanners 
+    ? 'Clearance Page Banners' 
+    : 'Promotional Page Banners'
 
   const handleDeleteBannerClick = (bannerId, imageUrl) => {
     deleteBanners({ imageUrl })
-    fetchClearenceBanners()
+      .then(() => {
+        fetchItems()
+      })
+      .catch((error) => {
+        message.error(error?.data?.message || 'Delete failed. Please try again.')
+      })
   }
 
   useEffect(() => {
-    fetchClearenceBanners()
-  }, [])
+    fetchItems()
+  }, [selectedKey, fetchItems])
 
   const handleUpload = () => {
     if (!fileList || fileList.length === 0) {
@@ -33,11 +77,12 @@ const ClearanceBanners = () => {
 
     postBanners({ files: fileList })
       .then(() => {
-        fetchClearenceBanners()
+        message.success('Banner uploaded successfully!')
+        fetchItems()
         setFileList([])
       })
       .catch((error) => {
-        message.error('Upload failed. Please try again.')
+        message.error(error?.data?.message || 'Upload failed. Please try again.')
       })
   }
 
@@ -53,13 +98,11 @@ const ClearanceBanners = () => {
         message.error('You can only upload image files!')
         return false
       }
-      
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
         message.error('Image must smaller than 2MB!')
         return false
       }
-      
       return false
     },
     onChange: ({ fileList: newFileList }) => {
@@ -73,21 +116,16 @@ const ClearanceBanners = () => {
     }
   }
 
-  const handleImagePreview = (imageSrc) => {
-    setPreviewImage(imageSrc)
-    setPreviewVisible(true)
-  }
- 
   return (
     <div className='w-full'> 
       <Card className='mb-2.5'>
         <div className='flex items-center justify-between'>
           <div>
             <Title level={3} className='m-0 text-gray-800'>
-              Clearance Page Banners
+              {title}
             </Title>
             <p className='text-gray-600 mt-1 mb-0'>
-              Manage your home page banner images and their associated links
+              Manage your page banner images and their associated links
             </p>
           </div>
           <Space size='middle'>
@@ -114,32 +152,25 @@ const ClearanceBanners = () => {
       </Card>
 
       <div className='space-y-3'>
-        {clearenceBanners.map((item) => (
+        {items.map((item) => (
           <Card 
             key={item.id} 
             className='hover:shadow-sm transition-shadow duration-200 mb-2.5'
           >
             <Row gutter={[12, 12]} align='middle'>
               <Col xs={24} sm={6} md={4}>
-                <div className='relative group cursor-pointer' onClick={() => item.image && handleImagePreview(item.image)}>
-                  {item.image ? (
-                    <Image 
-                      src={item.image} 
-                      alt={`Banner ${item.id}`}
-                      className='w-full h-28 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200'
-                      preview={false}
-                    />
-                  ) : (
-                    <div className='w-full h-28 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center'>
-                      <span className='text-gray-400 text-sm'>No Image</span>
-                    </div>
-                  )}
-                  <div className='absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 rounded-lg flex items-center justify-center'>
-                    <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                      <EyeOutlined className='text-white text-2xl' />
-                    </div>
+                {item.image ? (
+                  <Image 
+                    src={item.image} 
+                    alt={`Banner ${item.id}`}
+                    className='w-full h-28 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200'
+                    preview={{ src: item.image }}
+                  />
+                ) : (
+                  <div className='w-full h-28 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center'>
+                    <span className='text-gray-400 text-sm'>No Image</span>
                   </div>
-                </div>
+                )}
               </Col>
                 
               <Col xs={24} sm={18} md={16}>
@@ -189,32 +220,17 @@ const ClearanceBanners = () => {
         ))}
       </div>
 
-      {clearenceBanners.length === 0 && (
+      {items.length === 0 && (
         <div className='text-center py-12'>
           <div className='text-gray-400 text-lg mb-2'>No banners found</div>
           <p className='text-gray-500'>Upload some images to get started</p>
         </div>
       )} 
 
-      <Modal
-        open={previewVisible}
-        title='Banner Preview'
-        footer={null}
-        onCancel={() => setPreviewVisible(false)}
-        width='80%'
-        className='top-5'
-      >
-        <div className='text-center'>
-          <Image 
-            src={previewImage} 
-            alt='Banner Preview'
-            className='max-w-full max-h-[70vh] object-contain mx-auto rounded-lg'
-            preview={false}
-          />
-        </div>
-      </Modal>
     </div>
   )
 }
 
-export default ClearanceBanners
+export default BannersManager
+
+
