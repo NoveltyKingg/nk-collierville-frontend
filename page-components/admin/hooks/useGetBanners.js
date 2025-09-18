@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import useRequest from '@/request'
 
 const useGetBanners = () => {
@@ -9,7 +9,7 @@ const useGetBanners = () => {
 
   const [banners, setBanners] = useState([])
 
-  const fetchBanners = useCallback(async () => {
+  const fetchBanners = async () => { 
     try {
       const res = await trigger()
       const bannerData = res?.data || {}
@@ -27,7 +27,7 @@ const useGetBanners = () => {
         console.error('Failed to fetch banners:', e)
       }
     }
-  }, [trigger])
+  }
 
   return {
     fetchBanners,

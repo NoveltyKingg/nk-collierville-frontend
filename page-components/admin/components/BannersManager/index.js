@@ -19,41 +19,48 @@ const BannersManager = ({ selectedKey }) => {
   const isHomeBanners = selectedKey === 'home-banners'
   const isClearanceBanners = selectedKey === 'clearance-banners'
 
-  const { postBanners, uploading } = isHomeBanners 
-    ? useUploadBanner() 
-    : isClearanceBanners 
-    ? useUploadClearenceBanner() 
-    : useUploadPromotionalBanner()
+  let postBanners, uploading, getHook, deleteBanners, deleting, items, fetchItems, title
 
-  const getHook = isHomeBanners 
-    ? useGetBanners() 
-    : isClearanceBanners 
-    ? useGetClearenceBanners() 
-    : useGetPromotionalBanners()
-
-  const { deleteBanners, deleting } = isHomeBanners 
-    ? useDeleteBanners() 
-    : isClearanceBanners 
-    ? useDeleteClearenceBanners() 
-    : useDeletePromotionalBanners()
-
-  const items = isHomeBanners 
-    ? getHook.banners 
-    : isClearanceBanners 
-    ? getHook.clearenceBanners 
-    : getHook.promotionalBanners
-
-  const fetchItems = isHomeBanners 
-    ? getHook.fetchBanners 
-    : isClearanceBanners 
-    ? getHook.fetchClearenceBanners 
-    : getHook.fetchPromotionalBanners
-
-  const title = isHomeBanners 
-    ? 'Home Page Banners' 
-    : isClearanceBanners 
-    ? 'Clearance Page Banners' 
-    : 'Promotional Page Banners'
+  if (isHomeBanners) {
+    const uploadHook = useUploadBanner()
+    const getBannersHook = useGetBanners()
+    const deleteHook = useDeleteBanners()
+    
+    postBanners = uploadHook.postBanners
+    uploading = uploadHook.uploading
+    getHook = getBannersHook
+    deleteBanners = deleteHook.deleteBanners
+    deleting = deleteHook.deleting
+    items = getHook.banners
+    fetchItems = getHook.fetchBanners
+    title = 'Home Page Banners'
+  } else if (isClearanceBanners) {
+    const uploadHook = useUploadClearenceBanner()
+    const getBannersHook = useGetClearenceBanners()
+    const deleteHook = useDeleteClearenceBanners()
+    
+    postBanners = uploadHook.postBanners
+    uploading = uploadHook.uploading
+    getHook = getBannersHook
+    deleteBanners = deleteHook.deleteBanners
+    deleting = deleteHook.deleting
+    items = getHook.clearenceBanners
+    fetchItems = getHook.fetchClearenceBanners
+    title = 'Clearance Page Banners'
+  } else {
+    const uploadHook = useUploadPromotionalBanner()
+    const getBannersHook = useGetPromotionalBanners()
+    const deleteHook = useDeletePromotionalBanners()
+    
+    postBanners = uploadHook.postBanners
+    uploading = uploadHook.uploading
+    getHook = getBannersHook
+    deleteBanners = deleteHook.deleteBanners
+    deleting = deleteHook.deleting
+    items = getHook.promotionalBanners
+    fetchItems = getHook.fetchPromotionalBanners
+    title = 'Promotional Page Banners'
+  }
 
   const handleDeleteBannerClick = (bannerId, imageUrl) => {
     deleteBanners({ imageUrl })
@@ -71,19 +78,13 @@ const BannersManager = ({ selectedKey }) => {
 
   const handleUpload = () => {
     if (!fileList || fileList.length === 0) {
-      message.warning('Please select images to upload')
+      message.error('Please select images to upload')
       return
     }
 
     postBanners({ files: fileList })
-      .then(() => {
-        message.success('Banner uploaded successfully!')
-        fetchItems()
-        setFileList([])
-      })
-      .catch((error) => {
-        message.error(error?.data?.message || 'Upload failed. Please try again.')
-      })
+    fetchItems()
+    setFileList([])
   }
 
   const uploadProps = {
@@ -100,7 +101,7 @@ const BannersManager = ({ selectedKey }) => {
       }
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
-        message.error('Image must smaller than 2MB!')
+        message.error('Image must be smaller than 2MB!')
         return false
       }
       return false
