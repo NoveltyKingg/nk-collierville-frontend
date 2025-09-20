@@ -10,16 +10,24 @@ import useDeleteClearenceBanners from '../../hooks/useDeleteClearenceBanners'
 import useGetPromotionalBanners from '../../hooks/useGetPromotionalBanners'
 import useUploadPromotionalBanner from '../../hooks/useUploadPromotionalBanner'
 import useDeletePromotionalBanners from '../../hooks/useDeletePromotionalBanners'
+import useUpdateBannerLink from '../../hooks/useUpdateBannerLink'
+import useUpdateClearenceBannerLink from '../../hooks/useUpdateClearenceBannerLink'
+import useUpdatePromotionalBannerLink from '../../hooks/useUpdatePromotionalBannerLink'
 
 const { Title } = Typography
 
 const BannersManager = ({ selectedKey }) => {
   const [fileList, setFileList] = useState([])
+  const [linkInputs, setLinkInputs] = useState({})
+  
+  const homeUpdateHook = useUpdateBannerLink()
+  const clearanceUpdateHook = useUpdateClearenceBannerLink()
+  const promotionalUpdateHook = useUpdatePromotionalBannerLink()
 
   const isHomeBanners = selectedKey === 'home-banners'
   const isClearanceBanners = selectedKey === 'clearance-banners'
 
-  let postBanners, uploading, getHook, deleteBanners, deleting, items, fetchItems, title
+  let postBanners, uploading, getHook, deleteBanners, deleting, items, fetchItems, title, updateBannerLink, updating
 
   if (isHomeBanners) {
     const uploadHook = useUploadBanner()
@@ -34,6 +42,8 @@ const BannersManager = ({ selectedKey }) => {
     items = getHook.banners
     fetchItems = getHook.fetchBanners
     title = 'Home Page Banners'
+    updateBannerLink = homeUpdateHook.updateBannerLink
+    updating = homeUpdateHook.updating
   } else if (isClearanceBanners) {
     const uploadHook = useUploadClearenceBanner()
     const getBannersHook = useGetClearenceBanners()
@@ -47,6 +57,8 @@ const BannersManager = ({ selectedKey }) => {
     items = getHook.clearenceBanners
     fetchItems = getHook.fetchClearenceBanners
     title = 'Clearance Page Banners'
+    updateBannerLink = clearanceUpdateHook.updateBannerLink
+    updating = clearanceUpdateHook.updating
   } else {
     const uploadHook = useUploadPromotionalBanner()
     const getBannersHook = useGetPromotionalBanners()
@@ -60,6 +72,8 @@ const BannersManager = ({ selectedKey }) => {
     items = getHook.promotionalBanners
     fetchItems = getHook.fetchPromotionalBanners
     title = 'Promotional Page Banners'
+    updateBannerLink = promotionalUpdateHook.updateBannerLink
+    updating = promotionalUpdateHook.updating
   }
 
   const handleDeleteBannerClick = (bannerId, imageUrl) => {
@@ -72,9 +86,22 @@ const BannersManager = ({ selectedKey }) => {
       })
   }
 
+  const handleLinkChange = (imageUrl, value) => {
+    setLinkInputs(prev => ({
+      ...prev,
+      [imageUrl]: value
+    }))
+  }
+
+  const handleUpdateLink = async (imageUrl) => {
+    const linkUrl = linkInputs[imageUrl] || ''
+    await updateBannerLink({ imageUrl, linkUrl })
+    fetchItems()
+  }
+
   useEffect(() => {
     fetchItems()
-  }, [selectedKey, fetchItems])
+  }, [selectedKey])
 
   const handleUpload = () => {
     if (!fileList || fileList.length === 0) {
@@ -181,7 +208,8 @@ const BannersManager = ({ selectedKey }) => {
                         Banner Link
                     </label>
                     <Input
-                      defaultValue={item.value}
+                      value={linkInputs[item.image] !== undefined ? linkInputs[item.image] : item.value}
+                      onChange={(e) => handleLinkChange(item.image, e.target.value)}
                       placeholder={item.placeholder}
                       size='middle'
                       className='w-full'
@@ -201,6 +229,8 @@ const BannersManager = ({ selectedKey }) => {
                     type='primary' 
                     size='middle'
                     className='w-full'
+                    loading={updating}
+                    onClick={() => handleUpdateLink(item.image)}
                   >
                       Update Link
                   </Button>
