@@ -10,6 +10,18 @@ import {
 } from '@ant-design/icons'
 import { useRouter } from 'next/router' 
 import DynamicComponentLoader from './components/DynamicComponentLoader'
+import useGetBanners from './hooks/useGetBanners'
+import useUploadBanner from './hooks/useUploadBanner'
+import useDeleteBanners from './hooks/useDeleteBanners'
+import useGetClearenceBanners from './hooks/useGetClearenceBanners'
+import useUploadClearenceBanner from './hooks/useUploadClearenceBanner'
+import useDeleteClearenceBanners from './hooks/useDeleteClearenceBanners'
+import useGetPromotionalBanners from './hooks/useGetPromotionalBanners'
+import useUploadPromotionalBanner from './hooks/useUploadPromotionalBanner'
+import useDeletePromotionalBanners from './hooks/useDeletePromotionalBanners'
+import useUpdateBannerLink from './hooks/useUpdateBannerLink'
+import useUpdateClearenceBannerLink from './hooks/useUpdateClearenceBannerLink'
+import useUpdatePromotionalBannerLink from './hooks/useUpdatePromotionalBannerLink'
 
 const { Sider, Content } = Layout
 
@@ -18,6 +30,62 @@ const AdminPanel = () => {
   const router = useRouter()
   const { tab } = router.query
   const [selectedKey, setSelectedKey] = useState('home-banners')
+
+  const homeUploadHook = useUploadBanner()
+  const homeGetHook = useGetBanners()
+  const homeDeleteHook = useDeleteBanners()
+  const homeUpdateHook = useUpdateBannerLink()
+
+  const clearanceUploadHook = useUploadClearenceBanner()
+  const clearanceGetHook = useGetClearenceBanners()
+  const clearanceDeleteHook = useDeleteClearenceBanners()
+  const clearanceUpdateHook = useUpdateClearenceBannerLink()
+
+  const promotionalUploadHook = useUploadPromotionalBanner()
+  const promotionalGetHook = useGetPromotionalBanners()
+  const promotionalDeleteHook = useDeletePromotionalBanners()
+  const promotionalUpdateHook = useUpdatePromotionalBannerLink()
+
+  const getBannerProps = () => {
+    if (selectedKey === 'home-banners') {
+      return {
+        postBanners: homeUploadHook.postBanners,
+        uploading: homeUploadHook.uploading,
+        items: homeGetHook.banners,
+        fetchItems: homeGetHook.fetchBanners,
+        deleteBanners: homeDeleteHook.deleteBanners,
+        deleting: homeDeleteHook.deleting,
+        title: 'Home Page Banners',
+        updateBannerLink: homeUpdateHook.updateBannerLink,
+        updating: homeUpdateHook.updating
+      }
+    } else if (selectedKey === 'clearance-banners') {
+      return {
+        postBanners: clearanceUploadHook.postBanners,
+        uploading: clearanceUploadHook.uploading,
+        items: clearanceGetHook.clearenceBanners,
+        fetchItems: clearanceGetHook.fetchClearenceBanners,
+        deleteBanners: clearanceDeleteHook.deleteBanners,
+        deleting: clearanceDeleteHook.deleting,
+        title: 'Clearance Page Banners',
+        updateBannerLink: clearanceUpdateHook.updateBannerLink,
+        updating: clearanceUpdateHook.updating
+      }
+    } else if (selectedKey === 'promotional-banners') {
+      return {
+        postBanners: promotionalUploadHook.postBanners,
+        uploading: promotionalUploadHook.uploading,
+        items: promotionalGetHook.promotionalBanners,
+        fetchItems: promotionalGetHook.fetchPromotionalBanners,
+        deleteBanners: promotionalDeleteHook.deleteBanners,
+        deleting: promotionalDeleteHook.deleting,
+        title: 'Promotional Page Banners',
+        updateBannerLink: promotionalUpdateHook.updateBannerLink,
+        updating: promotionalUpdateHook.updating
+      }
+    }
+    return {}
+  }
 
   const menuItems = [
     {
@@ -76,7 +144,10 @@ const AdminPanel = () => {
           />
         </Sider>
         <Content className='p-6'>
-          <DynamicComponentLoader selectedKey={selectedKey} />
+          <DynamicComponentLoader 
+            selectedKey={selectedKey} 
+            {...getBannerProps()}
+          />
         </Content>
       </Layout>
     </div>
