@@ -42,13 +42,14 @@ const Home = () => {
       <Carousel autoplay>
         {Object.entries(homeBanners || {})?.map(([key, value], i) => (
           <div key={i} className='h-full w-full'>
-            {value ? (
-              <a href={value} rel='noopener noreferrer'>
-                <Image src={key} preview={false} height={500} width={'100%'} />
-              </a>
-            ) : (
-              <Image src={key} preview={false} height={500} width={'100%'} />
-            )}
+            <Image
+              src={key}
+              preview={false}
+              height={500}
+              width={'100%'}
+              className={value ? 'cursor-pointer' : ''}
+              onClick={() => value && push(value)}
+            />
           </div>
         ))}
       </Carousel>
