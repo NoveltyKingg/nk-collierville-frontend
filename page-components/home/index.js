@@ -42,7 +42,13 @@ const Home = () => {
       <Carousel autoplay>
         {Object.entries(homeBanners || {})?.map(([key, value], i) => (
           <div key={i} className='h-full w-full'>
-            <Image src={key} preview={false} height={500} width={'100%'} />
+            {value ? (
+              <a href={value} rel='noopener noreferrer'>
+                <Image src={key} preview={false} height={500} width={'100%'} />
+              </a>
+            ) : (
+              <Image src={key} preview={false} height={500} width={'100%'} />
+            )}
           </div>
         ))}
       </Carousel>
