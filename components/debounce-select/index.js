@@ -16,7 +16,7 @@ function DebounceSelect({
 }) {
   const [fetching, setFetching] = useState(false)
   const [options, setOptions] = useState([])
-  const isNavigatingRef = useRef(false) // <- block fetch after Enter
+  const isNavigatingRef = useRef(false)
   const { push } = useRouter()
 
   const debounceFetcher = useMemo(() => {
@@ -39,20 +39,15 @@ function DebounceSelect({
     return debounce(loadOptions, debounceTimeout)
   }, [fetchOptions, debounceTimeout])
 
-  // cleanup
   useEffect(() => () => debounceFetcher.cancel(), [debounceFetcher])
 
   const handleInputKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       e.stopPropagation()
-
-      // 1) prevent any pending debounced fetch from firing
       isNavigatingRef.current = true
       debounceFetcher.cancel()
       setFetching(false)
-
-      // 2) go to products page; Products page will make the API call
       if (!admin && searchValue) {
         push(`${optionRoute}?search=${encodeURIComponent(searchValue)}`)
       }
@@ -67,14 +62,14 @@ function DebounceSelect({
       name='debounce_select'
       searchValue={searchValue}
       onSearch={(val) => {
-        onSearch?.(val) // update parent immediately
-        if (isNavigatingRef.current) return // block fetch after Enter
-        debounceFetcher(val) // debounce ONLY the fetch
+        onSearch?.(val)
+        if (isNavigatingRef.current) return
+        debounceFetcher(val)
       }}
-      onInputKeyDown={handleInputKeyDown} // v5: key events on input
+      onInputKeyDown={handleInputKeyDown}
       onBlur={() => {
         isNavigatingRef.current = false
-      }} // reset if needed
+      }}
       notFoundContent={fetching ? 'Loading...' : null}
       onSelect={(e) => handleSelect(e, searchValue)}
       defaultActiveFirstOption={false}

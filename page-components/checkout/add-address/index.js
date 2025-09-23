@@ -4,9 +4,13 @@ import useGetCountries from '@/utils/useGetCountries'
 import useGetStateByCountry from '@/utils/useGetStateByCountry'
 import useGetCitiesByState from '@/utils/useGetCitiesByState'
 
-function AddAddress({ setDeliveryAddress, setAddAddress, deliveryAddress }) {
+export default function AddAddress({
+  setDeliveryAddress,
+  setAddAddress,
+  deliveryAddress,
+  setValue,
+}) {
   const [form] = Form.useForm()
-
   const [country, setCountry] = useState()
 
   const { countriesData } = useGetCountries()
@@ -17,66 +21,59 @@ function AddAddress({ setDeliveryAddress, setAddAddress, deliveryAddress }) {
     getStatesByCountry({ country: val })
     setCountry(val)
   }
-
   const handleSelectState = (val) => {
     getCitiesByState({ country, state: val })
   }
 
   const onFinish = (val) => {
-    setDeliveryAddress([...deliveryAddress, val])
+    const next = [...deliveryAddress, val]
+    setDeliveryAddress(next)
+    setValue(next.length - 1)
     form.resetFields()
     setAddAddress(false)
   }
 
-  const handleCancel = () => {
-    setAddAddress(false)
-  }
-
-  const validateMessages = {
-    required: '${label} is required!',
-  }
-
   return (
-    <div>
-      <Form
-        labelCol={{
-          span: 4,
-        }}
-        wrapperCol={{
-          span: 18,
-        }}
-        colon={false}
-        layout='horizontal'
-        form={form}
-        validateMessages={validateMessages}
-        onFinish={onFinish}
-        scrollToFirstError>
-        <Form.Item
-          label='Address 1'
-          name='address1'
-          rules={[{ required: true }]}>
-          <Input placeholder='Enter Address 1' />
-        </Form.Item>
-        <Form.Item label='Address 2' name='address2'>
-          <Input placeholder='Enter Address 2' />
+    <Form
+      form={form}
+      layout='vertical'
+      onFinish={onFinish}
+      requiredMark={false}
+      validateMessages={{ required: '${label} is required!' }}>
+      <Form.Item
+        label='Street Address'
+        name='address1'
+        rules={[{ required: true }]}>
+        <Input placeholder='Street Address' />
+      </Form.Item>
+
+      <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
+        <Form.Item label='Apt Number' name='apartment'>
+          <Input placeholder='APT Number' />
         </Form.Item>
         <Form.Item label='Country' name='country' rules={[{ required: true }]}>
           <Select
             placeholder='Select Country'
-            showSearch
-            options={countriesData.map((item) => ({
-              label: item?.name,
-              value: item?.name,
+            options={countriesData?.map((c) => ({
+              label: c?.name,
+              value: c?.name,
             }))}
+            showSearch
             onSelect={handleSelectCountry}
           />
         </Form.Item>
+        <Form.Item label='Zip Code' name='zipcode' rules={[{ required: true }]}>
+          <Input placeholder='Zip Code' />
+        </Form.Item>
+      </div>
+
+      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
         <Form.Item label='State' name='state' rules={[{ required: true }]}>
           <Select
             placeholder='Select State'
-            options={statesData?.map((item) => ({
-              label: item?.name,
-              value: item?.name,
+            options={statesData?.map((s) => ({
+              label: s?.name,
+              value: s?.name,
             }))}
             showSearch
             onSelect={handleSelectState}
@@ -85,31 +82,18 @@ function AddAddress({ setDeliveryAddress, setAddAddress, deliveryAddress }) {
         <Form.Item label='City' name='city' rules={[{ required: true }]}>
           <Select
             placeholder='Select City'
-            options={citiesData?.map((item) => ({
-              label: item,
-              value: item,
-            }))}
+            options={citiesData?.map((ct) => ({ label: ct, value: ct }))}
             showSearch
           />
         </Form.Item>
-        <Form.Item label='Zip Code' name='zipcode' rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          wrapperCol={{
-            span: 22,
-          }}>
-          <div>
-            {' '}
-            <Button type='text' onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button htmlType='submit'>Add Address</Button>
-          </div>
-        </Form.Item>
-      </Form>
-    </div>
+      </div>
+
+      <div className='mt-2 flex items-center justify-end gap-2'>
+        <Button type='text' onClick={() => setAddAddress(false)}>
+          Cancel
+        </Button>
+        <Button htmlType='submit'>Use This Address</Button>
+      </div>
+    </Form>
   )
 }
-
-export default AddAddress

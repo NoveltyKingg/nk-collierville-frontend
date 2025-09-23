@@ -3,7 +3,7 @@ import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
 const useUpdateCart = ({ getCartItems }) => {
-  const { data, loading, trigger } = useRequest(
+  const [{ data, loading }, trigger] = useRequest(
     { method: 'POST', url: '/store/updateCart' },
     { manual: true },
   )

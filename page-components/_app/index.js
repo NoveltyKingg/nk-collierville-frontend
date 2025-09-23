@@ -3,7 +3,8 @@ import Layout from './layout'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import Router from 'next/router'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, App as AntdApp } from 'antd'
+import { StyleProvider } from '@ant-design/cssinjs'
 import enUS from 'antd/locale/en_US'
 import AuthenticationProvider from '@/common/AuthenticationProvider'
 import ArticleProvider from '@/common/context'
@@ -28,6 +29,7 @@ const theme = {
     colorSuccess: '#4bb117',
     colorError: '#ff4d4d',
     fontFamily: 'Ubuntu, sans-serif',
+    zIndexPopupBase: 20000,
   },
 }
 
@@ -44,14 +46,18 @@ export default function App({ Component, ...rest }) {
   }, [router.asPath])
 
   return (
-    <ArticleProvider>
-      <AuthenticationProvider router={router} pageProps={pageProps}>
-        <ConfigProvider theme={theme} locale={enUS}>
-          <Layout pageProps={pageProps} layout={layout}>
-            <Component {...pageProps} />
-          </Layout>
-        </ConfigProvider>
-      </AuthenticationProvider>
-    </ArticleProvider>
+    <StyleProvider hashPriority='high'>
+      <ConfigProvider theme={theme} locale={enUS}>
+        <AntdApp>
+          <ArticleProvider>
+            <AuthenticationProvider router={router} pageProps={pageProps}>
+              <Layout pageProps={pageProps} layout={layout}>
+                <Component {...pageProps} />
+              </Layout>
+            </AuthenticationProvider>
+          </ArticleProvider>
+        </AntdApp>
+      </ConfigProvider>
+    </StyleProvider>
   )
 }

@@ -1,24 +1,70 @@
 import React, { useState } from 'react'
-import { LoginIcon } from '@/assets/common'
 import DebounceSelect from '@/components/debounce-select'
 import useQuerySearch from '../../hooks/useQuerySearch'
 import { useRouter } from 'next/router'
 import useIsMobile from '@/utils/useIsMobile'
+import { Button } from 'antd'
+import {
+  AdminIcon,
+  ChangeStoreIcon,
+  ProfileIcon,
+  LogoutIcon,
+  CartIcon,
+} from '@/assets/header'
+import useGetContext from '@/common/context/useGetContext'
+import setCookie from '@/utils/set-cookie'
+import { Dropdown } from 'antd'
+import { getCookie } from '@/utils/get-cookie'
+import useCreateLogin from '../../hooks/useCreateLogin'
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   const { queryTrigger } = useQuerySearch()
+  const { noveltyData } = useGetContext()
+  const { profile } = noveltyData || {}
   const { push } = useRouter()
   const { isMobile } = useIsMobile()
+
+  const { createLogin } = useCreateLogin()
+
+  const logout = () => {
+    setCookie('nk-collierville-token', 'expired', -1)
+  }
 
   const handleSelect = (e) => {
     push(`/product/${e}`)
   }
 
+  const handleRoute = (path) => {
+    if (!profile?.storeId) {
+      push('/login')
+    } else {
+      push(path)
+    }
+  }
+
+  const onStoreSelect = async ({ key }) => {
+    const token = getCookie('nk-collierville-token')
+    await createLogin({ storeId: key, token })
+    location.reload()
+  }
+
+  const stores = Object.entries(profile?.stores || {})
+    ?.map(([key, value]) => {
+      if (profile?.storeId !== Number(key)) {
+        return { label: value, key }
+      }
+    })
+    .filter((val) => val !== undefined)
+
+  console.log(stores, 'stores')
+
   return (
     <div className='w-full bg-main text-[#f3dbc3] min-h-16 flex items-center justify-between px-4 py-2'>
-      <div>Novelty King Icon</div>
+      <div onClick={() => push('/')} className='cursor-pointer'>
+        Novelty King Icon
+      </div>
       {!isMobile && (
         <div className='flex items-center gap-3'>
           <DebounceSelect
@@ -37,24 +83,54 @@ const Header = () => {
           />
         </div>
       )}
-      <div className='flex flex-row items-center gap-12'>
-        {!isMobile && (
-          <div className='flex flex-row items-center gap-4'>
-            <div className='cursor-pointer border-r-1 border-[#f3dbc3] pr-4'>
-              Shop All
-            </div>
-            <div className='cursor-pointer border-r-1 border-[#f3dbc3] pr-4'>
-              About
-            </div>
-            <div className='cursor-pointer'>Contact</div>
-          </div>
-        )}
-        <div className='flex items-center gap-4 cursor-pointer'>
-          <div>
-            <LoginIcon />
-          </div>
+      {!isMobile && (
+        <div className='flex items-center gap-2 cursor-pointer text-white'>
+          <Button
+            type='text'
+            icon={<AdminIcon />}
+            className='!text-white'
+            onClick={() => handleRoute('/admin')}>
+            ADMIN
+          </Button>
+          <Button
+            type='text'
+            icon={<ProfileIcon />}
+            className='!text-white'
+            onClick={() =>
+              handleRoute(`/${noveltyData?.profile?.storeId}/profile`)
+            }>
+            PROFILE
+          </Button>
+          <Button
+            type='text'
+            className='!text-white'
+            icon={<CartIcon />}
+            onClick={() =>
+              handleRoute(`/${noveltyData?.profile?.storeId}/cart`)
+            }>
+            CART
+          </Button>
+          {stores?.length > 0 && (
+            <Dropdown
+              menu={{ items: stores, onClick: onStoreSelect }}
+              trigger={['click']}>
+              <Button
+                type='text'
+                icon={<ChangeStoreIcon />}
+                className='!text-white'>
+                CHANGE STORE
+              </Button>
+            </Dropdown>
+          )}
+          <Button
+            type='text'
+            icon={<LogoutIcon />}
+            className='!text-white'
+            onClick={logout}>
+            LOGOUT
+          </Button>
         </div>
-      </div>
+      )}
     </div>
   )
 }

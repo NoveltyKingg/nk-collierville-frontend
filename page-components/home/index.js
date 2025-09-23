@@ -1,6 +1,6 @@
 import { LoginIcon } from '@/assets/common'
 import { BestPriceIcon, ShippingIcon, TruckIcon } from '@/assets/home'
-import { Avatar } from 'antd'
+import { Avatar, Skeleton } from 'antd'
 import { Card } from 'antd'
 import { Carousel, Image, Flex } from 'antd'
 import React, { useEffect } from 'react'
@@ -11,6 +11,7 @@ import useGetHomeBanners from './hooks/useGetHomeBanners'
 import useGetContext from '@/common/context/useGetContext'
 import NewArrivals from './new-arrivals'
 import { useRouter } from 'next/router'
+import useIsMobile from '@/utils/useIsMobile'
 
 const PROMOTION_ITEMS = [
   { id: 1, text: 'Free shipping on orders over $500', icon: <ShippingIcon /> },
@@ -18,87 +19,13 @@ const PROMOTION_ITEMS = [
   { id: 3, text: 'Express Delivery on bulk orders', icon: <TruckIcon /> },
 ]
 
-const ITEMS = [
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Smartwatch Pro',
-    price: '120.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Galaxy Buds',
-    price: '60.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-  {
-    name: 'Ultra HD Drone',
-    price: '350.00',
-    image:
-      'https://noveltykingmedia.s3.us-east-2.amazonaws.com/Homepage/Banners/TAX TN MS.png',
-  },
-]
-
 const Home = () => {
   const { getPromotionalBanners, promotionalBanners, promotionalLoading } =
     useGetPromotionalBanners()
-  const { getHomeBanners, homeBanners } = useGetHomeBanners()
+  const { getHomeBanners, homeBanners, homeLoading } = useGetHomeBanners()
 
   const { push } = useRouter()
+  const { isMobile } = useIsMobile()
 
   const context = useGetContext()
   const categories = context?.noveltyData?.general?.categories
@@ -115,11 +42,19 @@ const Home = () => {
   return (
     <Flex vertical gap={12} className='!mb-[10px]'>
       <Carousel autoplay>
-        {Object.entries(homeBanners || {})?.map(([key, value], i) => (
-          <div key={i} className='h-full w-full'>
-            <Image src={key} preview={false} height={500} width={'100%'} />
-          </div>
-        ))}
+        {!homeLoading &&
+          Object.entries(homeBanners || {})?.map(([key, value], i) => (
+            <div key={i} className='h-full w-full'>
+              <Image
+                src={key}
+                preview={false}
+                height={isMobile ? 200 : 500}
+                width={'100%'}
+                alt={<Skeleton />}
+              />
+            </div>
+          ))}
+        {homeLoading && <Skeleton className='!h-[500px] w-full' />}
       </Carousel>
       <Card className='!mx-[40px] flex flex-col'>
         <div className='text-[20px] font-bold'>Shop By Category</div>
@@ -141,7 +76,7 @@ const Home = () => {
           ))}
         </Flex>
       </Card>
-      <Flex justify='space-between' className='!px-[40px]'>
+      <Flex vertical={isMobile} justify='space-between' className='!px-[40px]'>
         <BannerCarousel
           banners={Object.entries(promotionalBanners || {})?.map(
             ([key, value]) => ({
@@ -175,7 +110,7 @@ const Home = () => {
       </Card>
 
       <Card className='!mx-[40px]'>
-        <NewArrivals items={ITEMS} loading={false} />
+        <NewArrivals loading={false} />
       </Card>
     </Flex>
   )

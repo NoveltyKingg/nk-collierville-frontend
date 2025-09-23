@@ -12,7 +12,7 @@ export default function BannerCarousel({ banners = [], loading = false }) {
   }
 
   return (
-    <div className='w-[47%] rounded-2xl overflow-hidden'>
+    <div className='w-[100%] md:w-[47%] rounded-2xl overflow-hidden'>
       {loading ? (
         <Skeleton
           active

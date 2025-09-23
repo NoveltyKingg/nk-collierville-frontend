@@ -246,10 +246,10 @@ function VarietiesTable({
   })
 
   return (
-    <div>
+    <div className='flex flex-col gap-4'>
       {isUpdate && varietiesData?.length > 0 && (
-        <div>
-          <div className='heading'>Selected Flavours: </div>
+        <div className='flex flex-col gap-4'>
+          <div className='font-[800] font-[14px]'>SELECTED FLAVOURS: </div>
           <Table
             columns={selectedColumns}
             dataSource={selectedVarieties}
@@ -257,7 +257,7 @@ function VarietiesTable({
             pagination={false}
             size='middle'
           />
-          <div className='heading'>Remaining Flavours: </div>
+          <div className='font-[800]'>REMANING FLAVOURS: </div>
         </div>
       )}
       <Table

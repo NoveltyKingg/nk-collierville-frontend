@@ -2,10 +2,13 @@ import { useEffect, useRef } from 'react'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Skeleton, Button } from 'antd'
 import useGetNewArrivals from '../hooks/useGetNewArrivals'
+import { Image } from 'antd'
+import { useRouter } from 'next/router'
 
 const NewArrivals = ({ loading }) => {
   const scrollContainerRef = useRef()
   const { getNewArrivals, newArrivalsData } = useGetNewArrivals()
+  const { push } = useRouter()
 
   useEffect(() => {
     getNewArrivals()
@@ -34,10 +37,12 @@ const NewArrivals = ({ loading }) => {
     newArrivalsData?.map((item, idx) => (
       <div
         key={idx}
+        onClick={() => push(`/product/${item?.id}`)}
         className='min-w-[200px] max-w-[260px] flex-shrink-0 border border-[#f5f5f5] rounded-lg shadow-sm bg-white p-4 snap-center cursor-pointer'>
-        <img
+        <Image
           src={item.imageUrls[0]}
           alt={item.name}
+          preview={false}
           className='w-full h-50 object-contain mb-2'
         />
         <div className='text-center'>
