@@ -1,9 +1,9 @@
 import { message } from 'antd'
 import useRequest from '@/request'
 
-const useUpdateBannerLink = () => {
+const useUpdateBannerLink = (url) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'POST', url: 'home/uploadBannerLinks' },
+    { method: 'POST', url },
     { manual: true },
   )
 
@@ -21,7 +21,6 @@ const useUpdateBannerLink = () => {
     } catch (err) {
       hide()
       message.error(err?.data?.message || 'Failed to update banner link')
-      throw err
     }
   }
 

@@ -1,14 +1,15 @@
 import { message } from 'antd'
 import useRequest from '@/request'
 
-const useDeleteBanners = () => {
+const useDeleteBanners = (url) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'DELETE', url: '/home/deleteBanners' },
+    { method: 'DELETE', url },
     { manual: true },
   )
 
-  const deleteBanners = async ({ imageUrl, imageUrls } = {}) => {
+  const deleteBanners = async (data) => {
     try {   
+      const { imageUrl, imageUrls } = data || {}
       let imagesToDelete = []
       
       if (imageUrls && imageUrls.length > 0) { 

@@ -13,15 +13,7 @@ import DynamicComponentLoader from './components/DynamicComponentLoader'
 import useGetBanners from './hooks/useGetBanners'
 import useUploadBanner from './hooks/useUploadBanner'
 import useDeleteBanners from './hooks/useDeleteBanners'
-import useGetClearenceBanners from './hooks/useGetClearenceBanners'
-import useUploadClearenceBanner from './hooks/useUploadClearenceBanner'
-import useDeleteClearenceBanners from './hooks/useDeleteClearenceBanners'
-import useGetPromotionalBanners from './hooks/useGetPromotionalBanners'
-import useUploadPromotionalBanner from './hooks/useUploadPromotionalBanner'
-import useDeletePromotionalBanners from './hooks/useDeletePromotionalBanners'
 import useUpdateBannerLink from './hooks/useUpdateBannerLink'
-import useUpdateClearenceBannerLink from './hooks/useUpdateClearenceBannerLink'
-import useUpdatePromotionalBannerLink from './hooks/useUpdatePromotionalBannerLink'
 
 const { Sider, Content } = Layout
 
@@ -31,20 +23,20 @@ const AdminPanel = () => {
   const { tab } = router.query
   const [selectedKey, setSelectedKey] = useState('home-banners')
 
-  const homeUploadHook = useUploadBanner()
-  const homeGetHook = useGetBanners()
-  const homeDeleteHook = useDeleteBanners()
-  const homeUpdateHook = useUpdateBannerLink()
+  const homeUploadHook = useUploadBanner('/home/uploadBanners')
+  const homeGetHook = useGetBanners('/home/getBanners')
+  const homeDeleteHook = useDeleteBanners('/home/deleteBanners')
+  const homeUpdateHook = useUpdateBannerLink('home/uploadBannerLinks')
 
-  const clearanceUploadHook = useUploadClearenceBanner()
-  const clearanceGetHook = useGetClearenceBanners()
-  const clearanceDeleteHook = useDeleteClearenceBanners()
-  const clearanceUpdateHook = useUpdateClearenceBannerLink()
+  const clearanceUploadHook = useUploadBanner('/home/clearance/uploadBanners')
+  const clearanceGetHook = useGetBanners('/home/clearance/getBanners')
+  const clearanceDeleteHook = useDeleteBanners('/home/clearance/deleteBanners')
+  const clearanceUpdateHook = useUpdateBannerLink('home/clearance/uploadBannerLinks')
 
-  const promotionalUploadHook = useUploadPromotionalBanner()
-  const promotionalGetHook = useGetPromotionalBanners()
-  const promotionalDeleteHook = useDeletePromotionalBanners()
-  const promotionalUpdateHook = useUpdatePromotionalBannerLink()
+  const promotionalUploadHook = useUploadBanner('/home/promotions/uploadBanners')
+  const promotionalGetHook = useGetBanners('/home/promotions/getBanners')
+  const promotionalDeleteHook = useDeleteBanners('/home/promotions/deleteBanners')
+  const promotionalUpdateHook = useUpdateBannerLink('home/promotions/uploadBannerLinks')
 
   const getBannerProps = () => {
     if (selectedKey === 'home-banners') {
@@ -57,31 +49,34 @@ const AdminPanel = () => {
         deleting: homeDeleteHook.deleting,
         title: 'Home Page Banners',
         updateBannerLink: homeUpdateHook.updateBannerLink,
-        updating: homeUpdateHook.updating
+        updating: homeUpdateHook.updating,
+        loading: homeGetHook.loading
       }
     } else if (selectedKey === 'clearance-banners') {
       return {
         postBanners: clearanceUploadHook.postBanners,
         uploading: clearanceUploadHook.uploading,
-        items: clearanceGetHook.clearenceBanners,
-        fetchItems: clearanceGetHook.fetchClearenceBanners,
+        items: clearanceGetHook.banners,
+        fetchItems: clearanceGetHook.fetchBanners,
         deleteBanners: clearanceDeleteHook.deleteBanners,
         deleting: clearanceDeleteHook.deleting,
         title: 'Clearance Page Banners',
         updateBannerLink: clearanceUpdateHook.updateBannerLink,
-        updating: clearanceUpdateHook.updating
+        updating: clearanceUpdateHook.updating,
+        loading: clearanceGetHook.loading
       }
     } else if (selectedKey === 'promotional-banners') {
       return {
         postBanners: promotionalUploadHook.postBanners,
         uploading: promotionalUploadHook.uploading,
-        items: promotionalGetHook.promotionalBanners,
-        fetchItems: promotionalGetHook.fetchPromotionalBanners,
+        items: promotionalGetHook.banners,
+        fetchItems: promotionalGetHook.fetchBanners,
         deleteBanners: promotionalDeleteHook.deleteBanners,
         deleting: promotionalDeleteHook.deleting,
         title: 'Promotional Page Banners',
         updateBannerLink: promotionalUpdateHook.updateBannerLink,
-        updating: promotionalUpdateHook.updating
+        updating: promotionalUpdateHook.updating,
+        loading: promotionalGetHook.loading
       }
     }
     return {}

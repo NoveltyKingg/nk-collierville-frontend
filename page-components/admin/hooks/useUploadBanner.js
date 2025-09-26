@@ -1,9 +1,9 @@
 import { message } from 'antd'
 import useRequest from '@/request'
 
-const useUploadBanner = () => {
+const useUploadBanner = (url) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'POST', url: '/home/uploadBanners' },
+    { method: 'POST', url },
     { manual: true },
   )
 

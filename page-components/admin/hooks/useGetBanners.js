@@ -1,39 +1,39 @@
-import { useState } from 'react'
 import useRequest from '@/request'
 
-const useGetBanners = () => {
+const useGetBanners = (url) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'GET', url: '/home/getBanners' },
+    { method: 'GET', url },
     { manual: true },
   )
-
-  const [banners, setBanners] = useState([])
 
   const fetchBanners = async () => { 
     try {
       const res = await trigger()
-      const bannerData = res?.data || {}
       
-      const bannerList = Object.entries(bannerData).map(([imageUrl, linkUrl]) => ({
-        id: imageUrl,
+      return Object.entries(res?.data || {}).map(([imageUrl, linkUrl], index) => ({
+        id: `banner-${index}`,
         image: imageUrl,
-        placeholder: 'Enter the link',
-        value: linkUrl || ''
+        placeholder: 'Enter banner link URL (e.g., https://example.com)',
+        linkUrl: linkUrl || ''
       }))
-      
-      setBanners(bannerList)
     } catch (e) {
       if (e.name !== 'CanceledError' && e.message !== 'canceled') {
         console.error('Failed to fetch banners:', e)
       }
+      return []
     }
   }
 
   return {
     fetchBanners,
-    banners,
-    setBanners,
+    banners: data ? Object.entries(data).map(([imageUrl, linkUrl], index) => ({
+      id: `banner-${index}`,
+      image: imageUrl,
+      placeholder: 'Enter banner link URL (e.g., https://example.com)',
+      linkUrl: linkUrl || ''
+    })) : [],
     loading,
+    data
   }
 }
 

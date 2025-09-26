@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Typography, Space, Upload, message, Card, Row, Col, Image } from 'antd'
+import { Button, Input, Typography, Space, Upload, message, Row, Col, Image, Modal, Checkbox } from 'antd'
 import { DeleteOutlined, UploadOutlined, CheckOutlined } from '@ant-design/icons'
 
 const { Title } = Typography
@@ -14,19 +14,100 @@ const BannersManager = ({
   deleting, 
   title, 
   updateBannerLink, 
-  updating 
+  updating,
+  loading
 }) => {
   const [fileList, setFileList] = useState([])
   const [linkInputs, setLinkInputs] = useState({})
+  const [deleteModal, setDeleteModal] = useState({ visible: false, imageUrl: null })
+  const [selectedBanners, setSelectedBanners] = useState([])
+  const [bulkDeleteModal, setBulkDeleteModal] = useState({ visible: false })
+  const [updatingItems, setUpdatingItems] = useState(new Set())
+  const [deletingItems, setDeletingItems] = useState(new Set())
 
-  const handleDeleteBannerClick = (bannerId, imageUrl) => {
-    deleteBanners({ imageUrl })
-      .then(() => {
+  const handleDeleteBannerClick = (imageUrl) => {
+    setDeleteModal({ visible: true, imageUrl })
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (deleteModal.imageUrl) {
+      // Add item to deleting set
+      setDeletingItems(prev => new Set(prev).add(deleteModal.imageUrl))
+      
+      try {
+        await deleteBanners({ imageUrl: deleteModal.imageUrl })
         fetchItems()
+      } catch (error) {
+        console.error('Delete failed:', error)
+      } finally {
+        // Remove item from deleting set
+        setDeletingItems(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(deleteModal.imageUrl)
+          return newSet
+        })
+      }
+    }
+    setDeleteModal({ visible: false, imageUrl: null })
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteModal({ visible: false, imageUrl: null })
+  }
+
+  const handleBannerSelect = (imageUrl, checked) => {
+    if (checked) {
+      setSelectedBanners(prev => [...prev, imageUrl])
+    } else {
+      setSelectedBanners(prev => prev.filter(url => url !== imageUrl))
+    }
+  }
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedBanners(items?.map(item => item.image) || [])
+    } else {
+      setSelectedBanners([])
+    }
+  }
+
+  const handleBulkDelete = () => {
+    if (selectedBanners.length === 0) {
+      message.warning('Please select banners to delete')
+      return
+    }
+    setBulkDeleteModal({ visible: true })
+  }
+
+  const handleBulkDeleteConfirm = async () => {
+    if (selectedBanners.length > 0) {
+      // Add all selected items to deleting set
+      setDeletingItems(prev => {
+        const newSet = new Set(prev)
+        selectedBanners.forEach(url => newSet.add(url))
+        return newSet
       })
-      .catch((error) => {
-        message.error(error?.data?.message || 'Delete failed. Please try again.')
-      })
+      
+      try {
+        await deleteBanners({ imageUrls: selectedBanners })
+        setSelectedBanners([])
+        fetchItems()
+      } catch (error) {
+        console.error('Bulk delete failed:', error)
+      } finally {
+        // Remove all selected items from deleting set
+        setDeletingItems(prev => {
+          const newSet = new Set(prev)
+          selectedBanners.forEach(url => newSet.delete(url))
+          return newSet
+        })
+      }
+    }
+    setBulkDeleteModal({ visible: false })
+  }
+
+  const handleBulkDeleteCancel = () => {
+    setBulkDeleteModal({ visible: false })
   }
 
   const handleLinkChange = (imageUrl, value) => {
@@ -36,24 +117,45 @@ const BannersManager = ({
     }))
   }
 
-  const handleUpdateLink = async (imageUrl) => {
-    const linkUrl = linkInputs[imageUrl] || ''
-    await updateBannerLink({ imageUrl, linkUrl })
+  const handleUpdateLink = async (imageUrl, itemId) => {
+    const linkUrl = linkInputs[itemId] || ''
+    
+    // Add item to updating set
+    setUpdatingItems(prev => new Set(prev).add(itemId))
+    
+    try {
+      await updateBannerLink({ imageUrl, linkUrl })
+    } catch (error) {
+      console.error('Update failed:', error)
+    } finally {
+      // Remove item from updating set
+      setUpdatingItems(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(itemId)
+        return newSet
+      })
+    }
   }
 
   useEffect(() => {
     fetchItems()
   }, [selectedKey])
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!fileList || fileList.length === 0) {
       message.error('Please select images to upload')
       return
     }
 
-    postBanners({ files: fileList })
-    fetchItems()
-    setFileList([])
+    try {
+      await postBanners({ files: fileList })  
+      setTimeout(() => {
+        fetchItems()
+      }, 500)
+      setFileList([])
+    } catch (error) {
+      console.error('Upload failed:', error)
+    }
   }
 
   const uploadProps = {
@@ -68,12 +170,12 @@ const BannersManager = ({
         message.error('You can only upload image files!')
         return false
       }
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        message.error('Image must be smaller than 2MB!')
+      const isLt9M = file.size / 1024 / 1024 < 9
+      if (!isLt9M) {
+        message.error('Image must be smaller than 9MB!')
         return false
       }
-      return false
+      return true
     },
     onChange: ({ fileList: newFileList }) => {
       setFileList(newFileList)
@@ -88,7 +190,7 @@ const BannersManager = ({
 
   return (
     <div className='w-full'> 
-      <Card className='mb-2.5'>
+      <div className='mb-2.5 p-4'>
         <div className='flex items-center justify-between'>
           <div>
             <Title level={3} className='m-0 text-gray-800'>
@@ -119,86 +221,152 @@ const BannersManager = ({
             </Button>
           </Space>
         </div>
-      </Card>
-
-      <div className='space-y-3'>
-        {items.map((item) => (
-          <Card 
-            key={item.id} 
-            className='hover:shadow-sm transition-shadow duration-200 mb-2.5'
-          >
-            <Row gutter={[12, 12]} align='middle'>
-              <Col xs={24} sm={6} md={4}>
-                {item.image ? (
-                  <Image 
-                    src={item.image} 
-                    alt={`Banner ${item.id}`}
-                    className='w-full h-28 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200'
-                    preview={{ src: item.image }}
-                  />
-                ) : (
-                  <div className='w-full h-28 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center'>
-                    <span className='text-gray-400 text-sm'>No Image</span>
-                  </div>
+         
+        {items && items.length > 0 && (
+          <div className='mt-4 p-3 bg-gray-50 rounded-lg'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-4'>
+                <Checkbox
+                  checked={selectedBanners.length === items.length && items.length > 0}
+                  indeterminate={selectedBanners.length > 0 && selectedBanners.length < items.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                >
+                  Select All ({selectedBanners.length}/{items.length})
+                </Checkbox>
+                {selectedBanners.length > 0 && (
+                  <span className='text-sm text-gray-600'>
+                    {selectedBanners.length} banner(s) selected
+                  </span>
                 )}
-              </Col>
-                
-              <Col xs={24} sm={18} md={16}>
-                <div className='space-y-3'>
-                  <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>
-                        Banner Link
-                    </label>
-                    <Input
-                      value={linkInputs[item.image] !== undefined ? linkInputs[item.image] : (item.value || '')}
-                      onChange={(e) => handleLinkChange(item.image, e.target.value)}
-                      placeholder={item.placeholder}
-                      size='middle'
-                      className='w-full'
-                    />
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <span className='text-xs text-gray-500'>
-                        Image URL: {item?.image?.split('/')?.pop() || 'N/A'}
-                    </span>
-                  </div>
-                </div>
-              </Col>
-                
-              <Col xs={24} sm={24} md={4}>
-                <div className='flex flex-col gap-2'>
-                  <Button 
-                    type='primary' 
-                    size='middle'
-                    className='w-full'
-                    loading={updating}
-                    onClick={() => handleUpdateLink(item.image)}
-                  >
-                      Update Link
-                  </Button>
-                  <Button 
-                    danger 
-                    icon={<DeleteOutlined />}
-                    size='middle'
-                    className='w-full'
-                    loading={deleting}
-                    onClick={() => handleDeleteBannerClick(item.id, item.image || '')}
-                  >
-                      Delete Banner
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </Card>
-        ))}
+              </div>
+              {selectedBanners.length > 0 && (
+                <Button 
+                  danger 
+                  icon={<DeleteOutlined />}
+                  onClick={handleBulkDelete}
+                  loading={selectedBanners.some(url => deletingItems.has(url))}
+                >
+                  Delete Selected ({selectedBanners.length})
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {items.length === 0 && (
-        <div className='text-center py-12'>
-          <div className='text-gray-400 text-lg mb-2'>No banners found</div>
-          <p className='text-gray-500'>Upload some images to get started</p>
+      {loading ? (
+        <div className='flex flex-col justify-center items-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300'>
+          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4'></div>
+          <p className='text-gray-600 font-medium'>Loading banners...</p>
         </div>
-      )} 
+      ) : (
+        <>
+          <div className='space-y-3'>
+            {items && items.length > 0 ? items.map((item) => (
+            <div 
+              key={item.id} 
+              className='hover:shadow-sm transition-shadow duration-200 mb-2.5 p-4 border border-gray-200'
+            >
+              <Row gutter={[12, 12]} align='middle'>
+                <Col xs={2} sm={1} md={1}>
+                  <Checkbox
+                    checked={selectedBanners.includes(item.image)}
+                    onChange={(e) => handleBannerSelect(item.image, e.target.checked)}
+                  />
+                </Col>
+                <Col xs={22} sm={5} md={3}>
+                  {item.image ? (
+                    <Image 
+                      src={item.image} 
+                      alt={`Banner ${item.id}`}
+                      className='w-full h-28 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-200'
+                    />
+                  ) : (
+                    <div className='w-full h-28 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center'>
+                      <span className='text-gray-400 text-sm'>No Image</span>
+                    </div>
+                  )}
+                </Col>
+                  
+                <Col xs={24} sm={18} md={16}>
+                  <div className='space-y-3'>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                          Banner Link
+                      </label>
+                      <Input
+                        value={linkInputs[item.id] !== undefined ? linkInputs[item.id] : (item.linkUrl || '')}
+                        onChange={(e) => handleLinkChange(item.id, e.target.value)}
+                        placeholder={item.placeholder}
+                        size='middle'
+                        className='w-full'
+                      />
+                    </div>
+                  </div>
+                </Col>
+                  
+                <Col xs={24} sm={24} md={4}>
+                  <div className='flex flex-col gap-2'>
+                    <Button 
+                      type='primary' 
+                      size='middle'
+                      className='w-full'
+                      loading={updatingItems.has(item.id)}
+                      onClick={() => handleUpdateLink(item.image, item.id)}
+                    >
+                        Update Link
+                    </Button>
+                    <Button 
+                      danger 
+                      icon={<DeleteOutlined />}
+                      size='middle'
+                      className='w-full'
+                      loading={deletingItems.has(item.image)}
+                      onClick={() => handleDeleteBannerClick(item.image)}
+                    >
+                        Delete Banner
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+            )) : null}
+          </div>
+
+          {(!items || items.length === 0) && (
+            <div className='text-center py-12'>
+              <div className='text-gray-400 text-lg mb-2'>No banners found</div>
+              <p className='text-gray-500'>Upload some images to get started</p>
+            </div>
+          )}
+        </>
+      )}
+
+      <Modal
+        title="Delete Banner"
+        open={deleteModal.visible}
+        onOk={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        okText="Yes, Delete"
+        cancelText="Cancel"
+        okType="danger"
+        confirmLoading={deleting}
+      >
+        <p>Are you sure you want to delete this banner? This action cannot be undone.</p>
+      </Modal>
+
+      <Modal
+        title="Delete Multiple Banners"
+        open={bulkDeleteModal.visible}
+        onOk={handleBulkDeleteConfirm}
+        onCancel={handleBulkDeleteCancel}
+        okText="Yes, Delete All"
+        cancelText="Cancel"
+        okType="danger"
+        confirmLoading={deleting}
+      >
+        <p>Are you sure you want to delete {selectedBanners.length} selected banner(s)? This action cannot be undone.</p>
+      </Modal>
 
     </div>
   )

@@ -3,8 +3,9 @@ import { Spin } from 'antd'
 import dynamic from 'next/dynamic'
 
 const LoadingSpinner = () => (
-  <div className='flex justify-center items-center h-64'>
+  <div className='flex flex-col justify-center items-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300'>
     <Spin size='large' />
+    <p className='mt-4 text-gray-600 font-medium'>Loading...</p>
   </div>
 )
 
