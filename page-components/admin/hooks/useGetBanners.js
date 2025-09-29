@@ -8,19 +8,11 @@ const useGetBanners = (url) => {
 
   const fetchBanners = async () => { 
     try {
-      const res = await trigger()
-      
-      return Object.entries(res?.data || {}).map(([imageUrl, linkUrl], index) => ({
-        id: `banner-${index}`,
-        image: imageUrl,
-        placeholder: 'Enter banner link URL (e.g., https://example.com)',
-        linkUrl: linkUrl || ''
-      }))
+      await trigger()
     } catch (e) {
       if (e.name !== 'CanceledError' && e.message !== 'canceled') {
         console.error('Failed to fetch banners:', e)
       }
-      return []
     }
   }
 
@@ -29,7 +21,6 @@ const useGetBanners = (url) => {
     banners: data ? Object.entries(data).map(([imageUrl, linkUrl], index) => ({
       id: `banner-${index}`,
       image: imageUrl,
-      placeholder: 'Enter banner link URL (e.g., https://example.com)',
       linkUrl: linkUrl || ''
     })) : [],
     loading,

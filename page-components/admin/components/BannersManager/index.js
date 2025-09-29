@@ -297,7 +297,7 @@ const BannersManager = ({
                       <Input
                         value={linkInputs[item.id] !== undefined ? linkInputs[item.id] : (item.linkUrl || '')}
                         onChange={(e) => handleLinkChange(item.id, e.target.value)}
-                        placeholder={item.placeholder}
+                        placeholder={'Enter the link'}
                         size='middle'
                         className='w-full'
                       />

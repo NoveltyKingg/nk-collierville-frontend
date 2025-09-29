@@ -9,13 +9,12 @@ const useDeleteBanners = (url) => {
 
   const deleteBanners = async (data) => {
     try {   
-      const { imageUrl, imageUrls } = data || {}
       let imagesToDelete = []
       
-      if (imageUrls && imageUrls.length > 0) { 
-        imagesToDelete = imageUrls
-      } else if (imageUrl) { 
-        imagesToDelete = [imageUrl]
+      if (data.imageUrls && data.imageUrls.length > 0) { 
+        imagesToDelete = data.imageUrls
+      } else if (data.imageUrl) { 
+        imagesToDelete = [data.imageUrl]
       }
       
       if (imagesToDelete.length === 0) {
