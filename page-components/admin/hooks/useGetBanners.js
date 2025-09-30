@@ -6,14 +6,12 @@ const useGetBanners = (url) => {
     { manual: true },
   )
 
-  const fetchBanners = async () => { 
-    try {
-      await trigger()
-    } catch (e) {
+  const fetchBanners = () => { 
+    trigger().catch(e => { 
       if (e.name !== 'CanceledError' && e.message !== 'canceled') {
         console.error('Failed to fetch banners:', e)
       }
-    }
+    })
   }
 
   return {

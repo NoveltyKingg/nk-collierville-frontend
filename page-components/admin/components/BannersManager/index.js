@@ -31,7 +31,6 @@ const BannersManager = ({
 
   const handleDeleteConfirm = async () => {
     if (deleteModal.imageUrl) {
-      // Add item to deleting set
       setDeletingItems(prev => new Set(prev).add(deleteModal.imageUrl))
       
       try {
@@ -40,7 +39,6 @@ const BannersManager = ({
       } catch (error) {
         console.error('Delete failed:', error)
       } finally {
-        // Remove item from deleting set
         setDeletingItems(prev => {
           const newSet = new Set(prev)
           newSet.delete(deleteModal.imageUrl)
@@ -81,7 +79,6 @@ const BannersManager = ({
 
   const handleBulkDeleteConfirm = async () => {
     if (selectedBanners.length > 0) {
-      // Add all selected items to deleting set
       setDeletingItems(prev => {
         const newSet = new Set(prev)
         selectedBanners.forEach(url => newSet.add(url))
@@ -95,7 +92,6 @@ const BannersManager = ({
       } catch (error) {
         console.error('Bulk delete failed:', error)
       } finally {
-        // Remove all selected items from deleting set
         setDeletingItems(prev => {
           const newSet = new Set(prev)
           selectedBanners.forEach(url => newSet.delete(url))
@@ -120,7 +116,6 @@ const BannersManager = ({
   const handleUpdateLink = async (imageUrl, itemId) => {
     const linkUrl = linkInputs[itemId] || ''
     
-    // Add item to updating set
     setUpdatingItems(prev => new Set(prev).add(itemId))
     
     try {
@@ -128,7 +123,6 @@ const BannersManager = ({
     } catch (error) {
       console.error('Update failed:', error)
     } finally {
-      // Remove item from updating set
       setUpdatingItems(prev => {
         const newSet = new Set(prev)
         newSet.delete(itemId)
@@ -164,6 +158,7 @@ const BannersManager = ({
     maxCount: 1,
     fileList,
     accept: 'image/*',
+    showUploadList: false,
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/')
       if (!isImage) {
@@ -178,12 +173,6 @@ const BannersManager = ({
       return true
     },
     onChange: ({ fileList: newFileList }) => {
-      setFileList(newFileList)
-    },
-    onRemove: (file) => {
-      const index = fileList.indexOf(file)
-      const newFileList = fileList.slice()
-      newFileList.splice(index, 1)
       setFileList(newFileList)
     }
   }
@@ -200,26 +189,50 @@ const BannersManager = ({
               Manage your page banner images and their associated links
             </p>
           </div>
-          <Space size='middle'>
-            <Upload {...uploadProps}>
+          <div className="flex items-center space-x-4">
+            {fileList && fileList.length > 0 && (
+              <div className="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg bg-gray-50">
+                <img 
+                  src={fileList[0].thumbUrl || fileList[0].url || URL.createObjectURL(fileList[0].originFileObj || fileList[0])} 
+                  alt={fileList[0].name}
+                  className="w-12 h-12 object-cover rounded"
+                />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{fileList[0].name}</p>
+                  <p className="text-xs text-gray-500">
+                    {(fileList[0].size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+                <Button 
+                  type="text" 
+                  danger 
+                  size="small"
+                  onClick={() => setFileList([])}
+                  icon={<DeleteOutlined />}
+                />
+              </div>
+            )}
+            <Space size='middle'>
+              <Upload {...uploadProps}>
+                <Button 
+                  icon={<UploadOutlined />}
+                  size='middle'
+                >
+                  Upload Images
+                </Button>
+              </Upload>
               <Button 
-                icon={<UploadOutlined />}
+                type='primary' 
+                icon={<CheckOutlined />}
                 size='middle'
+                onClick={handleUpload}
+                loading={uploading}
+                disabled={!fileList || fileList.length === 0}
               >
-                Upload Images
+                Submit Upload
               </Button>
-            </Upload>
-            <Button 
-              type='primary' 
-              icon={<CheckOutlined />}
-              size='middle'
-              onClick={handleUpload}
-              loading={uploading}
-              disabled={!fileList || fileList.length === 0}
-            >
-              Submit Upload
-            </Button>
-          </Space>
+            </Space>
+          </div>
         </div>
          
         {items && items.length > 0 && (
