@@ -192,10 +192,11 @@ const BannersManager = ({
           <div className="flex items-center space-x-4">
             {fileList && fileList.length > 0 && (
               <div className="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg bg-gray-50">
-                <img 
-                  src={fileList[0].thumbUrl || fileList[0].url || URL.createObjectURL(fileList[0].originFileObj || fileList[0])} 
+                <Image
+                  src={fileList[0].thumbUrl || fileList[0].url || URL.createObjectURL(fileList[0].originFileObj || fileList[0])}
                   alt={fileList[0].name}
                   className="w-12 h-12 object-cover rounded"
+                  preview={false} 
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">{fileList[0].name}</p>
