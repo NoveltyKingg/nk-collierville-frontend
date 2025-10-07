@@ -23,13 +23,16 @@ export default function BannerCarousel({ banners = [], loading = false }) {
         <Carousel autoplay dots className='w-full'>
           {banners.map((banner, index) => (
             <div key={index} className='relative w-full h-[400px] md:h-[500px]'>
-              <Image
-                src={banner.imageUrl}
-                alt='Banner Background'
-                layout='fill'
-                objectFit='cover'
-                className='z-0'
-              />
+              <div className='block w-full h-full'>
+                <Image
+                  src={banner.imageUrl}
+                  alt='Banner Background'
+                  layout='fill'
+                  objectFit='cover'
+                  className={`z-0 ${banner?.linkUrl ? 'cursor-pointer' : ''}`}
+                  onClick={() => banner?.linkUrl && handleClick(banner.linkUrl)}
+                />
+              </div>
               <div className='relative z-20 w-full h-full flex flex-col md:flex-row items-center justify-center md:justify-between px-6 md:px-12'>
                 <div className='text-white flex-1 text-center md:text-left'>
                   <p className='text-[clamp(14px,2vw,18px)] font-light'>

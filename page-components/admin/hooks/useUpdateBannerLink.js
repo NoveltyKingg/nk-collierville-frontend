@@ -1,29 +1,34 @@
 import { message } from 'antd'
 import useRequest from '@/request'
 
-const useUpdateBannerLink = ({ type }) => {
-  const { data, loading, trigger } = useRequest(
-    { method: 'POST' },
+const useUpdateBannerLink = (url) => {
+  const [{ data, loading }, trigger] = useRequest(
+    { method: 'POST', url },
     { manual: true },
   )
 
-  const updateBannersLink = async ({ updateData }) => {
-    const hide = message.loading('Loading...', 0)
+  const updateBannerLink = async ({ imageUrl, linkUrl }) => {
+    const hide = message.loading('Updating banner link...', 0)
     try {
-      await trigger({
-        data: updateData,
-        url: `home/${type ? `${type}/` : ''}uploadBannerLinks`,
+      const response = await trigger({
+        data: {
+          [imageUrl]: linkUrl || null,
+        },
       })
       hide()
-      message.success('Updated Link successfully')
-    } catch (error) {
-      console.error(error)
+      message.success('Banner link updated successfully!')
+      return response
+    } catch (err) {
       hide()
-      message.error(error?.data?.message || 'Something Went Wrong')
+      message.error(err?.data?.message || 'Failed to update banner link')
     }
   }
 
-  return { updateBannersLink, updatedData: data, updateLoading: loading }
+  return {
+    updateBannerLink,
+    updating: loading,
+    response: data,
+  }
 }
 
 export default useUpdateBannerLink

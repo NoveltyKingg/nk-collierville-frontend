@@ -1,33 +1,38 @@
 import { message } from 'antd'
-import showMessage from '@/utils/showMessage'
 import useRequest from '@/request'
 
-const useDeleteBanners = ({ type, getBanners }) => {
+const useDeleteBanners = (url) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'DELETE' },
+    { method: 'DELETE', url },
     { manual: true },
   )
 
-  const deleteBanners = async ({ deletedData }) => {
-    const hide = message.loading('Loading...', 0)
+  const deleteBanners = async (data) => {
     try {
-      const triggerData = await trigger({
-        data: deletedData,
-        url: `/home/${type ? `${type}/` : ''}deleteBanners`,
-      })
-      hide()
-      triggerData?.hasError
-        ? showMessage('Something Went Wrong', 'error')
-        : showMessage('Success', 'success')
-      getBanners()
+      let imagesToDelete = []
+
+      if (data.imageUrls && data.imageUrls.length > 0) {
+        imagesToDelete = data.imageUrls
+      } else if (data.imageUrl) {
+        imagesToDelete = [data.imageUrl]
+      }
+
+      if (imagesToDelete.length === 0) {
+        message.error('No image specified to delete')
+        return
+      }
+
+      await trigger({ data: imagesToDelete })
+      message.success('Banner deleted successfully!')
     } catch (err) {
-      console.error(err, 'err')
-      hide()
-      showMessage(err?.data?.message || 'Something Went Wrong', 'error')
+      message.error(err?.data?.message || 'Failed to delete banner')
     }
   }
 
-  return { data, deleteBanners, loading }
+  return {
+    deleteBanners,
+    deleting: loading,
+  }
 }
 
 export default useDeleteBanners

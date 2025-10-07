@@ -1,31 +1,30 @@
-import { useEffect } from 'react'
-import { message } from 'antd'
 import useRequest from '@/request'
 
-const useGetBanners = ({ type }) => {
-  const [{ data, loading, error }, trigger] = useRequest(
-    { method: 'GET' },
+const useGetBanners = (url) => {
+  const [{ data, loading }, trigger] = useRequest(
+    { method: 'GET', url },
     { manual: true },
   )
 
-  const getBanners = async () => {
+  const fetchBanners = () => {
     try {
-      await trigger({ url: `/home/${type ? `${type}/` : ''}getBanners` })
-    } catch (err) {
-      console.error(err)
-      message.error(err?.data?.message || 'Something Went Wrong')
+      trigger()
+    } catch {
+      if (e.name !== 'CanceledError' && e.message !== 'canceled') {
+        console.error('Failed to fetch banners:', e)
+      }
     }
   }
 
-  useEffect(() => {
-    getBanners()
-  }, [type])
-
   return {
-    getBanners,
-    data,
+    fetchBanners,
+    banners: Object.entries(data || {}).map(([imageUrl, linkUrl], index) => ({
+      id: `banner-${index}`,
+      image: imageUrl,
+      linkUrl: linkUrl || '',
+    })),
     loading,
-    error,
+    data,
   }
 }
 
