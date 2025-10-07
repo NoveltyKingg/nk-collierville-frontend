@@ -1,25 +1,25 @@
-import { createRequire } from "node:module";
-const require = createRequire(import.meta.url);
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
 
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["noveltykingmedia.s3.us-east-2.amazonaws.com"],
+    domains: ['noveltykingmedia.s3.us-east-2.amazonaws.com'],
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
       issuer: /\.[jt]sx?$/,
-      use: [require.resolve("@svgr/webpack")],
-    });
+      use: [require.resolve('@svgr/webpack')],
+    })
 
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
-    };
+    }
 
-    return config;
+    return config
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

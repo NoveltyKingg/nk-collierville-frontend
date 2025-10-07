@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from './header'
 import Footer from './footer'
 import useGetAllWebCategories from '../hooks/useGetAllWebCategories'
@@ -6,9 +6,16 @@ import { Badge } from 'antd'
 import useIsMobile from '@/utils/useIsMobile'
 import useGetContext from '@/common/context/useGetContext'
 import { useRouter } from 'next/router'
-import { AdminIcon, CartIcon, LogoutIcon, ProfileIcon } from '@/assets/header'
+import {
+  AddNewStoreIcon,
+  AdminIcon,
+  CartIcon,
+  LogoutIcon,
+  ProfileIcon,
+} from '@/assets/header'
 import { HomeIcon } from '@/assets/common'
 import setCookie from '@/utils/set-cookie'
+import AddNewStore from './add-new-store'
 
 const Layout = ({ children, layout }) => {
   const { getAllWebCategories } = useGetAllWebCategories()
@@ -16,6 +23,7 @@ const Layout = ({ children, layout }) => {
   const { profile } = noveltyData || {}
   const { isMobile } = useIsMobile()
   const { push } = useRouter()
+  const [openAddNewStoreModal, setOpenAddNewStoreModal] = useState()
 
   const handleCart = () => {
     if (profile?.isLoggedIn) {
@@ -23,6 +31,10 @@ const Layout = ({ children, layout }) => {
     } else {
       push('/login')
     }
+  }
+
+  const handleOpenAddNewStoreModal = () => {
+    setOpenAddNewStoreModal((prev) => !prev)
   }
 
   const logout = () => {
@@ -53,6 +65,7 @@ const Layout = ({ children, layout }) => {
             onClick={() => push('/')}
           />
           <AdminIcon onClick={() => handleRoute('/admin')} />
+          <AddNewStoreIcon onClick={handleOpenAddNewStoreModal} />
           <ProfileIcon
             onClick={() =>
               handleRoute(`/${noveltyData?.profile?.storeId}/profile`)
@@ -63,6 +76,12 @@ const Layout = ({ children, layout }) => {
           </Badge>
           <LogoutIcon onClick={logout} />
         </div>
+      )}
+      {openAddNewStoreModal && (
+        <AddNewStore
+          openAddStore={openAddNewStoreModal}
+          handleClose={handleOpenAddNewStoreModal}
+        />
       )}
     </div>
   )

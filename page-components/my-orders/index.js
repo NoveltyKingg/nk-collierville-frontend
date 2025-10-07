@@ -36,7 +36,12 @@ function StatusPill({ label = 'In progress' }) {
   )
 }
 
-export default function MyOrders({ orderData, isAdmin, adminLoading }) {
+export default function MyOrders({
+  orderData,
+  isAdmin,
+  adminLoading,
+  adminView,
+}) {
   const today = new Date()
   const threeMonthsAgo = new Date(
     today.getFullYear(),
@@ -111,109 +116,118 @@ export default function MyOrders({ orderData, isAdmin, adminLoading }) {
 
   return (
     <div className='mx-auto px-3 py-4'>
-      <div className='mb-4 flex items-center gap-2 text-sm text-neutral-500'>
-        <span
-          className='cursor-pointer hover:text-neutral-800'
-          onClick={() => push('/')}>
-          Home
-        </span>
-        <span>›</span>
-        <span
-          className='cursor-pointer hover:text-neutral-800'
-          onClick={() => push(`/${profile?.storeId}/profile`)}>
-          My Account
-        </span>
-        <span>›</span>
-        <span className='text-neutral-800 font-medium'>My Orders</span>
-      </div>
+      {!adminView && (
+        <div className='mb-4 flex items-center gap-2 text-sm text-neutral-500'>
+          <span
+            className='cursor-pointer hover:text-neutral-800'
+            onClick={() => push('/')}>
+            Home
+          </span>
+          <span>›</span>
+          <span
+            className='cursor-pointer hover:text-neutral-800'
+            onClick={() => push(`/${profile?.storeId}/profile`)}>
+            My Account
+          </span>
+          <span>›</span>
+          <span className='text-neutral-800 font-medium'>My Orders</span>
+        </div>
+      )}
 
-      <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
-        <Segmented
-          size='large'
-          value={status}
-          onChange={(v) => setStatus(v)}
-          options={['ALL', 'IN PROGRESS', 'DELIVERED', 'CANCELLED']}
-          className='rounded-full'
-        />
-        <RangePicker
-          onChange={handleRangeChange}
-          defaultValue={[dayjs(threeMonthsAgo), dayjs(today)]}
-          value={[dayjs(dates?.start), dayjs(dates?.end)]}
-        />
-      </div>
+      {!adminView && (
+        <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
+          <Segmented
+            size='large'
+            value={status}
+            onChange={(v) => setStatus(v)}
+            options={['ALL', 'IN PROGRESS', 'DELIVERED', 'CANCELLED']}
+            className='rounded-full'
+          />
+          <RangePicker
+            onChange={handleRangeChange}
+            defaultValue={[dayjs(threeMonthsAgo), dayjs(today)]}
+            value={[dayjs(dates?.start), dayjs(dates?.end)]}
+          />
+        </div>
+      )}
 
       <div className='space-y-4'>
-        {filtered.map((o) => (
-          <div
-            key={o?.orderId}
-            className='rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:shadow-md'>
-            <div className='flex flex-wrap items-center justify-between gap-3'>
-              <StatusPill label={o?.status} />
-              <div className='text-sm text-neutral-500'>
-                {dayjs(o?.time || o?.createdAt).format('DD MMM YYYY')}
-              </div>
-            </div>
-
-            <div className='mt-4 grid grid-cols-[auto_1fr_auto] items-center gap-4'>
-              <div className='relative'>
-                <Image
-                  src={o?.items?.[0]?.productDetail?.imageUrls?.[0]}
-                  className='size-16 rounded-xl object-cover'
-                  alt='Loading...'
-                />
-                {o?.items?.length > 1 && (
-                  <div className='absolute -right-2 -top-2 rounded-full bg-neutral-900 px-2 py-0.5 text-xs font-semibold text-white'>
-                    +{o?.items?.length - 1}
-                  </div>
-                )}
-              </div>
-
-              <div className='min-w-0'>
-                <div
-                  onClick={() => openOrder(o)}
-                  className='cursor-pointer text-[15px] font-semibold text-neutral-800 hover:underline'>
-                  Order ID: {o?.orderId}
+        {!loading &&
+          !adminLoading &&
+          filtered.map((o) => (
+            <div
+              key={o?.orderId}
+              className='rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:shadow-md'>
+              <div className='flex flex-wrap items-center justify-between gap-3'>
+                <StatusPill label={o?.status} />
+                <div className='text-sm text-neutral-500'>
+                  {dayjs(o?.time || o?.createdAt).format('DD MMM YYYY')}
                 </div>
-                <div className='truncate text-neutral-600'>
-                  {o?.items?.[0]?.productDetail?.name}
+              </div>
+
+              <div className='mt-4 grid grid-cols-[auto_1fr_auto] items-center gap-4'>
+                <div className='relative'>
+                  <Image
+                    src={o?.items?.[0]?.productDetail?.imageUrls?.[0]}
+                    className='rounded-xl object-cover'
+                    alt='Loading...'
+                    height={64}
+                    preview={false}
+                  />
                   {o?.items?.length > 1 && (
-                    <span className='text-neutral-500'>
-                      {' '}
-                      &amp; {o?.items?.length - 1} more items
-                    </span>
+                    <div className='absolute -right-2 -top-2 rounded-full bg-neutral-900 px-2 py-0.5 text-xs font-semibold text-white'>
+                      +{o?.items?.length - 1}
+                    </div>
                   )}
                 </div>
-                {o?.tracking && (
-                  <div className='mt-1 text-xs text-neutral-500'>
-                    Tracking: {o?.tracking}
-                  </div>
-                )}
-              </div>
 
-              <div className='flex items-center gap-3'>
-                <div className='text-right'>
-                  <div className='text-[15px] font-semibold'>
-                    $ {o?.totalAmount ?? o?.priceWithTax ?? o?.priceWithoutTax}
+                <div className='min-w-0'>
+                  <div
+                    onClick={() => openOrder(o)}
+                    className='cursor-pointer text-[15px] font-semibold text-neutral-800 hover:underline'>
+                    Order ID: {o?.orderId}
                   </div>
+                  <div className='truncate text-neutral-600'>
+                    {o?.items?.[0]?.productDetail?.name}
+                    {o?.items?.length > 1 && (
+                      <span className='text-neutral-500'>
+                        {' '}
+                        &amp; {o?.items?.length - 1} more items
+                      </span>
+                    )}
+                  </div>
+                  {o?.tracking && (
+                    <div className='mt-1 text-xs text-neutral-500'>
+                      Tracking: {o?.tracking}
+                    </div>
+                  )}
                 </div>
-                <Button
-                  onClick={() => openOrder(o)}
-                  className='grid size-9 place-items-center rounded-full bg-neutral-100 text-neutral-700 hover:bg-neutral-200'>
-                  <RightOutlined />
-                </Button>
+
+                <div className='flex items-center gap-3'>
+                  <div className='text-right'>
+                    <div className='text-[15px] font-semibold'>
+                      ${' '}
+                      {o?.totalAmount ?? o?.priceWithTax ?? o?.priceWithoutTax}
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => openOrder(o)}
+                    className='grid size-9 place-items-center rounded-full bg-neutral-100 text-neutral-700 hover:bg-neutral-200'>
+                    <RightOutlined />
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
 
         {(loading || adminLoading) && (
-          <div className='rounded-xl border border-neutral-200 p-6 text-center text-neutral-500'>
+          <div className='rounded-xl border border-neutral-200 p-6 text-center text-neutral-500 bg-white'>
             Loading orders…
           </div>
         )}
 
         {!loading && !adminLoading && (filtered || [])?.length === 0 && (
-          <div className='rounded-xl border border-neutral-200 p-10 text-center text-neutral-500'>
+          <div className='rounded-xl border border-neutral-200 bg-white p-10 text-center text-neutral-500'>
             No orders found for this filter.
           </div>
         )}

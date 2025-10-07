@@ -10,15 +10,18 @@ import {
   ProfileIcon,
   LogoutIcon,
   CartIcon,
+  AddNewStoreIcon,
 } from '@/assets/header'
 import useGetContext from '@/common/context/useGetContext'
 import setCookie from '@/utils/set-cookie'
 import { Dropdown } from 'antd'
 import { getCookie } from '@/utils/get-cookie'
 import useCreateLogin from '../../hooks/useCreateLogin'
+import AddNewStore from '../add-new-store'
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState('')
+  const [openAddNewStoreModal, setOpenAddNewStoreModal] = useState()
 
   const { queryTrigger } = useQuerySearch()
   const { noveltyData } = useGetContext()
@@ -34,6 +37,10 @@ const Header = () => {
 
   const handleSelect = (e) => {
     push(`/product/${e}`)
+  }
+
+  const handleOpenAddNewStoreModal = () => {
+    setOpenAddNewStoreModal((prev) => !prev)
   }
 
   const handleRoute = (path) => {
@@ -94,6 +101,13 @@ const Header = () => {
           </Button>
           <Button
             type='text'
+            icon={<AddNewStoreIcon className='align-middle' />}
+            onClick={handleOpenAddNewStoreModal}
+            className='!text-white'>
+            ADD NEW STORE
+          </Button>
+          <Button
+            type='text'
             icon={<ProfileIcon />}
             className='!text-white'
             onClick={() =>
@@ -130,6 +144,13 @@ const Header = () => {
             LOGOUT
           </Button>
         </div>
+      )}
+
+      {openAddNewStoreModal && (
+        <AddNewStore
+          openAddStore={openAddNewStoreModal}
+          handleClose={handleOpenAddNewStoreModal}
+        />
       )}
     </div>
   )

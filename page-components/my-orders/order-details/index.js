@@ -28,8 +28,7 @@ function LineItem({ item, onClick }) {
             {item?.productDetail?.name}
           </div>
           <div className='mt-1 text-sm text-neutral-500'>
-            Size: {item?.size || item?.productDetail?.size || '—'}{' '}
-            <span className='mx-2'>|</span> Qty: {item?.quantity}
+            Qty: {item?.quantity}
           </div>
         </div>
         <div className='text-right'>
@@ -178,9 +177,13 @@ export default function OrderDetails() {
               {data?.items?.map((item) => (
                 <div
                   key={uniqid()}
-                  className='flex items-center justify-between'>
-                  <span className='truncate'>{item?.productDetail?.name}</span>
-                  <span>$ {item?.price * item?.quantity}</span>
+                  className=' w-full flex items-center justify-between'>
+                  <span className='truncate w-fit'>
+                    {item?.productDetail?.name}
+                  </span>
+                  <span className='w-fit'>
+                    $ {item?.price * item?.quantity}
+                  </span>
                 </div>
               ))}
               <Divider />

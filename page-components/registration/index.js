@@ -7,8 +7,11 @@ import { FormatRegistrationData } from '@/utils/format-registration-data'
 import useGetStateByCountry from './hooks/useGetStatesByCountry'
 import useGetCitiesByState from './hooks/useGetCitiesByState'
 import useGetCountries from './hooks/useGetCountries'
+import useIsMobile from '@/utils/useIsMobile'
+import useAddNewStore from './hooks/useAddNewStore'
+import useGetContext from '@/common/context/useGetContext'
 
-const Registration = () => {
+const Registration = ({ isAddNewStore = false, handleClose }) => {
   const [requiredMark, setRequiredMarkType] = useState('customize')
   const [form] = Form.useForm()
   const [country, setCountry] = useState('United States')
@@ -18,8 +21,10 @@ const Registration = () => {
   }
 
   const { countriesData } = useGetCountries()
+  const { noveltyData } = useGetContext()
   const { getStatesByCountry, statesData } = useGetStateByCountry()
   const { getCitiesByState, citiesData } = useGetCitiesByState()
+  const { addNewStore, newStoreLoading } = useAddNewStore()
 
   const { submitRegistration, loading } = useSubmitRegistration()
 
@@ -32,9 +37,20 @@ const Registration = () => {
     getCitiesByState({ country, state: val })
   }
 
+  const { isMobile } = useIsMobile()
+
   const onFinish = (val) => {
-    const formattedData = FormatRegistrationData(val)
-    submitRegistration({ formattedData })
+    console.log(val, 'vallll')
+    const formattedData = FormatRegistrationData(val, isAddNewStore)
+    if (addNewStore) {
+      addNewStore({
+        formData: formattedData,
+        userId: noveltyData?.profile?.userId,
+        handleClose,
+      })
+    } else {
+      submitRegistration({ formattedData })
+    }
   }
 
   const validateMessages = {
@@ -82,15 +98,17 @@ const Registration = () => {
   }, [])
 
   return (
-    <div className='w-full h-screen flex flex-col gap-2'>
-      <Image
-        src='https://i.ibb.co/1Gv63CD3/Chat-GPT-Image-Jul-22-2025-01-43-27-PM.png'
-        height={200}
-        radius='none'
-        width={'100%'}
-        preview={false}
-        alt='Loading...'
-      />
+    <div className='w-full flex flex-col gap-2'>
+      {!isAddNewStore && (
+        <Image
+          src='https://i.ibb.co/1Gv63CD3/Chat-GPT-Image-Jul-22-2025-01-43-27-PM.png'
+          height={200}
+          radius='none'
+          width={'100%'}
+          preview={false}
+          alt='Loading...'
+        />
+      )}
       <div className='px-4'>
         Welcome to Novelty King Collierville, Please proceed to fill the
         details.
@@ -104,36 +122,41 @@ const Registration = () => {
         }}
         onFinish={onFinish}
         validateMessages={validateMessages}>
-        <Flex vertical gap={8}>
-          <h1 className='font-bold text-[16px]'>PERSONAL DETAILS</h1>
-          <Flex vertical gap={12}>
-            <Flex gap={20}>
+        {!isAddNewStore && (
+          <Flex vertical gap={8}>
+            <h1 className='font-bold text-[16px]'>PERSONAL DETAILS</h1>
+            <Flex vertical gap={12}>
+              <Flex gap={20}>
+                <Form.Item
+                  name='firstName'
+                  label='First Name'
+                  rules={[{ required: !isAddNewStore }]}
+                  style={{ width: '100%' }}>
+                  <Input placeholder='Enter your first name' type='text' />
+                </Form.Item>
+                <Form.Item
+                  name='lastName'
+                  label='Last Name'
+                  rules={[{ required: !isAddNewStore }]}
+                  style={{ width: '100%' }}>
+                  <Input placeholder='Enter your last name' type='text' />
+                </Form.Item>
+              </Flex>
               <Form.Item
-                name='firstName'
-                label='First Name'
-                rules={[{ required: true }]}
-                style={{ width: '100%' }}>
-                <Input placeholder='Enter your first name' type='text' />
+                name='email'
+                label='Email'
+                rules={[{ required: !isAddNewStore }]}>
+                <Input readOnly placeholder='Enter your Email' type='text' />
               </Form.Item>
               <Form.Item
-                name='lastName'
-                label='Last Name'
-                rules={[{ required: true }]}
-                style={{ width: '100%' }}>
-                <Input placeholder='Enter your last name' type='text' />
+                name='mobileNumber'
+                label='Mobile Number'
+                rules={[{ required: !isAddNewStore }]}>
+                <Input placeholder='Enter your mobile number' type='text' />
               </Form.Item>
             </Flex>
-            <Form.Item name='email' label='Email' rules={[{ required: true }]}>
-              <Input readOnly placeholder='Enter your Email' type='text' />
-            </Form.Item>
-            <Form.Item
-              name='mobileNumber'
-              label='Mobile Number'
-              rules={[{ required: true }]}>
-              <Input placeholder='Enter your mobile number' type='text' />
-            </Form.Item>
           </Flex>
-        </Flex>
+        )}
         <div className='flex flex-col'>
           <div className='font-bold text-[16px]'>STORE DETAILS</div>
           <Flex vertical gap={8}>
@@ -143,7 +166,7 @@ const Registration = () => {
               rules={[{ required: true }]}>
               <Input placeholder='Enter your store name' type='text' />
             </Form.Item>
-            <Flex gap={20}>
+            <Flex gap={20} vertical={isMobile}>
               <Form.Item
                 label='Store Address 1'
                 name='storeAddress1'
@@ -214,7 +237,7 @@ const Registration = () => {
                 name='zipCode'
                 rules={[{ required: true }]}
                 style={{ width: '100%' }}>
-                <Select placeholder='Select your City' type='text' />
+                <Input placeholder='Enter your zipcode' type='text' />
               </Form.Item>
             </Flex>
             <Form.Item label='Store Email' name='storeEmail'>
