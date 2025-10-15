@@ -45,8 +45,6 @@ const Header = () => {
     location.reload()
   }
 
-  console.log(profile, 'profile')
-
   const stores =
     Object.entries(profile?.stores || {})
       ?.map(([key, value]) =>

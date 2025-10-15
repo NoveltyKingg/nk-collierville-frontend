@@ -16,8 +16,6 @@ function OrderItem({ item, loading }) {
     varieties: JSON.stringify(val?.varietiesCount || val?.feature || {}),
   }))
 
-  console.log(item, 'itemmmm')
-
   return (
     <div className='space-y-3'>
       <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>

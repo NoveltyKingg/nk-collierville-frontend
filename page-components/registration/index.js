@@ -40,7 +40,6 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
   const { isMobile } = useIsMobile()
 
   const onFinish = (val) => {
-    console.log(val, 'vallll')
     const formattedData = FormatRegistrationData(val, isAddNewStore)
     if (addNewStore) {
       addNewStore({

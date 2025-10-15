@@ -42,8 +42,6 @@ const ProductDetail = () => {
     if (query?.productId) getProduct(query?.productId)
   }, [query?.productId])
 
-  console.log(flavoursData, productData, 'VALUESSS')
-
   const images = useMemo(
     () => productData?.imageUrls || [],
     [productData?.imageUrls],

@@ -23,7 +23,6 @@ const useAddToCart = () => {
     try {
       const IDS = productId ? { productId } : { variationId }
       const features = Object.keys(feature || {})?.length > 0 ? { feature } : {}
-      console.log(IDS, features, 'IDSFeatures')
       const triggerData = await trigger({
         data: {
           storeId,
