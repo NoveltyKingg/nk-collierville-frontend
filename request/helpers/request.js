@@ -1,39 +1,38 @@
-import { getCookie } from "@/utils/get-cookie";
-import setCookie from "@/utils/set-cookie";
-import { message } from "antd";
-import Axios from "axios";
+// helpers/request.js
+import Axios from 'axios'
+import Router from 'next/router' // <-- singleton, not the hook
+import { message } from 'antd' // <-- static API
+import { getCookie } from '@/utils/get-cookie'
+import setCookie from '@/utils/set-cookie'
 
-const request = Axios.create();
+const request = Axios.create()
 
 const config = {
-  novelty: {
-    tokenKey: "nk-collierville-token",
-  },
+  novelty: { tokenKey: 'nk-collierville-token' },
   public: { options: {} },
-};
+}
 
 const logout = () => {
-  setCookie("nk-collierville-token", "expired", -1);
-};
+  setCookie('nk-collierville-token', 'expired', -1)
+}
 
 request.interceptors.request.use((oldAxiosConfig) => {
-  const { ...axiosConfig } = oldAxiosConfig;
-  const { tokenKey } = config.novelty;
-  const token = getCookie(tokenKey);
+  const axiosConfig = { ...oldAxiosConfig }
+  const { tokenKey } = config.novelty
+  const token = getCookie(tokenKey)
 
-  axiosConfig.timeout = 300000;
+  axiosConfig.timeout = 300000
+  axiosConfig.paramsSerializer = { indexes: false }
+  axiosConfig.baseURL = process.env.NEXT_PUBLIC_REST_BASE_API_URL
 
-  axiosConfig.paramsSerializer = {
-    indexes: false,
-  };
-
-  axiosConfig.baseURL = process.env.NEXT_PUBLIC_REST_BASE_API_URL;
   if (token) {
-    axiosConfig.headers.authorization = `Bearer ${token}`;
+    axiosConfig.headers = axiosConfig.headers || {}
+    axiosConfig.headers.authorization = `Bearer ${token}`
   }
+  return axiosConfig
+})
 
-  return axiosConfig;
-});
+let handling401 = false
 
 request.interceptors.response.use(
   (response) => ({
@@ -42,22 +41,40 @@ request.interceptors.response.use(
     status: response?.status,
   }),
   async (error) => {
-    if (error.response) {
-      const { status } = error?.response || {};
+    const status = error?.response?.status
 
-      if (status !== 200 && status !== 401) {
-        const res = error?.response?.data;
-        return Promise.reject({ status, data: res, hasError: true });
+    if (status === 401 && typeof window !== 'undefined') {
+      if (!handling401) {
+        handling401 = true
+        try {
+          logout()
+          message.error('Your session expired. Please log in again.')
+          if (Router.pathname !== '/login') {
+            Router.replace('/login')
+          }
+        } finally {
+          setTimeout(() => {
+            handling401 = false
+          }, 500)
+        }
       }
-
-      if (status === 401) {
-        logout();
-        message.error("Token Expired");
-        window.location.reload();
-      }
+      return Promise.reject({
+        status,
+        data: error?.response?.data,
+        hasError: true,
+      })
     }
-    return Promise.reject(error);
-  }
-);
 
-export default request;
+    if (error?.response) {
+      return Promise.reject({
+        status,
+        data: error.response.data,
+        hasError: true,
+      })
+    }
+
+    return Promise.reject(error)
+  },
+)
+
+export default request

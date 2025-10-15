@@ -1,78 +1,77 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { Button, Skeleton } from 'antd'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
-import { Skeleton, Button } from 'antd'
 import useGetNewArrivals from '../hooks/useGetNewArrivals'
+import ProductCard from '@/components/product-card'
 
-const NewArrivals = ({ loading }) => {
-  const scrollContainerRef = useRef()
-  const { getNewArrivals, newArrivalsData } = useGetNewArrivals()
+export default function NewArrivals() {
+  const { getNewArrivals, newArrivalsData, loading } = useGetNewArrivals()
+  const scroller = useRef()
 
   useEffect(() => {
     getNewArrivals()
   }, [])
 
-  const scroll = (direction) => {
-    const { current } = scrollContainerRef
-    const scrollAmount = current.offsetWidth / 2
-    current.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth',
-    })
+  const scroll = (dir) => {
+    const el = scroller.current
+    if (!el) return
+    const amount = el.clientWidth * 0.6
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' })
   }
 
-  const renderSkeletons = () =>
-    Array.from({ length: 5 }).map((_, idx) => (
-      <div
-        key={idx}
-        className='min-w-[200px] max-w-[260px] flex-shrink-0 border rounded-lg shadow-sm bg-white p-4 snap-center'>
-        <Skeleton.Image style={{ width: '100%', height: 160 }} />
-        <Skeleton active title={false} paragraph={{ rows: 2 }} />
-      </div>
-    ))
-
-  const renderItems = () =>
-    newArrivalsData?.map((item, idx) => (
-      <div
-        key={idx}
-        className='min-w-[200px] max-w-[260px] flex-shrink-0 border border-[#f5f5f5] rounded-lg shadow-sm bg-white p-4 snap-center cursor-pointer'>
-        <img
-          src={item.imageUrls[0]}
-          alt={item.name}
-          className='w-full h-50 object-contain mb-2'
-        />
-        <div className='text-center'>
-          <h3 className='font-semibold text-base'>{item?.name}</h3>
-          <p className='text-[#385f43] font-bold mt-1'>${item?.sell}</p>
-        </div>
-      </div>
-    ))
+  const SkeletonCard = () => (
+    <div className='w-[220px] shrink-0 rounded-xl border border-zinc-100 bg-white p-3 snap-center'>
+      <Skeleton.Image className='!w-full !h-[180px]' />
+      <Skeleton active title={false} paragraph={{ rows: 2 }} className='mt-3' />
+    </div>
+  )
 
   return (
-    <div className='relative w-full items-center'>
-      <h2 className='text-2xl font-bold mb-4'>New Arrivals</h2>
-      <div className='flex flex-row items-center justify-between relative'>
+    <div className='relative'>
+      <div className='flex items-center justify-between mb-3'>
+        <h2 className='text-xl md:text-2xl font-bold'>New Arrivals</h2>
+        <div className='hidden md:flex gap-2'>
+          <Button
+            onClick={() => scroll('left')}
+            type='text'
+            shape='circle'
+            aria-label='Scroll left'>
+            <LeftOutlined />
+          </Button>
+          <Button
+            onClick={() => scroll('right')}
+            type='text'
+            shape='circle'
+            aria-label='Scroll right'>
+            <RightOutlined />
+          </Button>
+        </div>
+      </div>
+
+      <div
+        ref={scroller}
+        className='flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth px-1 pb-2'
+        style={{ scrollbarWidth: 'none' }}>
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          : (newArrivalsData || []).map((item, i) => (
+              <ProductCard key={item?.id ?? i} item={item} />
+            ))}
+      </div>
+
+      {/* Mobile controls */}
+      <div className='md:hidden flex justify-center gap-3 mt-2'>
         <Button
           onClick={() => scroll('left')}
-          type='text'
-          shape='circle'
-          className=' left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2'>
-          <LeftOutlined />
-        </Button>
-        <div
-          ref={scrollContainerRef}
-          className='flex overflow-x-auto scroll-smooth scrollbar-hide space-x-4  py-4 snap-x snap-mandatory'>
-          {loading ? renderSkeletons() : renderItems()}
-        </div>
+          size='small'
+          icon={<LeftOutlined />}
+        />
         <Button
           onClick={() => scroll('right')}
-          type='text'
-          shape='circle'
-          className=' right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-2'>
-          <RightOutlined />
-        </Button>
+          size='small'
+          icon={<RightOutlined />}
+        />
       </div>
     </div>
   )
 }
-
-export default NewArrivals

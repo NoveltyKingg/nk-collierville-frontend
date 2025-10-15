@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
@@ -7,6 +7,8 @@ const useDeleteVariation = (addedQuantity, setAddedQuantity, getCartItems) => {
     { method: 'DELETE', url: '/store/cart/product/variation' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
 

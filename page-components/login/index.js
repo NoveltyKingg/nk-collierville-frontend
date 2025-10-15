@@ -3,6 +3,7 @@ import { Card, Image, Input, Form, Button, Carousel, Flex } from 'antd'
 import { EmailIcon, PasswordIcon } from '@/assets/common'
 import useLogin from './hooks/useLogin'
 import { useRouter } from 'next/router'
+import useIsMobile from '@/utils/useIsMobile'
 
 const Login = () => {
   const [email, setEmail] = useState()
@@ -12,6 +13,8 @@ const Login = () => {
   const handleChangeValues = (name, value) => {
     name(value)
   }
+
+  const { isMobile } = useIsMobile()
 
   const { push } = useRouter()
 
@@ -99,26 +102,28 @@ const Login = () => {
             </Flex>
           </Card>
         </Form>
-        <div className='w-full lg:w-1/2'>
-          <Card>
-            <Carousel autoplay autoplaySpeed={3000} dots>
-              {[1, 2].map((_, i) => (
-                <div key={i} className='h-full w-full'>
-                  <Image
-                    src='https://i.ibb.co/1Gv63CD3/Chat-GPT-Image-Jul-22-2025-01-43-27-PM.png'
-                    alt={`Slide ${i + 1}`}
-                    preview={false}
-                    style={{
-                      height: '100%',
-                      width: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </div>
-              ))}
-            </Carousel>
-          </Card>
-        </div>
+        {!isMobile && (
+          <div className='w-full lg:w-1/2'>
+            <Card>
+              <Carousel autoplay autoplaySpeed={3000} dots>
+                {[1, 2].map((_, i) => (
+                  <div key={i} className='h-full w-full'>
+                    <Image
+                      src='https://i.ibb.co/1Gv63CD3/Chat-GPT-Image-Jul-22-2025-01-43-27-PM.png'
+                      alt={`Slide ${i + 1}`}
+                      preview={false}
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                ))}
+              </Carousel>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   )

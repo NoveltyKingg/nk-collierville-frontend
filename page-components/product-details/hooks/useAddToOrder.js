@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useAddToOrder = () => {
@@ -6,6 +6,8 @@ const useAddToOrder = () => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const addToOrder = async ({
     productId,

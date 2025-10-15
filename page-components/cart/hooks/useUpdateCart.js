@@ -1,12 +1,14 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
 const useUpdateCart = ({ getCartItems }) => {
-  const { data, loading, trigger } = useRequest(
+  const [{ data, loading }, trigger] = useRequest(
     { method: 'POST', url: '/store/updateCart' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
 

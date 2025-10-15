@@ -1,13 +1,15 @@
 import useRequest from '@/request'
 import setCookieAndRedirect from '@/utils/set-cookie-and-redirect'
 import { useEffect } from 'react'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useLogin = () => {
   const [{ data, loading, response }, trigger] = useRequest(
     { url: 'auth/signin', method: 'post' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const login = async (email, password) => {
     try {

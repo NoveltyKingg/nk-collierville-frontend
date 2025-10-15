@@ -1,53 +1,31 @@
-// components/BannerCarousel.jsx
-import { Button, Carousel, Skeleton } from 'antd'
+import React from 'react'
+import { Carousel, Skeleton } from 'antd'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React from 'react'
 
 export default function BannerCarousel({ banners = [], loading = false }) {
   const { push } = useRouter()
-
-  const handleClick = (url) => {
-    if (url) push(url)
-  }
+  const handleClick = (url) => url && push(url)
 
   return (
-    <div className='w-[47%] rounded-2xl overflow-hidden'>
+    <div className='w-full lg:w-[calc(50%-12px)] rounded-2xl overflow-hidden bg-[#f7f7f7]'>
       {loading ? (
-        <Skeleton
-          active
-          paragraph={{ rows: 4 }}
-          className='h-[400px] md:h-[500px]'
-        />
+        <div className='relative h-[38vh] md:h-[52vh]'>
+          <Skeleton.Image className='!w-full !h-full' />
+        </div>
       ) : (
-        <Carousel autoplay dots className='w-full'>
-          {banners.map((banner, index) => (
-            <div key={index} className='relative w-full h-[400px] md:h-[500px]'>
+        <Carousel autoplay dots>
+          {banners.map((b, idx) => (
+            <div key={idx} className='relative h-[38vh] md:h-[52vh]'>
               <Image
-                src={banner.imageUrl}
-                alt='Banner Background'
-                layout='fill'
-                objectFit='cover'
-                className='z-0'
+                src={b.imageUrl}
+                alt={`Banner ${idx + 1}`}
+                fill
+                sizes='(max-width: 1024px) 100vw, 50vw'
+                className={`object-cover ${b.linkUrl ? 'cursor-pointer' : ''}`}
+                onClick={() => handleClick(b.linkUrl)}
+                priority={idx === 0}
               />
-              <div className='relative z-20 w-full h-full flex flex-col md:flex-row items-center justify-center md:justify-between px-6 md:px-12'>
-                <div className='text-white flex-1 text-center md:text-left'>
-                  <p className='text-[clamp(14px,2vw,18px)] font-light'>
-                    {banner.subtitle}
-                  </p>
-                  <h1 className='text-[clamp(28px,6vw,64px)] font-bold my-4'>
-                    {banner.title}
-                  </h1>
-                  <p className='text-[clamp(14px,2vw,18px)] mb-6'>
-                    {banner.description}
-                  </p>
-                  {banner?.linkUrl && (
-                    <Button onClick={() => handleClick(banner.linkUrl)}>
-                      Shop Now
-                    </Button>
-                  )}
-                </div>
-              </div>
             </div>
           ))}
         </Carousel>

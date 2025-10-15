@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
@@ -8,7 +8,9 @@ const useDeleteCartItem = ({ productId, getCartItems }) => {
     { manual: true },
   )
 
-  const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
+  const { message } = App.useApp()
+
+  const { dispatchData, AVAILABLE_ACTIONS, noveltyData } = useGetContext()
 
   const deleteCartItem = async () => {
     const hide = message.loading('Loading...', 0)
@@ -21,7 +23,7 @@ const useDeleteCartItem = ({ productId, getCartItems }) => {
         cartItems: triggerData?.data,
       })
       message.success('Item deleted successfully')
-      getCartItems({})
+      getCartItems({ storeId: noveltyData?.profile?.storeId })
     } catch (error) {
       console.error(error, 'error')
       hide()

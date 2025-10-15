@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
+
+const MOBILE_QUERY = '(max-width: 1048px)'
 
 const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false)
+
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1048);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
+    if (typeof window === 'undefined') return
+    const mql = window.matchMedia(MOBILE_QUERY)
+    setIsMobile(mql.matches)
+    const onChange = (e) => setIsMobile(e.matches)
+    if (mql.addEventListener) mql.addEventListener('change', onChange)
     return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+      if (mql.removeEventListener) mql.removeEventListener('change', onChange)
+    }
+  }, [])
 
-  return { isMobile };
-};
+  return { isMobile }
+}
 
-export default useIsMobile;
+export default useIsMobile

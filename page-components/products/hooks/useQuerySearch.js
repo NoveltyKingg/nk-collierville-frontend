@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useQuerySearch = ({ setProductsData }) => {
@@ -6,6 +6,8 @@ const useQuerySearch = ({ setProductsData }) => {
     { method: 'GET', url: '/product/search' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const querySearch = async ({ query }) => {
     const hide = message.loading('Loading...', 0)

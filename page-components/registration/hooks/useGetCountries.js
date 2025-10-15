@@ -1,9 +1,11 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 const useGetCountries = () => {
   const [countriesData, setCountriesData] = useState([])
+
+  const { message } = App.useApp()
 
   useEffect(() => {
     axios

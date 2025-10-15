@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
@@ -9,6 +9,8 @@ const useUpdateCart = () => {
   )
 
   const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
+
+  const { message } = App.useApp()
 
   const updateCart = async ({
     productId,

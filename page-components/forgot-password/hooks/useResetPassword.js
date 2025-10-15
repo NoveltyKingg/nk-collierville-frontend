@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import setCookieAndRedirect from '@/utils/set-cookie-and-redirect'
 import { useEffect } from 'react'
@@ -11,6 +11,8 @@ const useResetPassword = () => {
     },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const resetPassword = async ({ password }) => {
     const hide = message.loading('Loading...')

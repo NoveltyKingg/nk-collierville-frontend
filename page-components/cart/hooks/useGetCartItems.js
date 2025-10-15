@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetCartItems = () => {
@@ -6,6 +6,8 @@ const useGetCartItems = () => {
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getCartItems = ({ storeId }) => {
     try {

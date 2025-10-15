@@ -1,11 +1,13 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
-const useGetProduct = ({ setFlavoursData, setMainImage }) => {
+const useGetProduct = ({ setFlavoursData }) => {
   const [{ data, loading }, trigger] = useRequest(
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getProduct = async (productId) => {
     try {
@@ -19,8 +21,7 @@ const useGetProduct = ({ setFlavoursData, setMainImage }) => {
         imageUrl: item?.imageUrl,
         stock: item?.stock,
       }))
-      const image = triggerData?.data?.imageUrls[0]
-      setMainImage(image)
+      console.log(flavoursData, 'FLAVDATA')
       setFlavoursData(flavoursData)
     } catch (err) {
       console.error(err)

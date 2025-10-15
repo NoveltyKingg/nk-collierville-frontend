@@ -1,43 +1,43 @@
 /* eslint-disable indent */
 import { useEffect, useMemo, useState } from 'react'
-import { Select, Card, Divider, Checkbox, Pagination } from 'antd'
+import {
+  Select,
+  Card,
+  Divider,
+  Checkbox,
+  Pagination,
+  Skeleton,
+  Empty,
+} from 'antd'
+import { Image } from 'antd'
+import { useRouter } from 'next/router'
+import { usePathname, useSearchParams } from 'next/navigation'
 import useGetContext from '@/common/context/useGetContext'
 import useGetProducts from './hooks/useGetProducts'
-import { usePathname, useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/router'
 import useQuerySearch from './hooks/useQuerySearch'
 import useIsMobile from '@/utils/useIsMobile'
-import { Image } from 'antd'
+import ProductCard from '@/components/product-card'
 
 function Products() {
-  const context = useGetContext()
+  const { noveltyData } = useGetContext()
+  const subCategories = noveltyData?.general?.subCategories || []
+  const categories = noveltyData?.general?.categories || []
+
   const [category, setCategory] = useState([1])
   const [productsData, setProductsData] = useState()
-  const subCategories = context?.noveltyData?.general?.subCategories || []
-  const categories = context?.noveltyData?.general?.categories || []
+  const [selectedFilters, setSelectedFilters] = useState([])
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 20 })
+  const [sorting, setSorting] = useState({ sortBy: 'name', order: 'ASC' })
+  const { isMobile } = useIsMobile()
+
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { replace, query, push } = useRouter()
 
-  const [selectedFilters, setSelectedFilters] = useState([])
-  const [pagination, setPagination] = useState({ page: 1, size: 20 })
-  const [sorting, setSorting] = useState({ sortBy: 'name', order: 'ASC' })
-
   const { getProducts, loading } = useGetProducts({ setProductsData })
   const { querySearch } = useQuerySearch({ setProductsData })
 
-  const { isMobile } = useIsMobile()
-
-  console.log(categories, 'categories')
-
-  const memoizedProducts = useMemo(() => {
-    return productsData?.products || []
-  }, [productsData])
-
-  const memoizedSelectedFilters = useMemo(() => {
-    return selectedFilters
-  }, [selectedFilters])
-
+  const products = useMemo(() => productsData?.products || [], [productsData])
   const filterOptions = subCategories
     .filter((sc) => category.includes(sc.cat_id))
     .flatMap((sc) => sc.values || [])
@@ -45,7 +45,7 @@ function Products() {
   const updateURLParams = (newParams) => {
     const params = new URLSearchParams(searchParams)
     Object.entries(newParams).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (value !== undefined && value !== null && value !== '') {
         params.set(key, value)
       } else {
         params.delete(key)
@@ -56,15 +56,26 @@ function Products() {
 
   useEffect(() => {
     setCategory([Number(query?.category) || 1])
-  }, [JSON.stringify(query?.category)])
+  }, [query?.category])
 
   useEffect(() => {
     const subCatParam = selectedFilters.join(',')
+
+    if (query?.search) {
+      updateURLParams({
+        search: query?.search,
+        sortBy: sorting.sortBy,
+        order: sorting.order,
+      })
+      querySearch({ query: query?.search })
+      return
+    }
+
     if (subCatParam) {
       updateURLParams({
         subCategoriesList: subCatParam,
         page: pagination.page,
-        pageSize: pagination.size,
+        pageSize: pagination.pageSize,
         sortBy: sorting.sortBy,
         order: sorting.order,
       })
@@ -75,26 +86,17 @@ function Products() {
         sorting,
       })
     }
+  }, [selectedFilters, pagination, sorting, query?.search])
 
-    if (query?.search) {
-      updateURLParams({
-        search: query?.search,
-        sortBy: sorting.sortBy,
-        order: sorting.order,
-      })
-      querySearch({ query: query?.search })
-    }
-  }, [selectedFilters, pagination, sorting])
-
-  const handleFilterChange = (checkedValue, valueId) => {
+  const handleFilterChange = (checked, valueId) => {
     setSelectedFilters((prev) =>
-      checkedValue ? [...prev, valueId] : prev.filter((v) => v !== valueId),
+      checked ? [...prev, valueId] : prev.filter((v) => v !== valueId),
     )
     setPagination((prev) => ({ ...prev, page: 1 }))
   }
 
   const handlePagination = (page, pageSize) => {
-    setPagination((prev) => ({ ...prev, page: page, size: pageSize }))
+    setPagination({ page, pageSize })
   }
 
   const handleSortChange = (value) => {
@@ -102,34 +104,45 @@ function Products() {
     setSorting({ sortBy, order })
   }
 
+  const CategoryTitle =
+    categories?.find((cat) => cat?.value === category[0])?.label || 'PRODUCTS'
+
   return (
-    <div className='w-full bg-[#f5f5f5] p-4 flex gap-[20px]'>
+    <div className='w-full bg-[#f5f5f5] p-4 md:p-6 flex gap-5'>
       {query?.category && !isMobile && (
-        <div className='w-1/5'>
-          <div>Filter by</div>
-          <Divider />
-          <div className='flex flex-col gap-2'>
+        <aside className='w-1/5'>
+          <div className='text-base font-semibold text-[#341809]'>
+            Filter by
+          </div>
+          <Divider className='!my-3' />
+          <div className='flex flex-col gap-2 max-h-[70vh] overflow-auto pr-1'>
             {filterOptions?.map((filter) => (
-              <div key={filter.value} className='flex items-center gap-2'>
+              <label
+                key={filter.value}
+                className='flex items-center gap-2 cursor-pointer'>
                 <Checkbox
-                  checked={memoizedSelectedFilters.includes(filter.value)}
+                  checked={selectedFilters.includes(filter.value)}
                   onChange={(e) =>
                     handleFilterChange(e.target.checked, filter.value)
                   }
                 />
-                {filter.label}
-              </div>
+                <span className='text-sm'>{filter.label}</span>
+              </label>
             ))}
+            {!filterOptions?.length && (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description='No filters'
+              />
+            )}
           </div>
-        </div>
+        </aside>
       )}
-      <div className='w-full'>
-        <div className='w-full flex flex-col md:flex-row justify-between items-center mb-3'>
-          <h2 className='text-2xl font-bold text-[#341809] mb-3 md:mb-0 uppercase'>
-            {categories?.find((cat) => cat?.value === category[0])?.label ||
-              'PRODUCTS'}
+      <main className='flex-1'>
+        <div className='w-full flex flex-col md:flex-row justify-between items-center mb-3 gap-3'>
+          <h2 className='text-2xl font-bold text-[#341809] uppercase'>
+            {CategoryTitle}
           </h2>
-
           <Select
             defaultValue='name-ASC'
             style={{ width: 250 }}
@@ -143,51 +156,38 @@ function Products() {
             ]}
           />
         </div>
-        <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-5'>
           {loading
-            ? Array.from({ length: 8 }).map((_, idx) => (
-                <Card key={idx} loading={true} className='w-full' />
-              ))
-            : memoizedProducts.map((product) => (
+            ? Array.from({ length: 10 }).map((_, idx) => (
                 <Card
-                  key={product.id}
-                  hoverable
-                  onClick={() => push(`/product/${product?.id}`)}
+                  key={idx}
+                  className='h-full rounded-2xl'
                   cover={
-                    <Image
-                      alt={product.name}
-                      src={product.imageUrls[0]}
-                      className='object-contain h-40 sm:h-40 md:h-52 lg:h-64 xl:h-80 px-4 py-2'
+                    <Skeleton.Image
+                      active
+                      style={{ width: '240px', height: 160 }}
                     />
-                  }
-                  className='w-full [&.ant-card .ant-card-body]:p-4'>
-                  <Card.Meta
-                    title={
-                      <p className='text-[#341809] font-semibold text-base'>
-                        {product?.name?.toUpperCase()}
-                      </p>
-                    }
-                    description={
-                      <div>
-                        <p className='text-[#ff8540] font-bold mt-2'>
-                          ${product?.sell}
-                        </p>
-                      </div>
-                    }
-                  />
+                  }>
+                  <Skeleton active paragraph={{ rows: 2 }} />
                 </Card>
+              ))
+            : products.map((product, i) => (
+                <ProductCard key={product?.id ?? i} item={product} />
               ))}
         </div>
         {!query?.search && (
-          <Pagination
-            align='end'
-            current={pagination?.page}
-            size={pagination?.size}
-            onChange={handlePagination}
-            total={productsData?.totalElements}
-          />
+          <div className='mt-5 flex justify-end'>
+            <Pagination
+              current={pagination.page}
+              pageSize={pagination.pageSize}
+              total={productsData?.totalElements || 0}
+              onChange={handlePagination}
+              showSizeChanger
+              pageSizeOptions={['12', '20', '30', '40', '50']}
+            />
+          </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }
