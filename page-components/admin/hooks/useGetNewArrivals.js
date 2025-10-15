@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetNewArrivals = () => {
@@ -7,6 +7,8 @@ const useGetNewArrivals = () => {
     { method: 'GET', url: '/product/newArrivals' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getNewArrivals = async () => {
     try {

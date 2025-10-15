@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetProfile = () => {
@@ -6,6 +6,9 @@ const useGetProfile = () => {
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const getProfile = async ({ setPersonalDetails, userId }) => {
     try {
       const triggerData = await trigger({ url: `/user/${userId}/profile` })

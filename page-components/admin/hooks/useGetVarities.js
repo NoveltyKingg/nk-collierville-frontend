@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import { useEffect, useState } from 'react'
 import useRequest from '@/request'
 
@@ -8,6 +8,8 @@ const useGetVarities = ({ product, setVaritiesList }) => {
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getVarities = async () => {
     try {

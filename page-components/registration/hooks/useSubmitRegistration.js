@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import { useRouter } from 'next/router'
 import useRequest from '@/request'
 import setCookie from '@/utils/set-cookie'
@@ -10,6 +10,8 @@ const useSubmitRegistration = () => {
   )
 
   const { push } = useRouter()
+
+  const { message } = App.useApp()
 
   const submitRegistration = async ({ formattedData }) => {
     const hide = message.loading('Loading...', 0)

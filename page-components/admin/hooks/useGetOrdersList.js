@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetOrdersList = (status) => {
@@ -6,6 +6,8 @@ const useGetOrdersList = (status) => {
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getOrdersList = async ({ page, pageSize }) => {
     const hide = message.loading('Loading...', 0)

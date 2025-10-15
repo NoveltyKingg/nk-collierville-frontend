@@ -157,7 +157,7 @@ function AddProductForm({
   }
 
   return (
-    <div className='p-4'>
+    <div>
       {!productDetails && (
         <div>
           <Title level={4} className='!mb-2'>

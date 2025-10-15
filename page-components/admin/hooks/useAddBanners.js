@@ -1,5 +1,4 @@
-import { message } from 'antd'
-import showMessage from '@/utils/showMessage'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useAddBanners = ({ type, getBanners }) => {
@@ -8,22 +7,22 @@ const useAddBanners = ({ type, getBanners }) => {
     { manual: true },
   )
 
+  const { message } = App.useApp()
+
   const addBanners = async ({ formData }) => {
     const hide = message.loading('Loading...', 0)
     try {
-      const triggerData = await trigger({
+      await trigger({
         data: formData,
         url: `/home/${type ? `${type}/` : ''}uploadBanners`,
       })
       hide()
-      triggerData?.hasError
-        ? showMessage('Something Went Wrong', 'error')
-        : showMessage('Success', 'success')
+      message.success('Banners added successfully')
       getBanners()
     } catch (err) {
       console.error(err, 'err')
       hide()
-      showMessage(err?.data?.message || 'Something Went Wrong', 'error')
+      message.error(err?.data?.message || 'Something Went Wrong')
     }
   }
 

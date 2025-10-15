@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useUpdateNewArrivals = () => {
@@ -6,6 +6,9 @@ const useUpdateNewArrivals = () => {
     { method: 'POST', url: 'product/newArrivals' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const updateNewArrivals = async ({ newArrivals }) => {
     const hide = message.loading('Loading...', 0)
     try {

@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import { useRouter } from 'next/router'
 import useRequest from '@/request'
 import setCookie from '@/utils/set-cookie'
@@ -8,6 +8,9 @@ const useDeleteStore = () => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const { push } = useRouter()
 
   const deleteStore = async ({ userId, storeId }) => {

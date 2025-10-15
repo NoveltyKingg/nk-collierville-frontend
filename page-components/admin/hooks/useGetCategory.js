@@ -1,5 +1,4 @@
-import { message } from 'antd'
-import { useEffect } from 'react'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetCategories = ({ setData }) => {
@@ -7,6 +6,9 @@ const useGetCategories = ({ setData }) => {
     { method: 'GET', url: 'category/getAll' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const getCategories = async () => {
     try {
       const triggerData = await trigger({})

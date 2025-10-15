@@ -9,70 +9,96 @@ import {
   PictureOutlined,
 } from '@ant-design/icons'
 import { useRouter } from 'next/router'
-import DynamicComponentLoader from './components/DynamicComponentLoader'
-import useGetBanners from './hooks/useGetBanners'
-import useUploadBanner from './hooks/useUploadBanner'
-import useDeleteBanners from './hooks/useDeleteBanners'
-import useUpdateBannerLink from './hooks/useUpdateBannerLink'
+import dynamic from 'next/dynamic'
+import useGetCategories from './hooks/useGetCategory'
+import formatCategories from '@/utils/format-categories'
+import { MENU_OPTIONS } from './menu-options'
+
+const AddProductForm = dynamic(() => import('./products/add-product-form'))
+const EditProduct = dynamic(() => import('./products/edit-product'))
+const AddSubCategory = dynamic(() => import('./sub-category/add-sub-category'))
+const AddVarities = dynamic(() => import('./varities'))
+const EditSubCategory = dynamic(() =>
+  import('./sub-category/edit-sub-category'),
+)
+const Banners = dynamic(() => import('./banners'))
+const Barcodes = dynamic(() => import('./barcodes'))
+const ActiveCustomers = dynamic(() => import('./customers/active-customers'))
+const PendingCustomers = dynamic(() => import('./customers/pending-customers'))
+const ActiveOrders = dynamic(() => import('./orders/order-list'))
+const PreviousOrders = dynamic(() => import('./orders/previous-orders'))
+const NewArrivals = dynamic(() => import('./products/new-arrivals'))
+const RecentlyAdded = dynamic(() => import('./products/recently-added'))
+const Statements = dynamic(() => import('./statements'))
 
 const { Sider, Content } = Layout
 
 const AdminPanel = () => {
   const [collapsed, setCollapsed] = useState(false)
   const router = useRouter()
-  const { tab } = router.query
+  const [data, setData] = useState([])
+  const { query } = router
+  const { tab } = query
   const [selectedKey, setSelectedKey] = useState('home-banners')
 
-  const getUrls = (type) => {
-    const urlMap = {
-      'home-banners': {
-        upload: '/home/uploadBanners',
-        get: '/home/getBanners',
-        delete: '/home/deleteBanners',
-        update: 'home/uploadBannerLinks',
-      },
-      'clearance-banners': {
-        upload: '/home/clearance/uploadBanners',
-        get: '/home/clearance/getBanners',
-        delete: '/home/clearance/deleteBanners',
-        update: 'home/clearance/uploadBannerLinks',
-      },
-      'promotional-banners': {
-        upload: '/home/promotions/uploadBanners',
-        get: '/home/promotions/getBanners',
-        delete: '/home/promotions/deleteBanners',
-        update: 'home/promotions/uploadBannerLinks',
-      },
+  useEffect(() => {
+    if (query?.tab) {
+      setSelectedKey(query?.tab)
+    } else {
+      setSelectedKey('add-product')
     }
-    return urlMap[type] || urlMap['home-banners']
-  }
+  }, [])
 
-  const currentUrls = getUrls(selectedKey)
+  const { getCategories } = useGetCategories({ setData })
 
-  const uploadHook = useUploadBanner(currentUrls.upload)
-  const getHook = useGetBanners(currentUrls.get)
-  const deleteHook = useDeleteBanners(currentUrls.delete)
-  const updateHook = useUpdateBannerLink(currentUrls.update)
+  const { SUBCATEGORIES, CATEGORIES, FILTERS } = formatCategories(data)
 
-  const getBannerProps = () => {
-    const titles = {
-      'home-banners': 'Home Page Banners',
-      'clearance-banners': 'Clearance Page Banners',
-      'promotional-banners': 'Promotional Page Banners',
-    }
-
-    return {
-      postBanners: uploadHook.postBanners,
-      uploading: uploadHook.uploading,
-      items: getHook.banners,
-      fetchItems: getHook.fetchBanners,
-      deleteBanners: deleteHook.deleteBanners,
-      deleting: deleteHook.deleting,
-      title: titles[selectedKey],
-      updateBannerLink: updateHook.updateBannerLink,
-      updating: updateHook.updating,
-      loading: getHook.loading,
-    }
+  const componentMapping = {
+    'add-product': (
+      <AddProductForm
+        SUBCATEGORIES={SUBCATEGORIES}
+        CATEGORIES={CATEGORIES}
+        FILTERS={FILTERS}
+      />
+    ),
+    'edit-product': (
+      <EditProduct
+        SUBCATEGORIES={SUBCATEGORIES}
+        CATEGORIES={CATEGORIES}
+        FILTERS={FILTERS}
+      />
+    ),
+    'recently-added': (
+      <RecentlyAdded
+        CATEGORIES={CATEGORIES}
+        SUBCATEGORIES={SUBCATEGORIES}
+        FILTERS={FILTERS}
+      />
+    ),
+    'add-sub-category': <AddSubCategory CATEGORIES={CATEGORIES} />,
+    'edit-sub-category': (
+      <EditSubCategory
+        CATEGORIES={CATEGORIES}
+        SUBCATEGORIES={SUBCATEGORIES}
+        setData={setData}
+      />
+    ),
+    varities: (
+      <AddVarities SUBCATEGORIES={SUBCATEGORIES} CATEGORIES={CATEGORIES} />
+    ),
+    'home-banners': <Banners type='home' />,
+    'promotional-banners': <Banners type='promotions' />,
+    'clearence-banners': <Banners type='clearance' />,
+    'active-customers': <ActiveCustomers />,
+    'pending-customers': <PendingCustomers />,
+    // customers: <ListCustomers />,
+    'active-orders': <ActiveOrders />,
+    'previous-orders': <PreviousOrders />,
+    'new-arrivals': <NewArrivals />,
+    statements: <Statements />,
+    barcodes: (
+      <Barcodes SUBCATEGORIES={SUBCATEGORIES} CATEGORIES={CATEGORIES} />
+    ),
   }
 
   const menuItems = [
@@ -110,38 +136,37 @@ const AdminPanel = () => {
     }
   }, [tab])
 
+  useEffect(() => {
+    getCategories()
+  }, [])
+
+  const ActiveComponent = componentMapping[selectedKey]
+
+  const OPTIONS = MENU_OPTIONS({ customersData: [] })
+
   return (
-    <div className='flex flex-col min-h-screen'>
-      <Layout style={{ minHeight: 'calc(100vh - 64px)' }}>
-        <Sider
-          onCollapse={setCollapsed}
-          width={250}
-          style={{ backgroundColor: '#385f43' }}>
-          <div className='p-4 text-white text-start font-bold text-lg'>
-            {collapsed ? 'AD' : 'Admin Panel'}
-          </div>
-          <Menu
-            theme='dark'
-            mode='inline'
-            items={menuItems}
-            selectedKeys={[selectedKey]}
-            defaultOpenKeys={['banners']}
-            style={{ backgroundColor: '#385f43', color: '#fff' }}
-            onClick={(info) => {
-              setSelectedKey(info.key)
-              router.push(`/admin?tab=${info.key}`, undefined, {
-                shallow: true,
-              })
-            }}
-          />
-        </Sider>
-        <Content className='p-6'>
-          <DynamicComponentLoader
-            selectedKey={selectedKey}
-            {...getBannerProps()}
-          />
-        </Content>
-      </Layout>
+    <div className='flex min-h-screen'>
+      <Sider
+        onCollapse={setCollapsed}
+        style={{ background: '#ffffff' }}
+        width={250}>
+        <div className='p-4 text-start font-bold text-lg'>
+          {collapsed ? 'AD' : 'Admin Panel'}
+        </div>
+        <Menu
+          mode='inline'
+          items={OPTIONS}
+          selectedKeys={[selectedKey]}
+          defaultOpenKeys={['banners']}
+          onClick={(info) => {
+            setSelectedKey(info.key)
+            router.push(`/admin?tab=${info.key}`, undefined, {
+              shallow: true,
+            })
+          }}
+        />
+      </Sider>
+      <Content className='p-6 bg-gray-100 w-full'>{ActiveComponent}</Content>
     </div>
   )
 }

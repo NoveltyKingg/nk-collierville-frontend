@@ -240,7 +240,7 @@ function EditProduct({ SUBCATEGORIES, CATEGORIES, FILTERS }) {
   const handleCancel = () => setProductId(undefined)
 
   return (
-    <div className='space-y-6 p-4'>
+    <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <div>
           <Title level={3} className='!m-0'>

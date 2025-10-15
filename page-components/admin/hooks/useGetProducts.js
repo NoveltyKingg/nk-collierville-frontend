@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetProducts = ({ subCategory }) => {
@@ -6,6 +6,8 @@ const useGetProducts = ({ subCategory }) => {
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getProducts = async () => {
     const hide = message.loading('Loading...', 0)

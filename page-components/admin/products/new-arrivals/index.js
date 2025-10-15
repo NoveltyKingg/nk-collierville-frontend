@@ -98,7 +98,7 @@ function NewArrivals() {
   }
 
   return (
-    <div className='space-y-6 p-4'>
+    <div className='space-y-6'>
       <div>
         <Title level={3} className='!m-0'>
           New Arrivals

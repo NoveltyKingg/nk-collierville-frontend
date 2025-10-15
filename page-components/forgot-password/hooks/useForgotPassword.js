@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useForgotPassword = () => {
@@ -9,6 +9,8 @@ const useForgotPassword = () => {
     },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const forgotPassword = async ({ email }) => {
     const hide = message.loading('Loading...', 0)

@@ -17,6 +17,7 @@
     "antd": "^5.26.6",
     "axios": "^1.10.0",
     "axios-hooks": "^5.1.1",
+    "dynamsoft-barcode-reader-bundle": "^11.0.6000",
     "lodash": "^4.17.21",
     "next": "15.5.4",
     "nprogress": "^0.2.0",

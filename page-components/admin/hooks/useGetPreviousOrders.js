@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetPreviousOrders = () => {
@@ -6,6 +6,8 @@ const useGetPreviousOrders = () => {
     { method: 'GET', url: 'store/user/past-purchase' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getPreviousOrders = async ({
     selectedStore,

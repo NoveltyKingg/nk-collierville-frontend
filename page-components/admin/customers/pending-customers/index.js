@@ -58,7 +58,7 @@ export default function PendingCustomers() {
   }, [customersData])
 
   return (
-    <div className='space-y-4 p-4'>
+    <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <div>
           <Title level={3} className='!m-0'>

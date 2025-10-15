@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useDeleteBarcode = ({ barcode, getVarities, setDeletedBarcode }) => {
@@ -6,6 +6,8 @@ const useDeleteBarcode = ({ barcode, getVarities, setDeletedBarcode }) => {
     { method: 'DELETE' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const deleteBarcode = async () => {
     const hide = message.loading('Loading...', 0)

@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
@@ -7,6 +7,8 @@ const useAddToCart = () => {
     { method: 'POST', url: '/store/addToCart' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
 

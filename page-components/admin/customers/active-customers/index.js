@@ -158,7 +158,7 @@ function ActiveCustomers() {
   const columns = getColumns({ getColumnSearchProps })
 
   return (
-    <div className='space-y-6 w-full p-4'>
+    <div className='space-y-6 w-full'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
         <div>
           <h2 className='text-2xl font-semibold'>Customers</h2>

@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
 
@@ -7,6 +7,9 @@ const useCompleteCheckout = (storeId) => {
     { method: 'POST', url: `/store/${storeId}/checkout` },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
 
   const completeCheckout = async (address, setOrderCompleted) => {

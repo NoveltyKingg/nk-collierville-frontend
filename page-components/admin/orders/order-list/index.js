@@ -223,7 +223,7 @@ function OrderList() {
   }, [data?.orders, loading, panelStyle, selectedOrderType, statusChange])
 
   return (
-    <div className='space-y-6 p-4'>
+    <div className='space-y-6'>
       {Header}
       <Card className='rounded-2xl shadow-sm'>
         <Divider className='!my-3' />

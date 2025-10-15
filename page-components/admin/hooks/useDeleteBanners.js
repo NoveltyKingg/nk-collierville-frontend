@@ -1,11 +1,13 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
-const useDeleteBanners = (url) => {
+const useDeleteBanners = ({ type }) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'DELETE', url },
+    { method: 'DELETE', url: `/home/${type ? `${type}/` : ''}deleteBanners` },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const deleteBanners = async (data) => {
     try {

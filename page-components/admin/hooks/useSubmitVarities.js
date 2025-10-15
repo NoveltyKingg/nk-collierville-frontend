@@ -1,13 +1,15 @@
 import useRequest from '@/request'
-import showMessage from '@/utils/show-message'
 import useGetVarities from './useGetVarities'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useSubmitVarities = ({ product, setVaritiesList, setOpen }) => {
   const [{ data, loading, error }, trigger] = useRequest(
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const { getVarities } = useGetVarities({ product, setVaritiesList })
 
   const submitVariety = async ({ formData }) => {
@@ -19,12 +21,12 @@ const useSubmitVarities = ({ product, setVaritiesList, setOpen }) => {
       })
       await getVarities()
       hide()
-      showMessage('Success', 'success')
+      message.success('Success')
       setOpen(false)
     } catch (err) {
       console.error(err)
       hide()
-      showMessage(err?.data?.message || 'Something went wrong', 'error')
+      message.error(err?.data?.message || 'Something went wrong')
     }
   }
 

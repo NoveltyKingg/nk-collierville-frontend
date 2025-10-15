@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetCustomerEmail = () => {
@@ -7,6 +7,9 @@ const useGetCustomerEmail = () => {
     { method: 'GET', url: 'home/getEmailAddress' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const getCustomerEmail = async () => {
     try {
       await trigger({})

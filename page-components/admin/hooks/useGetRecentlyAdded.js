@@ -5,6 +5,7 @@ const useGetRecentlyAdded = () => {
     { method: 'GET', url: 'product/recentlyAdded' },
     { manual: true },
   )
+
   const getRecentlyAdded = async () => {
     try {
       await trigger({})

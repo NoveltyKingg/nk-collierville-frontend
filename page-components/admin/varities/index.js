@@ -85,7 +85,7 @@ function AddVarities({ SUBCATEGORIES, CATEGORIES }) {
   }))
 
   return (
-    <div className='space-y-6 p-4'>
+    <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <div>
           <Title level={3} className='!m-0'>
@@ -136,7 +136,6 @@ function AddVarities({ SUBCATEGORIES, CATEGORIES }) {
       </Card>
 
       <Card className='rounded-2xl shadow-sm'>
-        <Divider orientation='left'>Varieties List</Divider>
         <Table
           columns={columns}
           dataSource={data || []}

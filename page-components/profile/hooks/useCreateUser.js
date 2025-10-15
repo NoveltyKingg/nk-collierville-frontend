@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useCreateUser = () => {
@@ -6,6 +6,8 @@ const useCreateUser = () => {
     { url: '/user/create', method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const createUser = async ({ formValues, storeId }) => {
     const hide = message.loading('Loading...', 0)

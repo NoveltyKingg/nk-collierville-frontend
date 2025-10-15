@@ -1,11 +1,13 @@
-import { message } from "antd";
-import useRequest from "@/request";
+import { App } from 'antd'
+import useRequest from '@/request'
 
 const useQuerySearch = () => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: "GET", url: "/product/search" },
-    { manual: true }
-  );
+    { method: 'GET', url: '/product/search' },
+    { manual: true },
+  )
+
+  const { message } = App.useApp()
 
   const querySearch = async (query) => {
     try {
@@ -13,19 +15,19 @@ const useQuerySearch = () => {
         params: {
           query,
         },
-      });
+      })
     } catch (err) {
-      console.error(err);
-      message.error(err?.data?.message || "Something Went Wrong");
+      console.error(err)
+      message.error(err?.data?.message || 'Something Went Wrong')
     }
-  };
+  }
 
   return {
     querySearch,
     queryData: data,
     queryLoading: loading,
     queryTrigger: trigger,
-  };
-};
+  }
+}
 
-export default useQuerySearch;
+export default useQuerySearch

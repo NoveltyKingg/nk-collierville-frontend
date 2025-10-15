@@ -1,11 +1,13 @@
 import useRequest from '@/request'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useGetOrderDetails = ({ orderId, setOrderDetails }) => {
   const [{ data, loading }, trigger] = useRequest(
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getOrderDetails = async () => {
     try {

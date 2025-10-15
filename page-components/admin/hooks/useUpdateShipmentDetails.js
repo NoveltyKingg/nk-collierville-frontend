@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useUpdateShipmentDetails = ({ orderId }) => {
@@ -6,6 +6,8 @@ const useUpdateShipmentDetails = ({ orderId }) => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const updateShipmentDetails = async ({ formData }) => {
     const hide = message.loading('Loading...', 0)

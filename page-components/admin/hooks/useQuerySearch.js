@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useQuerySearch = () => {
@@ -6,6 +6,9 @@ const useQuerySearch = () => {
     { method: 'GET', url: '/product/search' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const querySearch = async (query) => {
     try {
       await trigger({

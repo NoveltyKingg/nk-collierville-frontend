@@ -1,28 +1,21 @@
 import useRequest from '@/request'
 
-const useGetBanners = (url) => {
+const useGetBanners = ({ type }) => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'GET', url },
+    { method: 'GET', url: `/home/${type ? `${type}/` : ''}getBanners` },
     { manual: true },
   )
 
-  const fetchBanners = () => {
+  const getBanners = () => {
     try {
       trigger()
     } catch {
-      if (e.name !== 'CanceledError' && e.message !== 'canceled') {
-        console.error('Failed to fetch banners:', e)
-      }
+      console.error('error: ', err)
     }
   }
 
   return {
-    fetchBanners,
-    banners: Object.entries(data || {}).map(([imageUrl, linkUrl], index) => ({
-      id: `banner-${index}`,
-      image: imageUrl,
-      linkUrl: linkUrl || '',
-    })),
+    getBanners,
     loading,
     data,
   }

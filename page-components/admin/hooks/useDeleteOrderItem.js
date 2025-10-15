@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useDeleteOrderItem = () => {
@@ -6,6 +6,8 @@ const useDeleteOrderItem = () => {
     { method: 'DELETE', url: 'order/item' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const deleteOrderItem = async ({ orderId, orderItemId }) => {
     const hide = message.loading('Loading...', 0)

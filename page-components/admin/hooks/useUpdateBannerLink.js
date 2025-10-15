@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useUpdateBannerLink = (url) => {
@@ -6,6 +6,8 @@ const useUpdateBannerLink = (url) => {
     { method: 'POST', url },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const updateBannerLink = async ({ imageUrl, linkUrl }) => {
     const hide = message.loading('Updating banner link...', 0)

@@ -1,113 +1,130 @@
-import React, { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useRequest from '@/request'
 import useGetContext from '../context/useGetContext'
 import { getCookie } from '@/utils/get-cookie'
 
-// const GlobalLoading = dynamic(() => import("@/components/global-loading"), {
-//   ssr: false,
-// });
-
-const isBrowser = typeof window !== 'undefined'
-
-const privatePaths = [
+const PRIVATE_TEMPLATES = [
   '/[store_id]/cart',
   '/[store_id]/checkout',
   '/[store_id]/profile',
   '/admin',
 ]
 
-const unAuthenticatedPaths = ['/login', '/signup']
+const UNAUTH_TEMPLATES = ['/login', '/signup']
 
-const fetchProfile = async (context, profileAPI, router) => {
-  const { dispatchData, AVAILABLE_ACTIONS } = context
-
-  const response = await profileAPI[1]()
-  const { data: profileData } = response || {}
-
-  if (Object.keys(profileData || {}).length === 0) return false
-
-  if (
-    response.status === 200 &&
-    profileData?.status === 'PENDING_REGISTRATION'
-  ) {
-    router.push('/registration')
+function templateToRegex(template) {
+  if (template.startsWith('/[')) {
+    // dynamic store segment
+    const re = template.replace('/[store_id]', '/[^/]+').replace(/\/$/, '')
+    return new RegExp(`^${re}(?:\\/)?$`)
   }
-
-  if (
-    response.status === 200 &&
-    profileData?.status !== 'ADMIN' &&
-    router.pathname.startsWith('/admin')
-  ) {
-    router.push('/')
+  if (template === '/admin') {
+    // treat /admin and all children as private + admin-only
+    return /^\/admin(?:\/.*)?$/
   }
-
-  dispatchData(AVAILABLE_ACTIONS.ADD_PROFILE, {
-    ...profileData,
-    isLoggedIn: true,
-  })
-
-  if (response?.status === 200) {
-    return true
-  }
-
-  return false
+  const re = template.replace(/\/$/, '')
+  return new RegExp(`^${re}(?:\\/)?$`)
 }
 
-const handleAuthentication = async (context, profileAPI, router) => {
-  const token = getCookie('nk-collierville-token')
+const PRIVATE_REGEXES = PRIVATE_TEMPLATES.map(templateToRegex)
+const UNAUTH_REGEXES = UNAUTH_TEMPLATES.map(templateToRegex)
 
-  if (!token) return false
-  const response = await fetchProfile(context, profileAPI, router)
+const matches = (pathname, regexes) => regexes.some((re) => re.test(pathname))
 
-  return response
-}
-
-function AuthenticationProvider({ children, router }) {
+export default function AuthenticationProvider({ children, router }) {
   const context = useGetContext()
+  const mounted = useRef(true)
 
   const profileAPI = useRequest(
-    { method: 'get', url: '/auth/token-payload' },
+    { method: 'GET', url: '/auth/token-payload' },
     { manual: true },
   )
 
+  const pathname = router?.pathname || ''
+
   const [isLoading, setIsLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [role, setRole] = useState(null)
 
-  const { pathname } = router || {}
-
-  const getLogin = async () => {
-    setIsLoading(true)
-    const isLogged = await handleAuthentication(context, profileAPI, router)
-    setIsLoggedIn(isLogged)
-    setIsLoading(false)
-  }
+  const token = useMemo(() => getCookie('nk-collierville-token'), [pathname])
 
   useEffect(() => {
-    getLogin()
-  }, [])
+    mounted.current = true
+    const run = async () => {
+      setIsLoading(true)
+      try {
+        if (!token) {
+          setIsLoggedIn(false)
+          setRole(null)
+          return
+        }
+        const [, trigger] = profileAPI
+        const resp = await trigger()
 
-  if (!isBrowser) return null
+        const profile = resp?.data || {}
+        if (!profile || Object.keys(profile).length === 0) {
+          setIsLoggedIn(false)
+          setRole(null)
+          return
+        }
 
-  // if (isBrowser && isLoading) return <GlobalLoading />;
+        if (resp.status === 200 && profile.status === 'PENDING_REGISTRATION') {
+          router.replace('/registration')
+        }
 
-  if (isLoading) {
-    return null
-  }
+        const { dispatchData, AVAILABLE_ACTIONS } = context || {}
+        dispatchData?.(AVAILABLE_ACTIONS?.ADD_PROFILE, {
+          ...profile,
+          isLoggedIn: true,
+        })
 
-  if (isLoggedIn && unAuthenticatedPaths.includes(pathname)) {
-    router.push('/')
-  }
+        setIsLoggedIn(true)
+        setRole(profile?.status || null)
+      } catch {
+        setIsLoggedIn(false)
+        setRole(null)
+      } finally {
+        if (mounted.current) setIsLoading(false)
+      }
+    }
+    run()
+    return () => {
+      mounted.current = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
 
-  if (!isLoggedIn && privatePaths.includes(pathname)) {
-    router.push('/')
-  }
+  // 3) Redirect logic — ONLY in effects
+  useEffect(() => {
+    if (isLoading) return
+    if (!pathname) return
 
-  if (!isLoggedIn && pathname.startsWith('/admin')) {
-    router.push('/')
-  }
+    if (!isLoggedIn) {
+      // If trying to hit admin (or any private area) without login
+      if (
+        /^\/admin(?:\/.*)?$/.test(pathname) ||
+        matches(pathname, PRIVATE_REGEXES)
+      ) {
+        router.replace('/login')
+        return
+      }
+      return
+    }
+
+    // Authenticated: keep users away from unauth routes like /login
+    if (matches(pathname, UNAUTH_REGEXES)) {
+      router.replace('/')
+      return
+    }
+
+    // Authenticated: non-admin tries to enter /admin
+    if (role !== 'ADMIN' && /^\/admin(?:\/.*)?$/.test(pathname)) {
+      router.replace('/')
+    }
+  }, [isLoading, isLoggedIn, role, router])
+
+  // Optional: splash while checking
+  if (isLoading) return null
 
   return children
 }
-
-export default AuthenticationProvider

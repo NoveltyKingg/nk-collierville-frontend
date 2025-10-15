@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useUpdateProductInStock = () => {
@@ -6,6 +6,8 @@ const useUpdateProductInStock = () => {
     { method: 'POST', url: 'product/updateInStock' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const updateProductInStock = ({ status, productId }) => {
     const hide = message.loading('Loading...', 0)

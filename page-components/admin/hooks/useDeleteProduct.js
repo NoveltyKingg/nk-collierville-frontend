@@ -1,12 +1,14 @@
 import showMessage from '@/utils/show-message'
 import useRequest from '@/request'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useDeleteProduct = ({ productId, setProductId, getProducts }) => {
   const [{ data, loading }, trigger] = useRequest(
     { method: 'DELETE' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const deleteProduct = async () => {
     const hide = message.loading('Loading...', 0)

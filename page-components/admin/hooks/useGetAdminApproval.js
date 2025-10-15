@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetAdminApproval = ({ storeId }) => {
@@ -6,6 +6,8 @@ const useGetAdminApproval = ({ storeId }) => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getAdminApproval = async ({ formData }) => {
     const hide = message.loading('Loading...', 0)

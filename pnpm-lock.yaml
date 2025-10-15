@@ -26,6 +26,9 @@ importers:
       axios-hooks:
         specifier: ^5.1.1
         version: 5.1.1(axios@1.10.0)(react@19.1.0)
+      dynamsoft-barcode-reader-bundle:
+        specifier: ^11.0.6000
+        version: 11.0.6000
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -1821,6 +1824,9 @@ packages:
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
+
+  dynamsoft-barcode-reader-bundle@11.0.6000:
+    resolution: {integrity: sha512-adEmr9lhuSTh7c86GA8xd1Rz0r7Udf5/VwoEDuUoimyoK5W7TtpyE4iTUJKr+qChSzELHtTb4Yt69zEP7wiStw==}
 
   electron-to-chromium@1.5.187:
     resolution: {integrity: sha512-cl5Jc9I0KGUoOoSbxvTywTa40uspGJt/BDBoDLoxJRSBpWh4FFXBsjNRHfQrONsV/OoEjDfHUmZQa2d6Ze4YgA==}
@@ -5423,6 +5429,8 @@ snapshots:
       call-bind-apply-helpers: 1.0.2
       es-errors: 1.3.0
       gopd: 1.2.0
+
+  dynamsoft-barcode-reader-bundle@11.0.6000: {}
 
   electron-to-chromium@1.5.187: {}
 

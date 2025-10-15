@@ -1,17 +1,15 @@
-import { LoginIcon } from '@/assets/common'
-import { BestPriceIcon, ShippingIcon, TruckIcon } from '@/assets/home'
-import { Avatar, Skeleton } from 'antd'
-import { Card } from 'antd'
-import { Carousel, Image, Flex } from 'antd'
 import React, { useEffect } from 'react'
-import BannerCarousel from './banner-carousel'
+import { Card, Avatar, Flex, Skeleton } from 'antd'
+import { Carousel } from 'antd'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
 import useGetPromotionalBanners from './hooks/useGetPromotionalBanners'
 import useGetClearenceBanners from './hooks/useGetClearenceBanners'
 import useGetHomeBanners from './hooks/useGetHomeBanners'
 import useGetContext from '@/common/context/useGetContext'
+import BannerCarousel from './banner-carousel'
 import NewArrivals from './new-arrivals'
-import { useRouter } from 'next/router'
-import useIsMobile from '@/utils/useIsMobile'
+import { BestPriceIcon, ShippingIcon, TruckIcon } from '@/assets/home'
 
 const PROMOTION_ITEMS = [
   { id: 1, text: 'Free shipping on orders over $500', icon: <ShippingIcon /> },
@@ -19,19 +17,17 @@ const PROMOTION_ITEMS = [
   { id: 3, text: 'Express Delivery on bulk orders', icon: <TruckIcon /> },
 ]
 
-const Home = () => {
+export default function Home() {
+  const { push } = useRouter()
+
   const { getPromotionalBanners, promotionalBanners, promotionalLoading } =
     useGetPromotionalBanners()
   const { getHomeBanners, homeBanners, homeLoading } = useGetHomeBanners()
-
-  const { push } = useRouter()
-  const { isMobile } = useIsMobile()
-
-  const context = useGetContext()
-  const categories = context?.noveltyData?.general?.categories
-
   const { getClearenceBanners, clearenceBanners, clearenceLoading } =
     useGetClearenceBanners()
+
+  const context = useGetContext()
+  const categories = context?.noveltyData?.general?.categories || []
 
   useEffect(() => {
     getHomeBanners()
@@ -40,80 +36,97 @@ const Home = () => {
   }, [])
 
   return (
-    <Flex vertical gap={12} className='!mb-[10px]'>
-      <Carousel autoplay>
-        {!homeLoading &&
-          Object.entries(homeBanners || {})?.map(([key, value], i) => (
-            <div key={i} className='h-full w-full'>
-              <Image
-                src={key}
-                preview={false}
-                height={isMobile ? 200 : 500}
-                width={'100%'}
-                alt={<Skeleton />}
-              />
+    <div className='w-full'>
+      <div className='w-full'>
+        <Carousel autoplay dots arrows className='w-full'>
+          {homeLoading && (
+            <div className='relative h-[38vh] md:h-[56vh]'>
+              <Skeleton.Image className='!w-full !h-full' />
             </div>
-          ))}
-        {homeLoading && <Skeleton className='!h-[500px] w-full' />}
-      </Carousel>
-      <Card className='!mx-[40px] flex flex-col'>
-        <div className='text-[20px] font-bold'>Shop By Category</div>
-        <Flex wrap='wrap' gap={20} align='center' justify='center'>
-          {categories?.map((category) => (
-            <Flex
-              vertical
-              align='center'
-              className='cursor-pointer'
-              onClick={() => push(`/products?category=${category?.value}`)}
-              key={category?.value}>
-              <Avatar
-                shape='circle'
-                size={{ sm: 60, md: 100, lg: 150, xl: 150, xxl: 180 }}
-                src={category?.imageUrl}
-              />
-              <div className='text-[20px] font-bold'>{category?.label}</div>
-            </Flex>
-          ))}
-        </Flex>
-      </Card>
-      <Flex vertical={isMobile} justify='space-between' className='!px-[40px]'>
-        <BannerCarousel
-          banners={Object.entries(promotionalBanners || {})?.map(
-            ([key, value]) => ({
-              linkUrl: value,
-              imageUrl: key,
-            }),
           )}
-          loading={promotionalLoading}
-        />
-        <BannerCarousel
-          banners={Object.entries(clearenceBanners || {})?.map(
-            ([key, value]) => ({
-              linkUrl: value,
-              imageUrl: key,
-            }),
-          )}
-          loading={clearenceLoading}
-        />
-      </Flex>
-      <Card className='!mx-[40px]'>
-        <div className='flex flex-col md:flex-row justify-between items-center'>
-          {PROMOTION_ITEMS.map((item, index) => (
-            <div
-              key={index}
-              className='flex gap-[12px] items-center text-center text-[20px] font-bold'>
-              {item?.icon || <LoginIcon />}
-              {item?.text}
-            </div>
-          ))}
-        </div>
-      </Card>
+          {!homeLoading &&
+            Object.entries(homeBanners || {}).map(([src], i) => (
+              <div key={i} className='relative h-[38vh] md:h-[56vh]'>
+                <Image
+                  src={src}
+                  alt={`Home banner ${i + 1}`}
+                  fill
+                  priority={i === 0}
+                  sizes='100vw'
+                />
+              </div>
+            ))}
+        </Carousel>
+      </div>
 
-      <Card className='!mx-[40px]'>
-        <NewArrivals loading={false} />
-      </Card>
-    </Flex>
+      {/* <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 -mt-4'>
+        <Card className='rounded-2xl shadow-sm border-0'>
+          <h2 className='text-xl md:text-2xl font-bold mb-3'>
+            Shop by Category
+          </h2>
+          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-6'>
+            {categories?.map((cat) => (
+              <button
+                key={cat?.value}
+                onClick={() => push(`/products?category=${cat?.value}`)}
+                className='group flex flex-col items-center gap-3 rounded-xl p-3 bg-[#fafafa] hover:bg-white hover:shadow transition cursor-pointer'>
+                <div className='relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden ring-1 ring-zinc-200'>
+                  <Image
+                    src={cat?.imageUrl}
+                    alt={cat?.label}
+                    fill
+                    sizes='120px'
+                    className='object-cover'
+                  />
+                </div>
+                <span className='text-sm font-semibold text-zinc-800 text-center'>
+                  {cat?.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </Card>
+      </section> */}
+
+      <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-4'>
+        <div className='flex flex-col lg:flex-row gap-6'>
+          <BannerCarousel
+            banners={Object.entries(promotionalBanners || {}).map(
+              ([imageUrl, linkUrl]) => ({ imageUrl, linkUrl }),
+            )}
+            loading={promotionalLoading}
+          />
+          <BannerCarousel
+            banners={Object.entries(clearenceBanners || {}).map(
+              ([imageUrl, linkUrl]) => ({ imageUrl, linkUrl }),
+            )}
+            loading={clearenceLoading}
+          />
+        </div>
+      </section>
+
+      <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
+        <Card className='rounded-2xl shadow-sm border-0'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+            {PROMOTION_ITEMS.map((item) => (
+              <div
+                key={item.id}
+                className='flex items-center gap-3 px-3 py-2 rounded-xl bg-[#fafafa] hover:bg-white hover:shadow transition'>
+                <div className='text-[28px]'>{item.icon}</div>
+                <div className='text-base md:text-lg font-semibold'>
+                  {item.text}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-4'>
+        <Card className='rounded-2xl shadow-sm border-0'>
+          <NewArrivals />
+        </Card>
+      </section>
+    </div>
   )
 }
-
-export default Home

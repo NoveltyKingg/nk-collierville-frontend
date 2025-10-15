@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useUpdateOrderStatus = ({
@@ -12,6 +12,8 @@ const useUpdateOrderStatus = ({
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const updateOrderStatus = async () => {
     const hide = message.loading('Loading...', 0)

@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useAddBarcode = ({ barcode, getVarities }) => {
@@ -6,6 +6,8 @@ const useAddBarcode = ({ barcode, getVarities }) => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const addBarcode = async ({ productId, variationId }) => {
     const hide = message.loading('Loading...', 0)

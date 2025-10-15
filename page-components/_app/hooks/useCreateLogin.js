@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 import setCookie from '@/utils/set-cookie'
 
@@ -8,6 +8,8 @@ const useCreateLogin = () => {
     { method: 'POST', url: '/auth/signin' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const createLogin = async ({ storeId, token }) => {
     const hide = message.loading('Loading...', 0)

@@ -1,5 +1,5 @@
 import useRequest from '@/request'
-import useToast from '@/utils/show-message'
+import { App } from 'antd'
 
 const useAddToOrder = () => {
   const [{ data, loading }, trigger] = useRequest(
@@ -7,7 +7,7 @@ const useAddToOrder = () => {
     { manual: true },
   )
 
-  const { loadingMessage, success, error } = useToast()
+  const { message } = App.useApp()
 
   const addToOrder = async ({
     productId,
@@ -18,7 +18,7 @@ const useAddToOrder = () => {
     getOrderDetails,
     orderId,
   }) => {
-    const hide = loadingMessage()
+    const hide = message.loading('Loading...', 0)
     const features = Object.keys(feature || {})?.length > 0 ? { feature } : {}
     try {
       await trigger({
@@ -32,12 +32,12 @@ const useAddToOrder = () => {
         },
       })
       hide()
-      success('Added To Order')
+      message.success('Added To Order')
       getOrderDetails()
     } catch (error) {
       console.error(error)
       hide()
-      error(error?.data?.message || 'Something Went Wrong')
+      message.error(error?.data?.message || 'Something Went Wrong')
     }
   }
 

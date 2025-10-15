@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useChangeStatementStatus = () => {
@@ -6,6 +6,9 @@ const useChangeStatementStatus = () => {
     { method: 'POST', url: 'admin/statement' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const changeStatementStatus = async ({ statementId }) => {
     const hide = message.loading('Loading...', 0)
     try {

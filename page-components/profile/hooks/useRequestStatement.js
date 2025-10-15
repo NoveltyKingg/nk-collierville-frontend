@@ -1,11 +1,14 @@
 import useRequest from '@/request'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useRequestStatement = ({ userId, storeId }) => {
   const [{ data, loading }, trigger] = useRequest(
     { method: 'POST', url: `user/${userId}/store/${storeId}/statement` },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const requestStatement = async ({
     startDate,
     endDate,

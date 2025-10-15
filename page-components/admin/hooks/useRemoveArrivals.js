@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useRemoveArrivals = () => {
@@ -6,6 +6,8 @@ const useRemoveArrivals = () => {
     { method: 'DELETE', url: 'product/newArrivals' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const removeArrivals = async ({ removedData }) => {
     const hide = message.loading('Loading...', 0)

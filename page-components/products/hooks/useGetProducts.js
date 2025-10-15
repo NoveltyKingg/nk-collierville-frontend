@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetProducts = ({ setProductsData }) => {
@@ -7,7 +7,10 @@ const useGetProducts = ({ setProductsData }) => {
     { manual: true },
   )
 
+  const { message } = App.useApp()
+
   const getProducts = async ({ subCategoriesList, pagination, sorting }) => {
+    const hide = message.loading('Loading...', 0)
     try {
       const triggerData = await trigger({
         params: {
@@ -16,6 +19,8 @@ const useGetProducts = ({ setProductsData }) => {
           ...sorting,
         },
       })
+      hide()
+      message.success('Products Fetched Successfully')
       setProductsData(triggerData?.data)
     } catch (error) {
       console.error(error, 'error')

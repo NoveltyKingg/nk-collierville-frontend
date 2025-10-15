@@ -88,7 +88,7 @@ function PreviousOrders() {
   }
 
   return (
-    <div className='space-y-6 p-4'>
+    <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <div>
           <Title level={3} className='!m-0'>
@@ -99,54 +99,50 @@ function PreviousOrders() {
           </Text>
         </div>
       </div>
-      <div>
-        <Divider orientation='left'>Filters</Divider>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div>
+          <Text type='secondary'>Select Store</Text>
+          <Select
+            placeholder='Select Store'
+            options={STORE_OPTIONS}
+            value={selectedStore?.id}
+            onChange={handleStoreChange}
+            style={{ width: '100%' }}
+          />
+        </div>
+        {selectedStore && (
           <div>
-            <Text type='secondary'>Select Store</Text>
+            <Text type='secondary'>Select User</Text>
             <Select
-              placeholder='Select Store'
-              options={STORE_OPTIONS}
-              value={selectedStore?.id}
-              onChange={handleStoreChange}
+              placeholder='Select User'
+              options={USER_OPTIONS}
+              value={selectedUser}
+              onChange={handleUserChange}
               style={{ width: '100%' }}
             />
           </div>
-          {selectedStore && (
-            <div>
-              <Text type='secondary'>Select User</Text>
-              <Select
-                placeholder='Select User'
-                options={USER_OPTIONS}
-                value={selectedUser}
-                onChange={handleUserChange}
-                style={{ width: '100%' }}
-              />
-            </div>
-          )}
-          {selectedUser && (
-            <div>
-              <Text type='secondary'>Date Range</Text>
-              <RangePicker
-                onChange={handleRangeChange}
-                defaultValue={[dayjs(threeMonthsAgo), dayjs(today)]}
-                style={{ width: '100%' }}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className='flex justify-end mt-4'>
-          <Space>
-            <Button
-              type='primary'
-              disabled={!(selectedStore && selectedUser)}
-              onClick={handleSubmit}
-              loading={orderLoading}>
-              Show Previous Orders
-            </Button>
-          </Space>
-        </div>
+        )}
+        {selectedUser && (
+          <div>
+            <Text type='secondary'>Date Range</Text>
+            <RangePicker
+              onChange={handleRangeChange}
+              defaultValue={[dayjs(threeMonthsAgo), dayjs(today)]}
+              style={{ width: '100%' }}
+            />
+          </div>
+        )}
+      </div>
+      <div className='flex justify-end mt-2'>
+        <Space>
+          <Button
+            type='primary'
+            disabled={!(selectedStore && selectedUser)}
+            onClick={handleSubmit}
+            loading={orderLoading}>
+            Show Previous Orders
+          </Button>
+        </Space>
       </div>
       <MyOrders
         orderData={orderData}

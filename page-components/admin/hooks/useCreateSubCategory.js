@@ -1,5 +1,4 @@
-import { message } from 'antd'
-import showMessage from '@/utils/showMessage'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useCreateSubCategory = ({ category }) => {
@@ -7,6 +6,8 @@ const useCreateSubCategory = ({ category }) => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const createSubCategory = async ({ formData }) => {
     const hide = message.loading('Loading...', 0)
@@ -16,13 +17,11 @@ const useCreateSubCategory = ({ category }) => {
         url: `/category/${category}/subCategory/create`,
       })
       hide()
-      triggerData?.hasError
-        ? showMessage('Something Went Wrong', 'error')
-        : showMessage('Success', 'success')
+      message.success('Sub Category Created Successfully')
     } catch (err) {
       console.error(err, 'err')
       hide()
-      showMessage(err?.data?.message || 'Something Went Wrong', 'error')
+      message.error(err?.data?.message || 'Something Went Wrong')
     }
   }
 

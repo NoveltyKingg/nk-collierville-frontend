@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import { useRouter } from 'next/router'
 import useRequest from '@/request'
 import useGetContext from '@/common/context/useGetContext'
@@ -11,6 +11,8 @@ const useRepeatPreviousOrder = ({ storeId }) => {
   const { push } = useRouter()
   const { noveltyData } = useGetContext()
   const { profile } = noveltyData || {}
+
+  const { message } = App.useApp()
 
   const repeatPreviousOrder = async (orderId) => {
     const hide = message.loading('Loading...', 0)

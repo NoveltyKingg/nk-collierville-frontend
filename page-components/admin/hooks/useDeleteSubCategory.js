@@ -1,6 +1,6 @@
-import showMessage from '@/utils/showMessage'
+import showMessage from '@/utils/show-message'
 import useRequest from '@/request'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useDeleteSubCategory = ({
   subCategoryId,
@@ -11,6 +11,8 @@ const useDeleteSubCategory = ({
     { method: 'DELETE' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const deleteSubCategory = async () => {
     const hide = message.loading('Loading...', 0)

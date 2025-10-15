@@ -1,6 +1,7 @@
 export { default as AdminIcon } from './admin-icon.svg'
 export { default as ProfileIcon } from './profile-icon.svg'
 export { default as LogoutIcon } from './logout-icon.svg'
-export { default as ChangeStoreIcon } from './store-icon.svg'
 export { default as CartIcon } from './cart-icon.svg'
 export { default as AddNewStoreIcon } from './add-new-store-icon.svg'
+export { default as ChangeStoreIcon } from './store-icon.svg'
+export { default as LoginIcon } from './login-icon.svg'

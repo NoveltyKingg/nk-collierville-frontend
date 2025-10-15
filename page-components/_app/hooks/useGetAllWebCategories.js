@@ -1,6 +1,6 @@
 import useRequest from '@/request'
 import formatCategories from '@/utils/format-categories'
-import { message } from 'antd'
+import { App } from 'antd'
 import useGetContext from '@/common/context/useGetContext'
 import axios from 'axios'
 
@@ -11,6 +11,7 @@ const useGetAllWebCategories = () => {
   )
 
   const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
+  const { message } = App.useApp()
 
   const getAllWebCategories = async () => {
     try {

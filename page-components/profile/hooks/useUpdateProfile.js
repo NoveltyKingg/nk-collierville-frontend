@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useUpdateProfile = ({ userId }) => {
@@ -6,6 +6,8 @@ const useUpdateProfile = ({ userId }) => {
     { method: 'POST', url: `/user/${userId}/profile` },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const updateProfile = async ({ formData }) => {
     const hide = message.loading('Loading...', 0)

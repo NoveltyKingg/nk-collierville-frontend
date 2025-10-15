@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useGetCustomers = (status) => {
@@ -6,6 +6,8 @@ const useGetCustomers = (status) => {
     { method: 'GET' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const getCustomers = async () => {
     try {

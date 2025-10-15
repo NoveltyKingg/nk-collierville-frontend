@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useAddNewStore = () => {
@@ -6,6 +6,8 @@ const useAddNewStore = () => {
     { method: 'POST' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
 
   const addNewStore = async ({ formData, userId, handleClose }) => {
     const hide = message.loading('Loading...', 0)

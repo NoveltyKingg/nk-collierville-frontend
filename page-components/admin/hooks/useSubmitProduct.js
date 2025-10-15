@@ -1,12 +1,15 @@
 import showMessage from '@/utils/show-message'
 import useRequest from '@/request'
-import { message } from 'antd'
+import { App } from 'antd'
 
 const useSubmitProduct = () => {
   const [{ data, loading }, trigger] = useRequest(
     { method: 'POST', url: 'product/save' },
     { manual: true },
   )
+
+  const { message } = App.useApp()
+
   const submitProduct = async ({ formData, setDisabled }) => {
     const hide = message.loading('Loading...', 0)
     try {

@@ -87,8 +87,7 @@ function VaritiesModal({
       }
       onCancel={handleCancel}
       width={520}
-      footer={null}
-      destroyOnClose>
+      footer={null}>
       <Form
         form={form}
         layout='vertical'
@@ -97,7 +96,6 @@ function VaritiesModal({
         <Form.Item label='Name' name='name' rules={[{ required: true }]}>
           <Input placeholder='Enter variety name' />
         </Form.Item>
-
         <Form.Item label='Stock' name='stock' rules={[{ required: true }]}>
           <InputNumber
             min={0}
@@ -105,11 +103,9 @@ function VaritiesModal({
             onWheel={(e) => e.currentTarget.blur()}
           />
         </Form.Item>
-
         <Form.Item label='Barcodes' name='barcodes'>
           <TextArea rows={3} placeholder='Enter one barcode per line' />
         </Form.Item>
-
         <Form.Item label='Images' name='images' rules={[{ required: true }]}>
           <Upload
             listType='picture-card'
@@ -120,7 +116,6 @@ function VaritiesModal({
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>
-
         <div className='flex justify-end gap-2'>
           <Button onClick={handleCancel}>Cancel</Button>
           <Button type='primary' htmlType='submit' loading={loading}>
