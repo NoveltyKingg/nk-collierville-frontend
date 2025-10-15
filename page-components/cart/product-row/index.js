@@ -50,8 +50,6 @@ function ProductRow({ product, getCartItems }) {
     }
   }
 
-  console.log(product, 'VALUESSSS')
-
   const varietiesCount =
     Object.values(product?.varietiesCount || {}).length || 0
 

@@ -21,7 +21,6 @@ const useGetProduct = ({ setFlavoursData }) => {
         imageUrl: item?.imageUrl,
         stock: item?.stock,
       }))
-      console.log(flavoursData, 'FLAVDATA')
       setFlavoursData(flavoursData)
     } catch (err) {
       console.error(err)

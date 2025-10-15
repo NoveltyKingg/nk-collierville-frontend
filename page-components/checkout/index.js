@@ -72,8 +72,6 @@ export default function Checkout() {
     completeCheckout(deliveryAddress?.[selectedIdx], setOrderCompleted)
   }
 
-  console.log(selectedIdx, 'SelectedIDX')
-
   if (orderCompleted) return <OrderCompletion />
 
   return (

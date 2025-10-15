@@ -46,8 +46,6 @@ function Profile() {
     setIsEdit(name)
   }
 
-  console.log(profile, 'profileee')
-
   useEffect(() => {
     if (profile?.userId)
       getProfile({ setPersonalDetails, userId: profile?.userId })
