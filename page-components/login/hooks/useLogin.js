@@ -19,7 +19,7 @@ const useLogin = () => {
       message.success('Logged In Successfully')
     } catch (error) {
       console.error('error: ', error)
-      message.success(error?.data?.message || 'Unable to login')
+      message.error(error?.data?.message || 'Unable to login')
     }
   }
 
