@@ -56,7 +56,7 @@ export default function Footer() {
               <p className='text-[13px] uppercase tracking-wider text-white/70 mb-3'>
                 Categories
               </p>
-              <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-2 text-[14px]'>
+              {/* <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-2 text-[14px]'>
                 {categories.map((c) => (
                   <button
                     key={c?.value}
@@ -65,7 +65,7 @@ export default function Footer() {
                     {c?.label}
                   </button>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
