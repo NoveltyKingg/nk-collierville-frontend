@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { App } from 'antd'
 import useRequest from '@/request'
 
 const useDeleteVariety = ({ varietyId }) => {

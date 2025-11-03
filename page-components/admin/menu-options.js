@@ -80,7 +80,11 @@ export const MENU_OPTIONS = ({ customersData }) => [
     type: 'divider',
   },
   {
-    label: <Badge count={customersData?.length || 0}>Customers</Badge>,
+    label: (
+      <Badge count={customersData?.length || 0} className='!text-white'>
+        Customers
+      </Badge>
+    ),
     key: 'customers',
     children: [
       {
@@ -89,7 +93,9 @@ export const MENU_OPTIONS = ({ customersData }) => [
       },
       {
         label: (
-          <Badge count={customersData?.length || 0}>Pending Customers</Badge>
+          <Badge count={customersData?.length || 0} className='!text-white'>
+            Pending Customers
+          </Badge>
         ),
         key: 'pending-customers',
       },

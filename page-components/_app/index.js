@@ -8,6 +8,7 @@ import { StyleProvider } from '@ant-design/cssinjs'
 import enUS from 'antd/locale/en_US'
 import AuthenticationProvider from '@/common/AuthenticationProvider'
 import ArticleProvider from '@/common/context'
+import { theme } from './theme'
 
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
@@ -20,18 +21,8 @@ const noLayoutRoutes = [
   '/404',
   '/options',
   '/signup',
+  '/admin',
 ]
-
-const theme = {
-  token: {
-    colorPrimary: '#385f43',
-    colorInfo: '#385f43',
-    colorSuccess: '#4bb117',
-    colorError: '#ff4d4d',
-    fontFamily: 'Ubuntu, sans-serif',
-    zIndexPopupBase: 20000,
-  },
-}
 
 export default function App({ Component, ...rest }) {
   const { pageProps, router } = rest

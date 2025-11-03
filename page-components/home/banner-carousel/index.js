@@ -1,6 +1,5 @@
 import React from 'react'
-import { Carousel, Skeleton } from 'antd'
-import Image from 'next/image'
+import { Carousel, Skeleton, Image } from 'antd'
 import { useRouter } from 'next/router'
 
 export default function BannerCarousel({ banners = [], loading = false }) {
@@ -14,14 +13,14 @@ export default function BannerCarousel({ banners = [], loading = false }) {
           <Skeleton.Image className='!w-full !h-full' />
         </div>
       ) : (
-        <Carousel autoplay dots>
+        <Carousel autoplay dots fade speed={1500}>
           {banners.map((b, idx) => (
-            <div key={idx} className='relative h-[38vh] md:h-[52vh]'>
+            <div key={idx} className='relative '>
               <Image
                 src={b.imageUrl}
                 alt={`Banner ${idx + 1}`}
-                fill
-                sizes='(max-width: 1024px) 100vw, 50vw'
+                width={'100%'}
+                preview={false}
                 className={`object-cover ${b.linkUrl ? 'cursor-pointer' : ''}`}
                 onClick={() => handleClick(b.linkUrl)}
                 priority={idx === 0}

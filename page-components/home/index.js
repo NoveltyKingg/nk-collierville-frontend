@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { Card, Avatar, Flex, Skeleton } from 'antd'
+import { Card, Skeleton, Image } from 'antd'
 import { Carousel } from 'antd'
-import Image from 'next/image'
+// import Image from 'next/image'
 import { useRouter } from 'next/router'
 import useGetPromotionalBanners from './hooks/useGetPromotionalBanners'
 import useGetClearenceBanners from './hooks/useGetClearenceBanners'
@@ -38,7 +38,7 @@ export default function Home() {
   return (
     <div className='w-full'>
       <div className='w-full'>
-        <Carousel autoplay dots arrows className='w-full'>
+        <Carousel autoplay dots arrows fade speed={1500}>
           {homeLoading && (
             <div className='relative h-[38vh] md:h-[56vh]'>
               <Skeleton.Image className='!w-full !h-full' />
@@ -46,13 +46,14 @@ export default function Home() {
           )}
           {!homeLoading &&
             Object.entries(homeBanners || {}).map(([src], i) => (
-              <div key={i} className='relative h-[38vh] md:h-[56vh]'>
+              <div key={i} className='relative h-full'>
                 <Image
                   src={src}
                   alt={`Home banner ${i + 1}`}
-                  fill
                   priority={i === 0}
-                  sizes='100vw'
+                  preview={false}
+
+                  // width={'100%'}
                 />
               </div>
             ))}

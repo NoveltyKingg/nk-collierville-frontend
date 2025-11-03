@@ -1,3 +1,1 @@
-import Contact from '@/page-components/contact'
-
-export default Contact
+export { default } from '@/page-components/contact'

@@ -16,7 +16,7 @@ const useGetSignupOTP = () => {
         data: { email },
       })
       hide()
-      message.success('An OTP has been sent to your email address', 0)
+      message.success('An OTP has been sent to your email address')
     } catch (error) {
       console.error(error, 'error')
       hide()

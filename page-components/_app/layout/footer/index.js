@@ -11,9 +11,9 @@ export default function Footer() {
   const { push } = useRouter()
 
   return (
-    <footer className='bg-[#2F5A3B] text-white'>
+    <footer className='bg-[#38455e] text-white bottom-0'>
       <div className='mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8 py-4'>
-        <div className='bg-white text-[#1a1a1a] rounded-2xl shadow-lg p-4 md:p-4'>
+        <div className='bg-[#f5f5f5] text-[#1a1a1a] rounded-2xl shadow-lg p-4 md:p-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div className='space-y-1'>
               <p className='text-[15px] font-semibold'>
@@ -37,7 +37,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className='bg-[#2F5A3B]'>
+      <div className='bg-[#38455e]'>
         <div className='mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8 py-2'>
           <div className='grid grid-cols-1 md:grid-cols-4 gap-10'>
             <div className='space-y-3'>
@@ -52,7 +52,7 @@ export default function Footer() {
                 <button className='text-left hover:underline'>FAQ</button>
               </div>
             </div>
-            <div className='md:col-span-3'>
+            {/* <div className='md:col-span-3'>
               <p className='text-[13px] uppercase tracking-wider text-white/70 mb-3'>
                 Categories
               </p>
@@ -66,7 +66,7 @@ export default function Footer() {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className='h-px bg-white/10' />

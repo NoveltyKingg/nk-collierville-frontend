@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Header from './header'
+import SideBarMenu from './sidebar-menu'
 import Footer from './footer'
 import useGetAllWebCategories from '../hooks/useGetAllWebCategories'
-import useGetContext from '@/common/context/useGetContext'
-import useIsMobile from '@/utils/useIsMobile'
-import { useRouter } from 'next/router'
 import { Badge } from 'antd'
 import {
   AddNewStoreIcon,
@@ -14,7 +11,6 @@ import {
   ProfileIcon,
 } from '@/assets/header'
 import { HomeIcon } from '@/assets/common'
-import setCookie from '@/utils/set-cookie'
 import AddNewStore from './add-new-store'
 
 const MobileDock = ({
@@ -27,8 +23,6 @@ const MobileDock = ({
   cartDot = false,
 }) => (
   <div className='sticky bottom-0 z-[60]'>
-    {/* gradient border top */}
-    <div className='h-[1px] bg-gradient-to-r from-transparent via-black/10 to-transparent' />
     <div className='backdrop-blur bg-[#EAE0D5]/95 border-t border-black/10 px-5 py-3'>
       <div className='flex items-center justify-between max-w-[680px] mx-auto'>
         <button
@@ -70,33 +64,15 @@ const MobileDock = ({
           <LogoutIcon />
         </button>
       </div>
-      {/* safe-area on iOS */}
-      <div className='h-[env(safe-area-inset-bottom)]' />
     </div>
   </div>
 )
 
 const Layout = ({ children, layout }) => {
   const { getAllWebCategories } = useGetAllWebCategories()
-  const { noveltyData } = useGetContext()
-  const { profile } = noveltyData || {}
-  const { isMobile } = useIsMobile()
-  const { push } = useRouter()
   const [openAddNewStoreModal, setOpenAddNewStoreModal] = useState(false)
 
   const toggleAddStore = () => setOpenAddNewStoreModal((s) => !s)
-
-  const logout = () => {
-    setCookie('nk-collierville-token', 'expired', -1)
-  }
-
-  const routeGuard = (path) => {
-    if (!noveltyData?.profile?.storeId) push('/login')
-    else push(path)
-  }
-
-  const goCart = () =>
-    profile?.isLoggedIn ? push(`/${profile?.storeId}/cart`) : push('/login')
 
   useEffect(() => {
     getAllWebCategories()
@@ -104,24 +80,14 @@ const Layout = ({ children, layout }) => {
 
   return (
     <div className='min-h-screen flex flex-col bg-[#f5f5f5]'>
-      {layout && <Header />}
-      <main className='flex-1 pt-[1px]'>
-        <div className='mx-auto w-full'>{children}</div>
-      </main>
-      {layout && <Footer />}
-      {layout && isMobile && (
-        <MobileDock
-          onHome={() => push('/')}
-          onAdmin={() => routeGuard('/admin')}
-          onAddStore={toggleAddStore}
-          onProfile={() =>
-            routeGuard(`/${noveltyData?.profile?.storeId}/profile`)
-          }
-          onCart={goCart}
-          onLogout={logout}
-          cartDot={profile?.cartItems > 0}
-        />
-      )}
+      <div className='flex flex-1 '>
+        {layout && <SideBarMenu />}
+        <div className='flex-1 min-w-0'>
+          <main>{children}</main>
+          {layout && <Footer />}
+        </div>
+      </div>
+
       {openAddNewStoreModal && (
         <AddNewStore
           openAddStore={openAddNewStoreModal}

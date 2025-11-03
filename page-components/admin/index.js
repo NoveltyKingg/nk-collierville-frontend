@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Layout, Menu } from 'antd'
-import {
-  DashboardOutlined,
-  ShoppingOutlined,
-  UserOutlined,
-  FileTextOutlined,
-  SettingOutlined,
-  PictureOutlined,
-} from '@ant-design/icons'
+import { FloatButton, Layout, Menu } from 'antd'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import useGetCategories from './hooks/useGetCategory'
@@ -91,7 +83,6 @@ const AdminPanel = () => {
     'clearence-banners': <Banners type='clearance' />,
     'active-customers': <ActiveCustomers />,
     'pending-customers': <PendingCustomers />,
-    // customers: <ListCustomers />,
     'active-orders': <ActiveOrders />,
     'previous-orders': <PreviousOrders />,
     'new-arrivals': <NewArrivals />,
@@ -100,35 +91,6 @@ const AdminPanel = () => {
       <Barcodes SUBCATEGORIES={SUBCATEGORIES} CATEGORIES={CATEGORIES} />
     ),
   }
-
-  const menuItems = [
-    {
-      key: 'banners',
-      icon: <PictureOutlined />,
-      label: 'Banners',
-      children: [
-        { key: 'home-banners', label: 'Home Page Banners' },
-        { key: 'promotional-banners', label: 'Promotional Banners' },
-        { key: 'clearance-banners', label: 'Clearence Banners' },
-      ],
-    },
-    { key: 'barcodes', icon: <FileTextOutlined />, label: 'Bar Codes' },
-    {
-      key: 'products',
-      icon: <ShoppingOutlined />,
-      label: 'Products',
-      children: [{ key: 'all-products', label: 'All Products' }],
-    },
-    {
-      key: 'sub-categories',
-      icon: <SettingOutlined />,
-      label: 'Sub Categories',
-    },
-    { key: 'varities', icon: <SettingOutlined />, label: 'Varities' },
-    { key: 'customers', icon: <UserOutlined />, label: 'Customers' },
-    { key: 'orders', icon: <FileTextOutlined />, label: 'Orders' },
-    { key: 'statements', icon: <DashboardOutlined />, label: 'Statements' },
-  ]
 
   useEffect(() => {
     if (tab) {
@@ -148,25 +110,25 @@ const AdminPanel = () => {
     <div className='flex min-h-screen'>
       <Sider
         onCollapse={setCollapsed}
-        style={{ background: '#ffffff' }}
+        style={{ background: '#38455e' }}
         width={250}>
-        <div className='p-4 text-start font-bold text-lg'>
-          {collapsed ? 'AD' : 'Admin Panel'}
+        <div className='p-4 text-start font-bold text-lg text-white'>
+          {collapsed ? 'AD' : 'ADMIN PANEL'}
         </div>
         <Menu
           mode='inline'
           items={OPTIONS}
           selectedKeys={[selectedKey]}
+          className='flex-1 overflow-auto !bg-[#38455e]'
           defaultOpenKeys={['banners']}
           onClick={(info) => {
             setSelectedKey(info.key)
-            router.push(`/admin?tab=${info.key}`, undefined, {
-              shallow: true,
-            })
+            router.push(`/admin?tab=${info.key}`)
           }}
         />
       </Sider>
       <Content className='p-6 bg-gray-100 w-full'>{ActiveComponent}</Content>
+      <FloatButton />
     </div>
   )
 }

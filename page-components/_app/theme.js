@@ -1,0 +1,19 @@
+export const theme = {
+  token: {
+    colorPrimary: '#38455e',
+    colorInfo: '#38455e',
+    colorSuccess: '#4bb117',
+    colorError: '#ff4d4d',
+    fontFamily: 'Ubuntu, sans-serif',
+    zIndexPopupBase: 20000,
+  },
+  components: {
+    Menu: {
+      itemActiveBg: '#ffffff',
+      itemHoverColor: '#FFFFFF',
+      itemSelectedColor: '#FFFFFF',
+      itemColor: '#FFFFFF',
+      subMenuItemSelectedColor: '#ffffff',
+    },
+  },
+}

@@ -9,7 +9,7 @@ const config = {
   theme: {
     extend: {
       colors: {
-        main: '#385f43',
+        main: '#38455e',
         footer: '#f3dbc3',
         footerText: '#341809',
       },

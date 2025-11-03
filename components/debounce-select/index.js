@@ -66,6 +66,7 @@ function DebounceSelect({
         if (isNavigatingRef.current) return
         debounceFetcher(val)
       }}
+      options={options}
       onInputKeyDown={handleInputKeyDown}
       onBlur={() => {
         isNavigatingRef.current = false

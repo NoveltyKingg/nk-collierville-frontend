@@ -10,7 +10,8 @@ const SignUp = () => {
   const [password, setPassword] = useState()
   const [confirmPassword, setConfirmPassword] = useState()
   const [otp, setOtp] = useState()
-  const { getSignupOTP, loading, signUpOTPData } = useGetSignupOTP()
+  const { getSignupOTP, loading } = useGetSignupOTP()
+  const [otpConfirmed, setOtpConfirmed] = useState(false)
 
   const handleChangeValues = (name, value) => {
     name(value)
@@ -20,12 +21,13 @@ const SignUp = () => {
 
   const { createSignup } = useCreateSignup()
 
-  const handleGetOTP = () => {
-    getSignupOTP({ email })
+  const handleGetOTP = async () => {
+    await getSignupOTP({ email })
+    setOtpConfirmed(true)
   }
 
   const handleSignUp = () => {
-    createSignup({ email, password, confirmPassword })
+    createSignup({ email, password, otp })
   }
 
   return (
@@ -68,7 +70,7 @@ const SignUp = () => {
                   variant='underlined'
                 />
               </Form.Item>
-              {signUpOTPData ? (
+              {otpConfirmed ? (
                 <div
                   className=' w-full flex items-center justify-end cursor-pointer px-8 mb-[12px]'
                   onClick={loading ? () => {} : handleGetOTP}>
@@ -84,7 +86,7 @@ const SignUp = () => {
                 </Button>
               )}
             </div>
-            {signUpOTPData && (
+            {otpConfirmed && (
               <div className='w-full flex flex-col items-center gap-4'>
                 <Form.Item className='!mb-[12px]'>
                   <Input.OTP
@@ -121,7 +123,7 @@ const SignUp = () => {
                   <Button
                     type='primary'
                     htmlType='submit'
-                    onPress={handleLogin}
+                    onPress={handleSignUp}
                     loading={loading}
                     disabled={!email || !password || !confirmPassword || !otp}>
                     Sign Up
