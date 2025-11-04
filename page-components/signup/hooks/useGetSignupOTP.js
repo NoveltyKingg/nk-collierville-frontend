@@ -20,7 +20,7 @@ const useGetSignupOTP = () => {
     } catch (error) {
       console.error(error, 'error')
       hide()
-      message.error(error?.data?.message || 'Unable to Signup', 0)
+      message.error(error?.data?.message || 'Unable to Signup')
     }
   }
 

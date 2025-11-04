@@ -1,5 +1,6 @@
 import useRequest from '@/request'
 import { App } from 'antd'
+import { useRouter } from 'next/router'
 
 const useCreateSignup = () => {
   const [{ data, loading }, trigger] = useRequest(
@@ -8,6 +9,7 @@ const useCreateSignup = () => {
   )
 
   const { message } = App.useApp()
+  const { push } = useRouter()
 
   const createSignup = async (payload) => {
     const hide = message.loading('Loading...', 0)
@@ -17,6 +19,7 @@ const useCreateSignup = () => {
       })
       hide()
       message.success('Sucessfully created your account')
+      push('/registration')
     } catch (error) {
       console.error('error: ', error)
       hide()
