@@ -27,7 +27,11 @@ const SignUp = () => {
   }
 
   const handleSignUp = () => {
-    createSignup({ email, password, otp })
+    if (otpConfirmed) {
+      createSignup({ email, password, otp })
+    } else {
+      handleGetOTP()
+    }
   }
 
   return (

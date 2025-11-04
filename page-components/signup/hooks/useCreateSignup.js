@@ -1,25 +1,24 @@
 import useRequest from '@/request'
+import setCookie from '@/utils/set-cookie'
 import { App } from 'antd'
-import { useRouter } from 'next/router'
 
 const useCreateSignup = () => {
   const [{ data, loading }, trigger] = useRequest(
-    { method: 'post', url: '/auth/signup' },
+    { method: 'post', url: '/auth/signupWithOtp' },
     { manual: true },
   )
 
   const { message } = App.useApp()
-  const { push } = useRouter()
 
   const createSignup = async (payload) => {
     const hide = message.loading('Loading...', 0)
     try {
-      await trigger({
+      const triggerData = await trigger({
         data: payload,
       })
       hide()
-      message.success('Sucessfully created your account')
-      push('/registration')
+      setCookie('nk-collierville-token', triggerData?.data)
+      location.replace('/registration')
     } catch (error) {
       console.error('error: ', error)
       hide()

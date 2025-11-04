@@ -6,6 +6,7 @@ import CartIcon from './cart-icon.svg'
 import AddNewStoreIcon from './add-new-store-icon.svg'
 import ChangeStoreIcon from './store-icon.svg'
 import LoginIcon from './login-icon.svg'
+import MyOrdersIcon from './my-orders-icon.svg'
 
 export {
   HomeIcon,
@@ -16,4 +17,5 @@ export {
   AddNewStoreIcon,
   ChangeStoreIcon,
   LoginIcon,
+  MyOrdersIcon,
 }
