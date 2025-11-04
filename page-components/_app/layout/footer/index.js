@@ -45,10 +45,21 @@ export default function Footer() {
                 Info
               </p>
               <div className='flex flex-col gap-2 text-[14px]'>
-                <button className='text-left hover:underline'>
+                <button
+                  className='text-left hover:underline cursor-pointer'
+                  onClick={() => push('/privacy')}>
                   Store Policy
                 </button>
-                <button className='text-left hover:underline'>Returns</button>
+                <button
+                  className='text-left hover:underline cursor-pointer'
+                  onClick={() => push('/about')}>
+                  About Us
+                </button>
+                <button
+                  className='text-left hover:underline'
+                  onClick={() => push('/contact')}>
+                  Contact Us
+                </button>
                 <button className='text-left hover:underline'>FAQ</button>
               </div>
             </div>
