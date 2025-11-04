@@ -16,6 +16,7 @@ import {
   LoginIcon,
   HomeIcon,
 } from '@/assets/header'
+import { NoveltyIcon } from '@/assets/common'
 
 const SideBarMenu = () => {
   const [collapsed, setCollapsed] = useState(false)
@@ -84,19 +85,7 @@ const SideBarMenu = () => {
     }
   }
 
-  const CATEGORY_ITEMS = general?.categories?.map((item) => ({
-    label: item?.label,
-    key: `category - ${item?.value}`,
-    type: 'category',
-    children: general?.subCategories
-      ?.filter((sub) => sub?.cat_id === item?.value)[0]
-      ?.values.map((subItem) => ({
-        label: subItem?.label,
-        key: `subCategory - ${subItem?.value}`,
-        type: 'subCategory',
-      })),
-  }))
-
+  const CATEGORY_ITEMS = []
   return (
     <aside
       className={
@@ -106,8 +95,9 @@ const SideBarMenu = () => {
         <button
           onClick={toggleCollapse}
           className='flex items-center gap-2 overflow-hidden'>
-          <div className='w-9 h-9 rounded-full bg-white grid place-items-center'>
-            <span className='text-[12px] font-bold'>NK</span>
+          <div className='w-10 h-10 rounded-full bg-white grid place-items-center'>
+            <NoveltyIcon />
+            {/* <span className='text-[12px] font-bold'>NK</span> */}
           </div>
           {!collapsed && (
             <span className='font-semibold tracking-wide text-white'>
