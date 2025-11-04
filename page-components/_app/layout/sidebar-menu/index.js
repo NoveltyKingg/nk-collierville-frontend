@@ -23,14 +23,12 @@ const SideBarMenu = () => {
   const [openAddNewStoreModal, setOpenAddNewStoreModal] = useState(false)
 
   const { noveltyData } = useGetContext()
-  const { profile, general } = noveltyData || {}
+  const { profile } = noveltyData || {}
   const { push } = useRouter()
   const { createLogin } = useCreateLogin()
 
   const toggleCollapse = () => setCollapsed((p) => !p)
   const toggleAddStore = () => setOpenAddNewStoreModal((s) => !s)
-
-  console.log(noveltyData, 'noveltyData')
 
   const logout = () => {
     setCookie('nk-collierville-token', 'expired', -1)
@@ -97,7 +95,6 @@ const SideBarMenu = () => {
           className='flex items-center gap-2 overflow-hidden'>
           <div className='w-10 h-10 rounded-full bg-white grid place-items-center'>
             <NoveltyIcon />
-            {/* <span className='text-[12px] font-bold'>NK</span> */}
           </div>
           {!collapsed && (
             <span className='font-semibold tracking-wide text-white'>
