@@ -15,6 +15,7 @@ import {
   ChangeStoreIcon,
   LoginIcon,
   HomeIcon,
+  MyOrdersIcon,
 } from '@/assets/header'
 import { NoveltyIcon } from '@/assets/common'
 
@@ -44,28 +45,33 @@ const SideBarMenu = () => {
       )
       .filter(Boolean) || []
 
-  const menuItems = useMemo(
-    () => [
-      { key: 'admin', icon: <AdminIcon />, label: 'ADMIN' },
+  const menuItems = useMemo(() => {
+    const items = [
       { key: 'profile', icon: <ProfileIcon />, label: 'PROFILE' },
       { key: 'cart', icon: <CartIcon />, label: 'CART' },
       { key: 'addStore', icon: <AddNewStoreIcon />, label: 'ADD NEW STORE' },
       { key: 'home', label: 'HOME', icon: <HomeIcon /> },
-      {
+      { key: 'myOrders', label: 'MY ORDERS', icon: <MyOrdersIcon /> },
+    ]
+
+    if (profile?.status === 'ADMIN') {
+      items.unshift({ key: 'admin', icon: <AdminIcon />, label: 'ADMIN' })
+    }
+
+    if (stores?.length > 0) {
+      items.push({
         key: 'changeStore',
         icon: <ChangeStoreIcon />,
         label: 'CHANGE STORE',
-        children:
-          stores?.length > 0
-            ? stores.map((s) => ({
-                key: `store-${s.key}`,
-                label: s.label,
-              }))
-            : null,
-      },
-    ],
-    [stores],
-  )
+        children: stores.map((s) => ({
+          key: `store-${s.key}`,
+          label: s.label,
+        })),
+      })
+    }
+
+    return items
+  }, [profile?.status, stores])
 
   const onMenuClick = async ({ key }) => {
     if (key === 'admin') return routeGuard('/admin')
@@ -73,6 +79,7 @@ const SideBarMenu = () => {
       return routeGuard(`/${profile?.storeId || ''}/profile`)
     if (key === 'cart') return routeGuard(`/${profile?.storeId || ''}/cart`)
     if (key === 'home') return push('/')
+    if (key === 'myOrders') return push('/my-orders')
     if (key === 'addStore') return toggleAddStore()
 
     if (key.startsWith('store-')) {

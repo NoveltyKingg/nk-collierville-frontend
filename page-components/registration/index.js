@@ -22,6 +22,8 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
 
   const { countriesData } = useGetCountries()
   const { noveltyData } = useGetContext()
+
+  const email = noveltyData?.profile?.email || sessionStorage.getItem('email')
   const { getStatesByCountry, statesData } = useGetStateByCountry()
   const { getCitiesByState, citiesData } = useGetCitiesByState()
   const { addNewStore, newStoreLoading } = useAddNewStore()
@@ -145,7 +147,12 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
                 name='email'
                 label='Email'
                 rules={[{ required: !isAddNewStore }]}>
-                <Input readOnly placeholder='Enter your Email' type='text' />
+                <Input
+                  readOnly
+                  placeholder='Enter your Email'
+                  type='text'
+                  value={email}
+                />
               </Form.Item>
               <Form.Item
                 name='mobileNumber'
