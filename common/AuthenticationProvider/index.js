@@ -14,12 +14,10 @@ const UNAUTH_TEMPLATES = ['/login', '/signup']
 
 function templateToRegex(template) {
   if (template.startsWith('/[')) {
-    // dynamic store segment
     const re = template.replace('/[store_id]', '/[^/]+').replace(/\/$/, '')
     return new RegExp(`^${re}(?:\\/)?$`)
   }
   if (template === '/admin') {
-    // treat /admin and all children as private + admin-only
     return /^\/admin(?:\/.*)?$/
   }
   const re = template.replace(/\/$/, '')
