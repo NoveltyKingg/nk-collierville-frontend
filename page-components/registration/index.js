@@ -95,6 +95,7 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
 
   useEffect(() => {
     form.setFieldValue('country', country)
+    form.setFieldValue('email', email)
     getStatesByCountry({ country: 'United States' })
   }, [])
 
@@ -147,12 +148,7 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
                 name='email'
                 label='Email'
                 rules={[{ required: !isAddNewStore }]}>
-                <Input
-                  readOnly
-                  placeholder='Enter your Email'
-                  type='text'
-                  value={email}
-                />
+                <Input readOnly placeholder='Enter your Email' type='text' />
               </Form.Item>
               <Form.Item
                 name='mobileNumber'
