@@ -9,11 +9,15 @@ const useGetCartItems = () => {
 
   const { message } = App.useApp()
 
-  const getCartItems = ({ storeId }) => {
+  const getCartItems = async ({ storeId }) => {
+    const hide = message.loading('Loading...', 0)
     try {
-      trigger({ url: `store/${storeId}/cart` })
+      await trigger({ url: `store/${storeId}/cart` })
+      hide()
+      message.success('Cart Items Fetched Successfully')
     } catch (error) {
       console.error(error, 'error')
+      hide()
       message.error(error?.data?.message || 'Something Went Wrong')
     }
   }

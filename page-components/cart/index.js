@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { Card, Input, Button, Empty, Divider } from 'antd'
+import { Card, Input, Button, Empty, Divider, Skeleton } from 'antd'
 import { ShoppingOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/router'
 import useGetContext from '@/common/context/useGetContext'
@@ -12,7 +12,7 @@ const currency = (n = 0) =>
     currency: 'USD',
   }).format(Number(n || 0))
 
-const FREE_SHIPPING_MIN = 500
+const FREE_SHIPPING_MIN = 1000
 
 function Cart() {
   const { noveltyData } = useGetContext()
@@ -76,6 +76,7 @@ function Cart() {
               </div>
             </>
           )}
+          {loading && <Skeleton active paragraph={{ rows: 4 }} />}
         </Card>
         <div className='h-fit'>
           <Card className='rounded-xl'>

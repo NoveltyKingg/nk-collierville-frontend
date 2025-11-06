@@ -1,78 +1,30 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Divider, Button } from 'antd'
 import SideBarMenu from './sidebar-menu'
 import Footer from './footer'
 import useGetAllWebCategories from '../hooks/useGetAllWebCategories'
-import { Badge } from 'antd'
-import {
-  AddNewStoreIcon,
-  AdminIcon,
-  CartIcon,
-  LogoutIcon,
-  ProfileIcon,
-} from '@/assets/header'
-import { HomeIcon } from '@/assets/common'
 import AddNewStore from './add-new-store'
-
-const MobileDock = ({
-  onHome,
-  onAdmin,
-  onAddStore,
-  onProfile,
-  onCart,
-  onLogout,
-  cartDot = false,
-}) => (
-  <div className='sticky bottom-0 z-[60]'>
-    <div className='backdrop-blur bg-[#EAE0D5]/95 border-t border-black/10 px-5 py-3'>
-      <div className='flex items-center justify-between max-w-[680px] mx-auto'>
-        <button
-          aria-label='Home'
-          onClick={onHome}
-          className='p-2 rounded-xl hover:bg-black/5 transition'>
-          <HomeIcon style={{ fontSize: 22, color: '#222' }} />
-        </button>
-        <button
-          aria-label='Admin'
-          onClick={onAdmin}
-          className='p-2 rounded-xl hover:bg-black/5 transition'>
-          <AdminIcon />
-        </button>
-        <button
-          aria-label='Add store'
-          onClick={onAddStore}
-          className='p-2 rounded-xl hover:bg-black/5 transition'>
-          <AddNewStoreIcon />
-        </button>
-        <button
-          aria-label='Profile'
-          onClick={onProfile}
-          className='p-2 rounded-xl hover:bg-black/5 transition'>
-          <ProfileIcon />
-        </button>
-        <Badge dot={cartDot}>
-          <button
-            aria-label='Cart'
-            onClick={onCart}
-            className='p-2 rounded-xl hover:bg-black/5 transition'>
-            <CartIcon />
-          </button>
-        </Badge>
-        <button
-          aria-label='Logout'
-          onClick={onLogout}
-          className='p-2 rounded-xl hover:bg-black/5 transition'>
-          <LogoutIcon />
-        </button>
-      </div>
-    </div>
-  </div>
-)
+import useIsMobile from '@/utils/useIsMobile'
+import MobileFooter from './mobile-footer'
+import MobileHeader from './mobile-header'
+import setCookie from '@/utils/set-cookie'
+import { useRouter } from 'next/router'
+import useGetContext from '@/common/context/useGetContext'
 
 const Layout = ({ children, layout }) => {
   const { getAllWebCategories } = useGetAllWebCategories()
   const [openAddNewStoreModal, setOpenAddNewStoreModal] = useState(false)
+  const { isMobile } = useIsMobile()
+  const { push } = useRouter()
+  const { noveltyData } = useGetContext()
+  const { profile } = noveltyData || {}
 
   const toggleAddStore = () => setOpenAddNewStoreModal((s) => !s)
+
+  const logout = () => {
+    setCookie('nk-collierville-token', 'expired', -1)
+    push('/login')
+  }
 
   useEffect(() => {
     getAllWebCategories()
@@ -80,11 +32,24 @@ const Layout = ({ children, layout }) => {
 
   return (
     <div className='min-h-screen flex flex-col bg-[#f5f5f5]'>
-      <div className='flex flex-1 '>
-        {layout && <SideBarMenu />}
+      {layout && isMobile && (
+        <div className='sticky top-0 z-50'>
+          <MobileHeader profile={profile} />
+        </div>
+      )}
+
+      <div className='flex flex-1'>
+        {layout && !isMobile && <SideBarMenu />}
         <div className='flex-1 min-w-0'>
           <main>{children}</main>
           {layout && <Footer />}
+          {isMobile && layout && (
+            <MobileFooter
+              profile={profile}
+              onAddStore={toggleAddStore}
+              onLogout={logout}
+            />
+          )}
         </div>
       </div>
 

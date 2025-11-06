@@ -21,7 +21,7 @@ const useSubmitRegistration = () => {
       message.success(
         'Registration Successfull. Give our executive some time to accept your registration',
       )
-      setCookie('novelty-token', triggerData?.data)
+      setCookie('nk-collierville-token', triggerData?.data)
       push('/')
     } catch (error) {
       console.error(error, 'error')
