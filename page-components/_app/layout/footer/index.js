@@ -20,18 +20,17 @@ export default function Footer() {
                 325 South Byhalia Road
               </p>
               <p className='text-[14px] opacity-80'>Collierville, TN 38017</p>
-              <p className='text-[14px] opacity-80'>nkcollierville@gmail.com</p>
-              <p className='text-[14px] opacity-80'>Tel: 123-456-7890</p>
+              <p className='text-[14px] opacity-80'>admin@nkcollierville.com</p>
+              <p className='text-[14px] opacity-80'>Tel: 901-656-5209</p>
             </div>
 
             <div className='space-y-1'>
-              <p className='text-[#285a32] font-semibold'>Operating Hours</p>
+              <p className='text-[#38455e] font-semibold'>Operating Hours</p>
               <p className='text-[14px] opacity-80'>
                 Monday – Thursday: 8am – 8pm
               </p>
-              <p className='text-[14px] opacity-80'>
-                Friday – Saturday: 8am – 6pm
-              </p>
+              <p className='text-[14px] opacity-80'>Friday: 8am – 6pm</p>
+              <p className='text-[14px] opacity-80'>Saturday: 10am – 5pm</p>
               <p className='text-[14px] opacity-80'>Sunday: Closed</p>
             </div>
           </div>

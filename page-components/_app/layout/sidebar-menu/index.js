@@ -79,7 +79,8 @@ const SideBarMenu = () => {
       return routeGuard(`/${profile?.storeId || ''}/profile`)
     if (key === 'cart') return routeGuard(`/${profile?.storeId || ''}/cart`)
     if (key === 'home') return push('/')
-    if (key === 'myOrders') return push('/my-orders')
+    if (key === 'myOrders')
+      return routeGuard(`/${profile?.storeId || ''}/my-orders`)
     if (key === 'addStore') return toggleAddStore()
 
     if (key.startsWith('store-')) {
@@ -125,14 +126,14 @@ const SideBarMenu = () => {
             onClick={logout}
             className='w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-black/5'>
             <LogoutIcon />
-            {!collapsed && <span>Logout</span>}
+            {!collapsed && <span>LOGOUT</span>}
           </Button>
         ) : (
           <Button
             onClick={() => push('/login')}
-            className='w-full flex items-center gap-2 px-2 py-1.5 !text-white'>
+            className='w-full flex items-center gap-2 px-2 py-1.5'>
             <LoginIcon />
-            {!collapsed && <span className='!text-white'>Login</span>}
+            {!collapsed && <span>LOGIN</span>}
           </Button>
         )}
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Button, Image, Select, Flex, Upload, message } from 'antd'
+import { Form, Input, Button, Image, Select, Flex, Upload, App } from 'antd'
 import CustomisedRequiredFormMark from '@/utils/customised-required-form-mark'
 import useSubmitRegistration from './hooks/useSubmitRegistration'
 import { UploadOutlined } from '@ant-design/icons'
@@ -12,13 +12,9 @@ import useAddNewStore from './hooks/useAddNewStore'
 import useGetContext from '@/common/context/useGetContext'
 
 const Registration = ({ isAddNewStore = false, handleClose }) => {
-  const [requiredMark, setRequiredMarkType] = useState('customize')
   const [form] = Form.useForm()
   const [country, setCountry] = useState('United States')
-
-  const onRequiredTypeChange = ({ requiredMarkValue }) => {
-    setRequiredMarkType(requiredMarkValue)
-  }
+  const { message } = App.useApp()
 
   const { countriesData } = useGetCountries()
   const { noveltyData } = useGetContext()
@@ -43,7 +39,7 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
 
   const onFinish = (val) => {
     const formattedData = FormatRegistrationData(val, isAddNewStore)
-    if (addNewStore) {
+    if (isAddNewStore) {
       addNewStore({
         formData: formattedData,
         userId: noveltyData?.profile?.userId,
@@ -120,7 +116,7 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
         className='!p-4'
         requiredMark={CustomisedRequiredFormMark}
         initialValues={{
-          requiredMarkValue: requiredMark,
+          requiredMarkValue: 'customize',
         }}
         onFinish={onFinish}
         validateMessages={validateMessages}>
@@ -193,7 +189,7 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
                   placeholder='Select your Country'
                   type='text'
                   showSearch
-                  options={countriesData.map((item) => ({
+                  options={countriesData?.map((item) => ({
                     label: item?.name,
                     value: item?.name,
                   }))}
@@ -290,7 +286,7 @@ const Registration = ({ isAddNewStore = false, handleClose }) => {
             htmlType='submit'
             color='primary'
             variant='solid'
-            loading={loading}>
+            loading={loading || newStoreLoading}>
             Submit
           </Button>
         </Form.Item>
