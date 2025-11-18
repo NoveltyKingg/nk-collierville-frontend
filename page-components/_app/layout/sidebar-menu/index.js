@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Menu, Button } from 'antd'
+import { Menu, Button, Dropdown, Space } from 'antd'
 import { useRouter } from 'next/router'
 import useGetContext from '@/common/context/useGetContext'
 import { getCookie } from '@/utils/get-cookie'
@@ -18,6 +18,7 @@ import {
   MyOrdersIcon,
 } from '@/assets/header'
 import { NoveltyIcon } from '@/assets/common'
+import { DownOutlined } from '@ant-design/icons'
 
 const SideBarMenu = () => {
   const [collapsed, setCollapsed] = useState(false)
@@ -45,6 +46,32 @@ const SideBarMenu = () => {
       )
       .filter(Boolean) || []
 
+  const items = [
+    {
+      key: '1',
+      label: profile?.storeName || 'Select Store',
+      disabled: true,
+    },
+    {
+      type: 'divider',
+    },
+    ...(stores.map((store) => ({
+      key: `store-${store.key}`,
+      label: store.label,
+      icon: <ChangeStoreIcon />,
+    })) || []),
+    {
+      type: 'divider',
+    },
+    {
+      key: '4',
+      label: 'Logout',
+      icon: <LogoutIcon />,
+    },
+  ]
+
+  console.log(profile, 'profileee')
+
   const menuItems = useMemo(() => {
     const items = [
       { key: 'profile', icon: <ProfileIcon />, label: 'PROFILE' },
@@ -58,20 +85,8 @@ const SideBarMenu = () => {
       items.unshift({ key: 'admin', icon: <AdminIcon />, label: 'ADMIN' })
     }
 
-    if (stores?.length > 0) {
-      items.push({
-        key: 'changeStore',
-        icon: <ChangeStoreIcon />,
-        label: 'CHANGE STORE',
-        children: stores.map((s) => ({
-          key: `store-${s.key}`,
-          label: s.label,
-        })),
-      })
-    }
-
     return items
-  }, [profile?.status, stores])
+  }, [profile?.status])
 
   const onMenuClick = async ({ key }) => {
     if (key === 'admin') return routeGuard('/admin')
@@ -120,15 +135,22 @@ const SideBarMenu = () => {
         onClick={onMenuClick}
       />
 
-      <div className='p-3 bg-[#38455e] border-[#f5f5f5] border-t'>
+      <div className='px-3 py-6 bg-[#38455e] border-[#f5f5f5] border-t text-white cursor-pointer align-center'>
         {profile?.isLoggedIn ? (
-          <Button
-            onClick={logout}
-            className='w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-black/5'>
-            <LogoutIcon />
-            {!collapsed && <span>LOGOUT</span>}
-          </Button>
+          <Dropdown menu={{ items }}>
+            <Space>
+              {profile.storeName}
+              <DownOutlined />
+            </Space>
+          </Dropdown>
         ) : (
+          // <Button
+          //   onClick={logout}
+          //   type='primary'
+          //   className='w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-black/5'
+          //   icon={<ChangeStoreIcon />}>
+          //   {!collapsed && <span>{profile.storeName}</span>}
+          // </Button>
           <Button
             onClick={() => push('/login')}
             className='w-full flex items-center gap-2 px-2 py-1.5'>

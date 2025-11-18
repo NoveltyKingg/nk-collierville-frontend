@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, Skeleton, Image } from 'antd'
 import { Carousel } from 'antd'
 // import Image from 'next/image'
@@ -10,6 +10,10 @@ import useGetContext from '@/common/context/useGetContext'
 import BannerCarousel from './banner-carousel'
 import NewArrivals from './new-arrivals'
 import { BestPriceIcon, ShippingIcon, TruckIcon } from '@/assets/home'
+import DebounceSelect from '@/components/debounce-select'
+import { SearchOutlined } from '@ant-design/icons'
+import useQuerySearch from './hooks/useQuerySearch'
+import useIsMobile from '@/utils/useIsMobile'
 
 const PROMOTION_ITEMS = [
   { id: 1, text: 'Free shipping on orders over $500', icon: <ShippingIcon /> },
@@ -19,6 +23,9 @@ const PROMOTION_ITEMS = [
 
 export default function Home() {
   const { push } = useRouter()
+  const [search, setSearch] = useState()
+
+  const { isMobile } = useIsMobile()
 
   const { getPromotionalBanners, promotionalBanners, promotionalLoading } =
     useGetPromotionalBanners()
@@ -26,8 +33,11 @@ export default function Home() {
   const { getClearenceBanners, clearenceBanners, clearenceLoading } =
     useGetClearenceBanners()
 
-  const context = useGetContext()
-  const categories = context?.noveltyData?.general?.categories || []
+  const { queryTrigger } = useQuerySearch()
+
+  const handleSelectProduct = (val) => {
+    push(`/product/${val}`)
+  }
 
   useEffect(() => {
     getHomeBanners()
@@ -37,7 +47,22 @@ export default function Home() {
 
   return (
     <div className='w-full'>
-      <div className='w-full'>
+      <div className='w-full flex flex-col gap-2 mt-2'>
+        <div className='flex justify-end mr-4'>
+          <DebounceSelect
+            value={search}
+            showSearch
+            placeholder='Search product'
+            fetchOptions={queryTrigger}
+            handleSelect={handleSelectProduct}
+            onChange={(newValue) => setSearch(newValue)}
+            admin
+            style={{
+              width: isMobile ? '95%' : '50%',
+            }}
+            suffixIcon={<SearchOutlined />}
+          />
+        </div>
         <Carousel autoplay dots arrows fade speed={1500}>
           {homeLoading && (
             <div className='relative h-[38vh] md:h-[56vh]'>
@@ -50,10 +75,9 @@ export default function Home() {
                 <Image
                   src={src}
                   alt={`Home banner ${i + 1}`}
+                  width={'100%'}
                   priority={i === 0}
                   preview={false}
-
-                  // width={'100%'}
                 />
               </div>
             ))}
@@ -89,7 +113,7 @@ export default function Home() {
         </Card>
       </section> */}
 
-      <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-4'>
+      <section className='mx-auto px-4 sm:px-6 lg:px-8 py-4'>
         <div className='flex flex-col lg:flex-row gap-6'>
           <BannerCarousel
             banners={Object.entries(promotionalBanners || {}).map(
@@ -106,7 +130,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
+      <section className='mx-auto px-4 sm:px-6 lg:px-8'>
         <Card className='rounded-2xl shadow-sm border-0'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             {PROMOTION_ITEMS.map((item) => (
@@ -123,7 +147,7 @@ export default function Home() {
         </Card>
       </section>
 
-      <section className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-4'>
+      <section className='mx-auto px-4 sm:px-6 lg:px-8 py-4'>
         <Card className='rounded-2xl shadow-sm border-0'>
           <NewArrivals />
         </Card>

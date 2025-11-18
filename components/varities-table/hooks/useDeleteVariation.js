@@ -10,7 +10,7 @@ const useDeleteVariation = (addedQuantity, setAddedQuantity, getCartItems) => {
 
   const { message } = App.useApp()
 
-  const { dispatchData, AVAILABLE_ACTIONS } = useGetContext()
+  const { dispatchData, AVAILABLE_ACTIONS, noveltyData } = useGetContext()
 
   const deleteVariation = async (productId, variation) => {
     const hide = message.loading('Loading...', 0)
@@ -29,7 +29,7 @@ const useDeleteVariation = (addedQuantity, setAddedQuantity, getCartItems) => {
         cartItems: triggerData?.data,
       })
       message.success('Deleted Successfully from cart')
-      getCartItems({})
+      getCartItems({ storeId: noveltyData?.profile?.storeId })
     } catch (error) {
       console.error(error, 'error')
       hide()

@@ -47,6 +47,9 @@ importers:
       react-loader-spinner:
         specifier: ^6.1.6
         version: 6.1.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      scanbot-web-sdk:
+        specifier: ^5.0.0
+        version: 5.1.3
       uniqid:
         specifier: ^5.4.0
         version: 5.4.0
@@ -3056,6 +3059,9 @@ packages:
   safe-regex-test@1.1.0:
     resolution: {integrity: sha512-x/+Cz4YrimQxQccJf5mKEbIa1NzeCRNI5Ecl/ekmlYaampdNLPalVyIcCZNNH3MvmqBugV5TMYZXv0ljslUlaw==}
     engines: {node: '>= 0.4'}
+
+  scanbot-web-sdk@5.1.3:
+    resolution: {integrity: sha512-liXDKYlPI9FMvNlsRDb2C9o9y9TdXZv5jPtsKH7vBxq10Tybglp18dhZYSNbDgRXHCn9aV4k4YFH94GfVo5WiA==}
 
   scheduler@0.25.0-rc-603e6108-20241029:
     resolution: {integrity: sha512-pFwF6H1XrSdYYNLfOcGlM28/j8CGLu8IvdrxqhjWULe2bPcKiKW4CV+OWqR/9fT52mywx65l7ysNkjLKBda7eA==}
@@ -6869,6 +6875,8 @@ snapshots:
       call-bound: 1.0.4
       es-errors: 1.3.0
       is-regex: 1.2.1
+
+  scanbot-web-sdk@5.1.3: {}
 
   scheduler@0.25.0-rc-603e6108-20241029: {}
 

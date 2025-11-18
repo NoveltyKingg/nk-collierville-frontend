@@ -42,7 +42,8 @@ function DebounceSelect({
   useEffect(() => () => debounceFetcher.cancel(), [debounceFetcher])
 
   const handleInputKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    console.log(e, 'EEEEEEE')
+    if (e.key === 'Enter' || e.keyCode === 13) {
       e.preventDefault()
       e.stopPropagation()
       isNavigatingRef.current = true

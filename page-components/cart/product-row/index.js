@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react'
-import { Button, Image, Select, Popconfirm, message } from 'antd'
+import { Button, Image, Popconfirm, InputNumber, App } from 'antd'
 import useGetContext from '@/common/context/useGetContext'
 import useDeleteCartItem from '../hooks/useDeleteCartItem'
 import useUpdateCart from '../hooks/useUpdateCart'
 import VarietiesModal from './varieties-modal'
+import {} from 'antd'
 
 const currency = (n = 0) =>
   new Intl.NumberFormat(undefined, {
@@ -17,6 +18,8 @@ function ProductRow({ product, getCartItems }) {
 
   const { noveltyData } = useGetContext()
   const { profile } = noveltyData || {}
+
+  const { message } = App.useApp()
 
   const unit = Number(product?.productDetails?.sell || 0)
   const total = useMemo(() => qty * unit, [qty, unit])
@@ -33,17 +36,18 @@ function ProductRow({ product, getCartItems }) {
     value: i + 1,
   }))
 
-  const commitQty = async (value) => {
-    const newQty = Number(value || 1)
-    if (newQty < 1) {
+  const commitQty = (value) => {
+    setQty(value)
+  }
+
+  const handlePressEnter = () => {
+    if (qty < 1) {
       message.error('Quantity must be at least 1')
-      setQty(product?.quantity || 1)
       return
     }
-    setQty(newQty)
-    if (newQty !== product?.quantity) {
-      await updateCart({
-        quantity: newQty,
+    if (qty !== product?.quantity) {
+      updateCart({
+        quantity: qty,
         productId: product?.productId,
         storeId: profile?.storeId,
       })
@@ -95,11 +99,12 @@ function ProductRow({ product, getCartItems }) {
 
       {
         <div className='md:text-center self-start'>
-          <Select
+          <InputNumber
             value={qty}
             options={options}
             className='min-w-[100px]'
             onChange={commitQty}
+            onPressEnter={handlePressEnter}
             disabled={updateLoading || varietiesCount > 0}
           />
         </div>

@@ -15,23 +15,22 @@ export default function Footer() {
       <div className='mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8 py-4'>
         <div className='bg-[#f5f5f5] text-[#1a1a1a] rounded-2xl shadow-lg p-4 md:p-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            <div className='space-y-1'>
-              <p className='text-[15px] font-semibold'>
+            <div className='space-y-1 text-[16px]'>
+              <div className='text-[#38455e] font-semibold'>
                 325 South Byhalia Road
-              </p>
-              <p className='text-[14px] opacity-80'>Collierville, TN 38017</p>
-              <p className='text-[14px] opacity-80'>admin@nkcollierville.com</p>
-              <p className='text-[14px] opacity-80'>Tel: 901-656-5209</p>
+              </div>
+              <div>Collierville, TN 38017</div>
+              <div>admin@nkcollierville.com</div>
+              <div>Tel: 901-656-5209</div>
             </div>
-
-            <div className='space-y-1'>
-              <p className='text-[#38455e] font-semibold'>Operating Hours</p>
-              <p className='text-[14px] opacity-80'>
-                Monday – Thursday: 8am – 8pm
-              </p>
-              <p className='text-[14px] opacity-80'>Friday: 8am – 6pm</p>
-              <p className='text-[14px] opacity-80'>Saturday: 10am – 5pm</p>
-              <p className='text-[14px] opacity-80'>Sunday: Closed</p>
+            <div className='text-[16px]'>
+              <div className='text-[#38455e] font-semibold'>
+                Operating Hours
+              </div>
+              <div>Monday – Thursday: 8am – 8pm</div>
+              <div>Friday: 8am – 6pm</div>
+              <div>Saturday: 10am – 5pm</div>
+              <div>Sunday: Closed</div>
             </div>
           </div>
         </div>

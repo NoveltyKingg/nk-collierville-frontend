@@ -175,7 +175,7 @@ export default function Checkout() {
                           alt='Product'
                         />
                       </Badge>
-                      <div className='truncate text-sm capitalize'>
+                      <div className='text-sm capitalize'>
                         {it?.productDetail?.name}
                       </div>
                     </div>

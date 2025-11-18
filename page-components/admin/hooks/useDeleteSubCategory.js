@@ -1,4 +1,3 @@
-import showMessage from '@/utils/show-message'
 import useRequest from '@/request'
 import { App } from 'antd'
 
@@ -17,19 +16,17 @@ const useDeleteSubCategory = ({
   const deleteSubCategory = async () => {
     const hide = message.loading('Loading...', 0)
     try {
-      const triggerData = await trigger({
+      await trigger({
         url: `/subcategory/${subCategoryId}`,
       })
       hide()
       setSubCategoryId()
       getCategories()
-      triggerData?.hasError
-        ? showMessage('Something Went Wrong', 'error')
-        : showMessage('Deleted Successfully', 'success')
+      message.success('Sub-Category Deleted Successfully')
     } catch (err) {
       console.error(err, 'err')
       hide()
-      showMessage(err?.data?.message || 'Something Went Wrong', 'error')
+      message.error(err?.data?.message || 'Something Went Wrong')
     }
   }
 

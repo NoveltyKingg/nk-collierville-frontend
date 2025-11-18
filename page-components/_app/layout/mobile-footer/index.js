@@ -44,7 +44,7 @@ const MobileFooter = ({
     {
       key: 'profile',
       icon: <ProfileIcon />,
-      onClick: () => routeGuard(`/${profile?.storeId || ''}/cart`),
+      onClick: () => routeGuard(`/${profile?.storeId || ''}/profile`),
     },
     {
       key: 'cart',

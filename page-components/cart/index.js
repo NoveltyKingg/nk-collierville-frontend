@@ -22,7 +22,7 @@ function Cart() {
   const { push } = useRouter()
 
   useEffect(() => {
-    if (profile?.storeId) getCartItems({ storeId: profile.storeId })
+    if (profile?.storeId) getCartItems({ storeId: profile?.storeId })
   }, [profile?.storeId])
 
   const { itemCount, totalQty, subtotal } = useMemo(() => {

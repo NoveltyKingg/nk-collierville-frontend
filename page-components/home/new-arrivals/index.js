@@ -55,11 +55,10 @@ export default function NewArrivals() {
         {loading
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : (newArrivalsData || []).map((item, i) => (
-              <ProductCard key={item?.id ?? i} item={item} />
+              <ProductCard key={item?.id ?? i} item={item} isNewArrival />
             ))}
       </div>
 
-      {/* Mobile controls */}
       <div className='md:hidden flex justify-center gap-3 mt-2'>
         <Button
           onClick={() => scroll('left')}

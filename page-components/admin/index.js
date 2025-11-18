@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import useGetCategories from './hooks/useGetCategory'
 import formatCategories from '@/utils/format-categories'
 import { MENU_OPTIONS } from './menu-options'
+import useIsMobile from '@/utils/useIsMobile'
+import { HomeOutlined } from '@ant-design/icons'
 
 const AddProductForm = dynamic(() => import('./products/add-product-form'))
 const EditProduct = dynamic(() => import('./products/edit-product'))
@@ -26,12 +28,11 @@ const Statements = dynamic(() => import('./statements'))
 const { Sider, Content } = Layout
 
 const AdminPanel = () => {
-  const [collapsed, setCollapsed] = useState(false)
-  const router = useRouter()
+  const { query, push } = useRouter()
   const [data, setData] = useState([])
-  const { query } = router
   const { tab } = query
   const [selectedKey, setSelectedKey] = useState('home-banners')
+  const { isMobile } = useIsMobile()
 
   useEffect(() => {
     if (query?.tab) {
@@ -107,28 +108,25 @@ const AdminPanel = () => {
   const OPTIONS = MENU_OPTIONS({ customersData: [] })
 
   return (
-    <div className='flex min-h-screen'>
-      <Sider
-        onCollapse={setCollapsed}
-        style={{ background: '#38455e' }}
-        width={250}>
+    <div className='flex flex-col lg:flex-row xl:flex-row min-h-screen'>
+      <div style={{ background: '#38455e' }} width={250}>
         <div className='p-4 text-start font-bold text-lg text-white'>
-          {collapsed ? 'AD' : 'ADMIN PANEL'}
+          ADMIN PANEL
         </div>
         <Menu
-          mode='inline'
+          mode={isMobile ? 'horizontal' : 'inline'}
           items={OPTIONS}
           selectedKeys={[selectedKey]}
           className='flex-1 overflow-auto !bg-[#38455e]'
           defaultOpenKeys={['banners']}
           onClick={(info) => {
             setSelectedKey(info.key)
-            router.push(`/admin?tab=${info.key}`)
+            push(`/admin?tab=${info.key}`)
           }}
         />
-      </Sider>
+      </div>
       <Content className='p-6 bg-gray-100 w-full'>{ActiveComponent}</Content>
-      <FloatButton />
+      <FloatButton icon={<HomeOutlined />} onClick={() => push('/')} />
     </div>
   )
 }
