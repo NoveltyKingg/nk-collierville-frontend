@@ -46,8 +46,6 @@ function ProductBarcode({
     setBarcode((prev) => ({ ...prev, barcode: e.target.value }))
   }
 
-  console.log(barcode, 'barcodeee')
-
   useEffect(() => {
     if (product) getProduct()
   }, [product])
@@ -63,8 +61,6 @@ function ProductBarcode({
     })) || []),
     ...(barcode ? [barcode] : []),
   ]
-
-  console.log(data, barcode, rows, 'dattttttaaa')
 
   return (
     <div className='flex gap-2'>

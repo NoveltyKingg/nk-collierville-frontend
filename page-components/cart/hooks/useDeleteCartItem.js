@@ -12,8 +12,6 @@ const useDeleteCartItem = ({ productId, getCartItems }) => {
 
   const { dispatchData, AVAILABLE_ACTIONS, noveltyData } = useGetContext()
 
-  console.log(noveltyData, 'noveltyData')
-
   const deleteCartItem = async () => {
     const hide = message.loading('Loading...', 0)
     try {

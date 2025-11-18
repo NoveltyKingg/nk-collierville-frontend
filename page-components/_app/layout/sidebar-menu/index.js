@@ -70,8 +70,6 @@ const SideBarMenu = () => {
     },
   ]
 
-  console.log(profile, 'profileee')
-
   const menuItems = useMemo(() => {
     const items = [
       { key: 'profile', icon: <ProfileIcon />, label: 'PROFILE' },
