@@ -14,6 +14,7 @@ export const theme = {
       itemSelectedColor: '#FFFFFF',
       itemColor: '#FFFFFF',
       subMenuItemSelectedColor: '#ffffff',
+      subMenuItemBg: '#38455e',
     },
   },
 }

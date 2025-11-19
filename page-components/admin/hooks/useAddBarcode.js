@@ -9,7 +9,12 @@ const useAddBarcode = ({ barcode, getVarities }) => {
 
   const { message } = App.useApp()
 
-  const addBarcode = async ({ productId, variationId }) => {
+  const addBarcode = async ({
+    productId,
+    variationId,
+    setProductBarcodes,
+    setBarcode,
+  }) => {
     const hide = message.loading('Loading...', 0)
     try {
       await trigger({
@@ -22,6 +27,12 @@ const useAddBarcode = ({ barcode, getVarities }) => {
       hide()
       message.success('Barcode Added Successfully')
       variationId && getVarities()
+      if (setProductBarcodes) {
+        setProductBarcodes((prev) => [...prev, barcode])
+      }
+      if (setBarcode) {
+        setBarcode()
+      }
     } catch (err) {
       console.error('error: ', err)
       hide()

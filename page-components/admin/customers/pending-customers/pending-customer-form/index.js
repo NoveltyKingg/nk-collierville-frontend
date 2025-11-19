@@ -17,8 +17,6 @@ import {
 } from 'antd'
 import {
   UploadOutlined,
-  InboxOutlined,
-  FileTextOutlined,
   CheckCircleOutlined,
   StopOutlined,
   InfoCircleOutlined,
@@ -36,7 +34,6 @@ const TIER_OPTIONS = [
   { label: 'D', value: 'D' },
 ]
 
-// --- helpers ---
 const toUploadFileList = (urls = []) =>
   (urls || []).map((u, i) => ({
     uid: `doc-${i}`,
@@ -53,7 +50,6 @@ export default function PendingCustomerForm({ customer }) {
     storeId: customer?.storeId,
   })
 
-  // Pre-fill form on mount / customer change
   useEffect(() => {
     if (!customer) return
     const docs = toUploadFileList(customer?.documentUrls)
@@ -83,7 +79,6 @@ export default function PendingCustomerForm({ customer }) {
 
   const buildPayload = (status) => {
     const values = form.getFieldsValue(true)
-    // Convert dayjs -> ISO if present
     const expiryDateISO = values.expiryDate
       ? dayjs(values.expiryDate).toISOString()
       : undefined
@@ -136,10 +131,8 @@ export default function PendingCustomerForm({ customer }) {
 
   const previousComments = useMemo(() => customer?.comments || [], [customer])
 
-  // --- UI ---
   return (
     <div className='space-y-4'>
-      {/* Summary header */}
       <Card bordered={false} className='rounded-xl shadow-sm'>
         <div className='flex flex-wrap items-center justify-between gap-3'>
           <div>
@@ -166,8 +159,6 @@ export default function PendingCustomerForm({ customer }) {
           </div>
         </div>
       </Card>
-
-      {/* Main form */}
       <Card bordered={false} className='rounded-xl shadow-sm'>
         <Form
           form={form}
@@ -310,7 +301,6 @@ export default function PendingCustomerForm({ customer }) {
           </div>
         </Form>
 
-        {/* Sticky action bar */}
         <Divider />
         <div className='sticky bottom-0 bg-white py-2'>
           <Space wrap>

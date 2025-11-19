@@ -15,9 +15,7 @@ const useGetVarities = ({ product, setVaritiesList }) => {
     try {
       const triggerData = await trigger({ url: `/product/${product}/variants` })
       setVaritiesList(triggerData?.data)
-      triggerData?.data?.length > 0
-        ? setIsVariationExist(true)
-        : setIsVariationExist(false)
+      setIsVariationExist((triggerData?.data || [])?.length > 0)
     } catch (err) {
       console.error(err)
       message.error(err?.data?.message || 'Something Went Wrong')

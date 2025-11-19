@@ -1,4 +1,3 @@
-import showMessage from '@/utils/show-message'
 import useRequest from '@/request'
 import { App } from 'antd'
 
@@ -13,17 +12,15 @@ const useDeleteProduct = ({ productId, setProductId, getProducts }) => {
   const deleteProduct = async () => {
     const hide = message.loading('Loading...', 0)
     try {
-      const triggerData = await trigger({ url: `/product/${productId}` })
+      await trigger({ url: `/product/${productId}` })
       hide()
       setProductId()
-      triggerData?.hasError
-        ? showMessage('Something Went Wrong', 'error')
-        : showMessage('Deleted Successfully', 'success')
+      message.success('Product Deleted Successfully')
       getProducts()
     } catch (err) {
       console.error(err, 'err')
       hide()
-      showMessage(err?.data?.message || 'Something Went Wrong', 'error')
+      message.error(err?.data?.message || 'Something Went Wrong')
     }
   }
 

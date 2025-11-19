@@ -1,28 +1,29 @@
-import Image from 'next/image'
+import { Image, Tooltip } from 'antd'
 import { useRouter } from 'next/router'
 
-const ProductCard = ({ item }) => {
+const ProductCard = ({ item, isNewArrival }) => {
   const { push } = useRouter()
   return (
-    <button
+    <div
       onClick={() => push(`/product/${item?.id}`)}
-      className='w-[240px] shrink-0 rounded-xl border border-zinc-100 bg-white p-3 hover:shadow transition snap-center text-left cursor-pointer'>
-      <div className='relative w-full h-[180px] rounded-lg overflow-hidden'>
+      className='shrink-0 rounded-xl border border-zinc-100 bg-white p-3 hover:shadow transition snap-center text-left cursor-pointer'>
+      <div className='w-full items-center justify-center'>
         <Image
           src={item.imageUrls?.[0]}
           alt={item.name}
-          fill
-          sizes='220px'
-          className='object-contain'
+          height={200}
+          width={'100%'}
+          preview={false}
         />
       </div>
-      <div className='mt-3 space-y-1'>
-        <h3 className='font-semibold text-sm line-clamp-2 min-h-[2.6em]'>
-          {item?.name}
-        </h3>
-        <p className='text-[#385f43] font-bold'>${item?.sell}</p>
+      <div
+        className={`mt-3 space-y-1 ${isNewArrival && 'w-[200px]'} uppercase`}>
+        <Tooltip title={item?.name} color='#38455e'>
+          <div className='font-semibold text-sm truncate'>{item?.name}</div>
+        </Tooltip>
+        <div className='text-[#38455e] font-bold'>${item?.sell}</div>
       </div>
-    </button>
+    </div>
   )
 }
 

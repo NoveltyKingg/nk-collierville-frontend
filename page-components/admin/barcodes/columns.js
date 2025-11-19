@@ -1,21 +1,20 @@
-import { Button, Image, Input, Space, Tooltip, message } from 'antd'
-import React from 'react'
+import { Button, Image, Input, Space, Tooltip, message, Popconfirm } from 'antd'
 import {
   CheckOutlined,
   MinusCircleOutlined,
-  BarcodeOutlined,
+  ScanOutlined,
 } from '@ant-design/icons'
+import React from 'react'
 
 const useGetColumns = ({
-  handleScan,
   product,
   addBarcode,
   barcode,
   setBarcode,
   handleDelete,
-  variationId,
   addBarcodeLoading,
   deleteBarcodeLoading,
+  onScanClick,
 }) => {
   const handlePlus = ({ record }) => {
     if (barcode?.barcode && barcode?.variationId === record?.key) {
@@ -32,11 +31,7 @@ const useGetColumns = ({
   }
 
   return [
-    {
-      title: 'Variation',
-      dataIndex: 'name',
-      key: 'name',
-    },
+    { title: 'Variation', dataIndex: 'name', key: 'name' },
     {
       title: 'Image',
       dataIndex: 'imageUrls',
@@ -51,7 +46,7 @@ const useGetColumns = ({
       key: 'barcode',
       render: (_, record) => {
         const rows = [
-          barcode, // potentially active input for this row
+          barcode,
           ...(record?.barcodes?.map((val, idx) => ({
             id: idx + 1,
             variationId: record?.key,
@@ -60,7 +55,7 @@ const useGetColumns = ({
         ].filter((val) => val?.variationId === record?.key)
 
         return (
-          <div>
+          <div className='flex gap-2 flex-wrap'>
             {rows?.map(
               (item) =>
                 item && (
@@ -69,19 +64,25 @@ const useGetColumns = ({
                     style={{ marginBottom: 8 }}>
                     <Input
                       style={{ maxWidth: 300 }}
-                      disabled={!item?.barcode}
+                      disabled={!('barcode' in item)}
                       onChange={(e) => handleChange(e, record)}
-                      value={item?.barcodeValue || barcode?.barcode}
+                      value={item?.barcodeValue ?? barcode?.barcode ?? ''}
                       placeholder='Scan or type barcode'
                     />
                     {item?.barcodeValue ? (
                       <Tooltip title='Remove'>
-                        <Button
-                          icon={<MinusCircleOutlined />}
-                          loading={deleteBarcodeLoading}
-                          disabled={deleteBarcodeLoading}
-                          onClick={() => handleDelete(item)}
-                        />
+                        <Popconfirm
+                          title='Delete the task'
+                          description='Are you sure to delete this barcode?'
+                          onConfirm={() => handleDelete(item)}
+                          okText='Yes'
+                          cancelText='No'>
+                          <Button
+                            icon={<MinusCircleOutlined />}
+                            loading={deleteBarcodeLoading}
+                            disabled={deleteBarcodeLoading}
+                          />
+                        </Popconfirm>
                       </Tooltip>
                     ) : (
                       <Tooltip title='Add'>
@@ -98,9 +99,9 @@ const useGetColumns = ({
                 ),
             )}
             <Button
-              icon={<BarcodeOutlined />}
-              onClick={(e) => handleScan(e, record, 'scan')}>
-              Scan
+              icon={<ScanOutlined />}
+              onClick={() => onScanClick(record.key)}>
+              Scan Barcode
             </Button>
           </div>
         )

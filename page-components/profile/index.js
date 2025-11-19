@@ -70,7 +70,7 @@ function Profile() {
     const urls = []
     fileList.forEach((f) => f?.url && urls.push(f.url))
     fileList.forEach(
-      (f) => f?.originFileObj && formData.append('images', f.originFileObj),
+      (f) => f?.originFileObj && formData.append('documents', f.originFileObj),
     )
     if (urls.length) formData.append('documentUrls', JSON.stringify(urls))
     formData.append('firstName', personalDetails?.first_name)

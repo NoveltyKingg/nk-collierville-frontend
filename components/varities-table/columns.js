@@ -1,6 +1,7 @@
 import { Button, InputNumber, Image } from 'antd'
 import React from 'react'
 import { DeleteOutlined } from '@ant-design/icons'
+import { Popconfirm } from 'antd'
 
 const getColumns = ({
   handleAddToCart,
@@ -55,7 +56,7 @@ const getColumns = ({
             onChange={(e) => addFlavours(record, e)}
             type='number'
             defaultValue={
-              Object.keys(addedQuantity || {}).length > 0
+              Object.keys(addedQuantity || {})?.length > 0
                 ? (addedQuantity || {})[record?.name]
                 : productQuantity
             }
@@ -77,16 +78,21 @@ const getColumns = ({
             {!deleteOption && !isEditOrder && 'Add to Cart'}
           </Button>
           {deleteOption && (
-            <Button
-              onClick={() => deleteVariation(productData?.id, record)}
-              icon={<DeleteOutlined />}
-              loading={deleteLoading}>
-              {isMobile ? '' : 'Delete'}
-            </Button>
+            <Popconfirm
+              title='Delete item'
+              description='Are you sure to delete this item?'
+              okText='Yes'
+              onConfirm={() => deleteVariation(productData?.id, record)}
+              cancelText='No'>
+              <Button icon={<DeleteOutlined />} loading={deleteLoading}>
+                {isMobile ? '' : 'Delete'}
+              </Button>
+            </Popconfirm>
           )}
         </div>
       ),
     },
+    ,
   ]
 
   return fixedColumns

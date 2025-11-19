@@ -35,7 +35,7 @@ const useUpdateCart = ({ getCartItems }) => {
         cartItems: triggerData?.data,
       })
       message.success('Cart Updated')
-      getCartItems()
+      getCartItems({ storeId: storeId })
     } catch (error) {
       console.error(error, 'error')
       hide()

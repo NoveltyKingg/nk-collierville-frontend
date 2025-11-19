@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import useRequest from '@/request'
 import useGetContext from '../context/useGetContext'
 import { getCookie } from '@/utils/get-cookie'
@@ -121,7 +121,6 @@ export default function AuthenticationProvider({ children, router }) {
     }
   }, [isLoading, isLoggedIn, role, router])
 
-  // Optional: splash while checking
   if (isLoading) return null
 
   return children

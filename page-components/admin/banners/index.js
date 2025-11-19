@@ -147,7 +147,7 @@ function Banners({ type }) {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-6 gap-2'>
       <div className='flex items-center justify-between'>
         <div>
           <Title level={3} className='!m-0'>
@@ -204,8 +204,8 @@ function Banners({ type }) {
             {fileList.map((file) => {
               const isExisting = !!file.url
               return (
-                <div key={file.uid || file.url} className='space-y-3'>
-                  <div className='relative rounded-xl overflow-hidden border'>
+                <div key={file.uid || file.url} className=''>
+                  <div className='relative rounded-xl overflow-hidden border border-[#cdcdcd]'>
                     <Image
                       src={file.url || file.thumbUrl || ''}
                       alt={file.name}
