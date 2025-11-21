@@ -48,23 +48,23 @@ const SideBarMenu = () => {
 
   const items = [
     {
-      key: '1',
+      key: 'store',
       label: profile?.storeName || 'Select Store',
       disabled: true,
     },
     {
       type: 'divider',
     },
-    ...(stores.map((store) => ({
-      key: `store-${store.key}`,
-      label: store.label,
+    ...(stores?.map((store) => ({
+      key: `store-${store?.key}`,
+      label: store?.label,
       icon: <ChangeStoreIcon />,
     })) || []),
     {
       type: 'divider',
     },
     {
-      key: '4',
+      key: 'logout',
       label: 'Logout',
       icon: <LogoutIcon />,
     },
@@ -95,6 +95,7 @@ const SideBarMenu = () => {
     if (key === 'myOrders')
       return routeGuard(`/${profile?.storeId || ''}/my-orders`)
     if (key === 'addStore') return toggleAddStore()
+    if (key === 'logout') return logout()
 
     if (key.startsWith('store-')) {
       const storeId = key.replace('store-', '')
@@ -135,20 +136,13 @@ const SideBarMenu = () => {
 
       <div className='px-3 py-6 bg-[#38455e] border-[#f5f5f5] border-t text-white cursor-pointer align-center'>
         {profile?.isLoggedIn ? (
-          <Dropdown menu={{ items }}>
+          <Dropdown menu={{ items, onClick: onMenuClick }}>
             <Space>
               {profile.storeName}
               <DownOutlined />
             </Space>
           </Dropdown>
         ) : (
-          // <Button
-          //   onClick={logout}
-          //   type='primary'
-          //   className='w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-black/5'
-          //   icon={<ChangeStoreIcon />}>
-          //   {!collapsed && <span>{profile.storeName}</span>}
-          // </Button>
           <Button
             onClick={() => push('/login')}
             className='w-full flex items-center gap-2 px-2 py-1.5'>
