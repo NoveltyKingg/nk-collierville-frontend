@@ -22,6 +22,7 @@ const noLayoutRoutes = [
   '/options',
   '/signup',
   '/admin',
+  '/underage',
 ]
 
 export default function App({ Component, ...rest }) {

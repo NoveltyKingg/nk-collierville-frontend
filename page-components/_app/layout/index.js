@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FloatButton } from 'antd'
+import { FloatButton, Modal, Button, Image } from 'antd'
 import SideBarMenu from './sidebar-menu'
 import Footer from './footer'
 import useGetAllWebCategories from '../hooks/useGetAllWebCategories'
@@ -22,6 +22,19 @@ const Layout = ({ children, layout }) => {
   const { push } = useRouter()
   const { noveltyData } = useGetContext()
   const { profile } = noveltyData || {}
+  const [openModal, setOpenModal] = useState(
+    !(sessionStorage.getItem('age_verified') || profile?.isLoggedIn),
+  )
+
+  const handleOk = () => {
+    sessionStorage.setItem('age_verified', true)
+    setOpenModal(false)
+  }
+
+  const handleCancel = () => {
+    setOpenModal(false)
+    push('/underage')
+  }
 
   const toggleAddStore = () => setOpenAddNewStoreModal((s) => !s)
 
@@ -77,6 +90,36 @@ const Layout = ({ children, layout }) => {
         </div>
       </div>
 
+      {openModal && (
+        <Modal
+          title='Age Verification'
+          open={openModal}
+          footer={null}
+          closeIcon={null}>
+          <div className='flex flex-col gap-2 text-[16px]'>
+            <div className='text-red'>18+ Adults Only!</div>
+            <div className='text-red'>Underage Sale Prohibited!</div>
+            <Image
+              src='https://i.ibb.co/wNq9n1WL/Untitled-450-x-150-px.png'
+              alt='Loading...'
+              width='100%'
+              style={{ maxWidth: 450 }}
+              preview={false}
+            />
+            <p>
+              Please verify that you are 18 years of age or older. By entering
+              this site you are stating that you are of legal age to purchase,
+              handle, and own products. Use at your own risk.
+            </p>
+            <div className='flex gap-2'>
+              <Button type='primary' onClick={handleOk}>
+                Yes, I am 18 or older
+              </Button>
+              <Button onClick={handleCancel}>No, I am under 18</Button>
+            </div>
+          </div>
+        </Modal>
+      )}
       {openBarcodeScanner && (
         <BarcodeScanner
           isModalOpen={openBarcodeScanner}
