@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FloatButton, Modal, Button, Image } from 'antd'
+import { FloatButton, Modal, Button, Image, App } from 'antd'
 import SideBarMenu from './sidebar-menu'
 import Footer from './footer'
 import useGetAllWebCategories from '../hooks/useGetAllWebCategories'
@@ -12,6 +12,8 @@ import { useRouter } from 'next/router'
 import useGetContext from '@/common/context/useGetContext'
 import { ScanOutlined } from '@ant-design/icons'
 import BarcodeScanner from '@/utils/barcode-scanner'
+import useAddToCartByBarcode from '../hooks/useAddToCartByBarcode'
+import AddQuantityModal from './add-quantity-modal'
 
 const Layout = ({ children, layout }) => {
   const { getAllWebCategories } = useGetAllWebCategories()
@@ -25,6 +27,13 @@ const Layout = ({ children, layout }) => {
   const [openModal, setOpenModal] = useState(
     !(sessionStorage.getItem('age_verified') || profile?.isLoggedIn),
   )
+  const [openQuantityModal, setOpenQuantityModal] = useState(false)
+  const [quantityAdded, setQuantityAdded] = useState(1)
+
+  const { message } = App.useApp()
+
+  const { addToCartByBarcode, addToCartData, addToCartLoading } =
+    useAddToCartByBarcode()
 
   const handleOk = () => {
     sessionStorage.setItem('age_verified', true)
@@ -43,20 +52,39 @@ const Layout = ({ children, layout }) => {
     push('/login')
   }
 
+  const handleAddToCart = () => {
+    if (barcode?.barcode) {
+      addToCartByBarcode({
+        barcode: barcode?.barcode,
+        quantity: quantityAdded,
+        storeId: profile?.storeId,
+        setBarcode,
+        setQuantityAdded,
+      })
+      setOpenQuantityModal((prev) => !prev)
+    } else {
+      message.error('No Barcode Scanned')
+    }
+  }
+
+  useEffect(() => {
+    if (barcode?.barcode) setOpenQuantityModal((prev) => !prev)
+  }, [barcode])
+
   const LICENSE_KEY =
-    'pjHhzYwVGOycuaz9Vr/IwOZNVFgMta' +
-    'RPPFoIGxdvIdzPST4qP9jnBFuEVIBo' +
-    'sKArmowREsUJxT3t9BpHkrzPIMJzoP' +
-    '/pUPf02JUImtOJtRQlaOS+x1sNIGhT' +
-    'mJIbJ+qYLSHOiGAVMTEwuOKebg+ed+' +
-    'tH2r72u49TztZjyt/sHrmDZBio2ARQ' +
-    'pFKOJIR/v4q6DEuBxNDKRa8Smp0Nan' +
-    'VHOqGPtOZOnIHogNffkvZMsEX8BCCa' +
-    'rqiIHW7pj3JXBiqjx823D62Rg3NTqa' +
-    'dGO/CSqosXiwSN1JCVZwKdZM01CyLw' +
-    '3JtXjD1UkvUu8tclo5Wl8Ph0oRJw+z' +
-    'mgYuD5MJIqhA==\nU2NhbmJvdFNESw' +
-    'psb2NhbGhvc3QKMTc2NDAyODc5OQo4' +
+    'n9/EMSn9/C3yJ+T01kNB0an8zzxuII' +
+    'bKQUWSjJfNi01zHZkOcQ7N43RWqz2g' +
+    'HSdKLfi2rK9AQWEiNUOAXZ/qAry+ei' +
+    'qWsE0ycikDbmcB9F0m4+zThGSTrvVt' +
+    '/JBdfVKxAkktw3A5PDMgkqCFkSwZ0G' +
+    'PWymf2Ewf6DuByY/GnTSr+BlAn22X1' +
+    'yu83s7U1EOvUcKqD2nDDfFkZNk90VH' +
+    'tiPjI1/vV27lUh8rXODmBTBHFdf+95' +
+    'qiiDLsL+L2YnPMP5hsasPG21kILhQy' +
+    '1797NSr8WUdTcVwy9H9o8q/5w3IHnz' +
+    'Dy7DcjMsvdhcoCkyzBdneHV4zye1Hn' +
+    'v9kWbDkZyNyw==\nU2NhbmJvdFNESw' +
+    'psb2NhbGhvc3QKMTc2NDg5Mjc5OQo4' +
     'Mzg4NjA3Cjg=\n'
 
   useEffect(() => {
@@ -76,10 +104,12 @@ const Layout = ({ children, layout }) => {
         <div className='flex-1 min-w-0'>
           <main>{children}</main>
           {layout && <Footer />}
-          <FloatButton
-            icon={<ScanOutlined />}
-            onClick={() => setOpenBarcodeScanner((prev) => !prev)}
-          />
+          {layout && profile?.isLoggedIn && (
+            <FloatButton
+              icon={<ScanOutlined />}
+              onClick={() => setOpenBarcodeScanner((prev) => !prev)}
+            />
+          )}
           {isMobile && layout && (
             <MobileFooter
               profile={profile}
@@ -120,12 +150,22 @@ const Layout = ({ children, layout }) => {
           </div>
         </Modal>
       )}
-      {openBarcodeScanner && (
+      {openBarcodeScanner && profile?.isLoggedIn && (
         <BarcodeScanner
           isModalOpen={openBarcodeScanner}
           setIsModalOpen={setOpenBarcodeScanner}
           setBarcode={setBarcode}
           licenseKey={LICENSE_KEY}
+        />
+      )}
+
+      {openQuantityModal && (
+        <AddQuantityModal
+          open={openQuantityModal}
+          onCancel={() => setOpenQuantityModal((prev) => !prev)}
+          quantityAdded={quantityAdded}
+          setQuantityAdded={setQuantityAdded}
+          handleOk={handleAddToCart}
         />
       )}
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import useRequest from '@/request'
 import useGetContext from '../context/useGetContext'
 import { getCookie } from '@/utils/get-cookie'
+import GlobalLoading from '@/components/global-loading'
 
 const PRIVATE_TEMPLATES = [
   '/[store_id]/cart',
@@ -121,7 +122,7 @@ export default function AuthenticationProvider({ children, router }) {
     }
   }, [isLoading, isLoggedIn, role, router])
 
-  if (isLoading) return null
+  if (isLoading) return <GlobalLoading />
 
   return children
 }
