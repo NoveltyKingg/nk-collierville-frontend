@@ -24,6 +24,7 @@ const useGetProducts = ({ setProductsData }) => {
       setProductsData(triggerData?.data)
     } catch (error) {
       console.error(error, 'error')
+      hide()
       message.error(error?.data?.message || 'Something Went Wrong')
     }
   }

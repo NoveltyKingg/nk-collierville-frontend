@@ -25,7 +25,7 @@ const SideBarMenu = () => {
   const [openAddNewStoreModal, setOpenAddNewStoreModal] = useState(false)
 
   const { noveltyData } = useGetContext()
-  const { profile } = noveltyData || {}
+  const { profile, general } = noveltyData || {}
   const { push } = useRouter()
   const { createLogin } = useCreateLogin()
 
@@ -103,9 +103,26 @@ const SideBarMenu = () => {
       await createLogin({ storeId, token })
       location.reload()
     }
+
+    if (key.startsWith('subCategory-')) {
+      const subCategoryId = key.replace('subCategory-', '')
+      push(`/products?subCategory=${subCategoryId}`)
+    }
   }
 
-  const CATEGORY_ITEMS = []
+  const CATEGORY_ITEMS = general?.categories?.map((cat) => ({
+    label: cat?.label,
+    key: `category-${cat?.value}`,
+    value: cat?.value,
+    children: general?.subCategories
+      ?.filter((sub) => sub?.cat_id === cat?.value)[0]
+      ?.values?.map((item) => ({
+        label: item?.label,
+        key: `subCategory-${item?.value}`,
+        value: item?.value,
+      })),
+  }))
+
   return (
     <aside
       className={

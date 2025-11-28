@@ -17,13 +17,16 @@ import useGetProducts from './hooks/useGetProducts'
 import useQuerySearch from './hooks/useQuerySearch'
 import useIsMobile from '@/utils/useIsMobile'
 import ProductCard from '@/components/product-card'
+import useGetProductsByCategory from './hooks/useGetProductsByCategory'
 
 function Products() {
   const { noveltyData } = useGetContext()
   const subCategories = noveltyData?.general?.subCategories || []
   const categories = noveltyData?.general?.categories || []
+  const { replace, query, push } = useRouter()
 
-  const [category, setCategory] = useState([1])
+  const [category, setCategory] = useState(query?.category)
+  const [subCategory, setSubCategory] = useState(query?.subCategory)
   const [productsData, setProductsData] = useState()
   const [selectedFilters, setSelectedFilters] = useState([])
   const [pagination, setPagination] = useState({ page: 1, pageSize: 20 })
@@ -32,14 +35,16 @@ function Products() {
 
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const { replace, query, push } = useRouter()
 
   const { getProducts, loading } = useGetProducts({ setProductsData })
   const { querySearch } = useQuerySearch({ setProductsData })
+  const { getProductsByCategory } = useGetProductsByCategory({
+    setProductsData,
+  })
 
   const products = useMemo(() => productsData?.products || [], [productsData])
   const filterOptions = subCategories
-    .filter((sc) => category.includes(sc.cat_id))
+    .filter((sc) => category == sc.cat_id)
     .flatMap((sc) => sc.values || [])
 
   const updateURLParams = (newParams) => {
@@ -55,8 +60,9 @@ function Products() {
   }
 
   useEffect(() => {
-    setCategory([Number(query?.category) || 1])
-  }, [query?.category])
+    if (query?.category) setCategory(Number(query?.category))
+    if (query?.subCategory) setSubCategory(Number(query?.subCategory))
+  }, [query])
 
   useEffect(() => {
     const subCatParam = selectedFilters.join(',')
@@ -86,7 +92,11 @@ function Products() {
         sorting,
       })
     }
-  }, [selectedFilters, pagination, sorting, query?.search])
+
+    if (category || subCategory) {
+      getProductsByCategory({ category, subCategory })
+    }
+  }, [selectedFilters, pagination, sorting, query?.search, subCategory])
 
   const handleFilterChange = (checked, valueId) => {
     setSelectedFilters((prev) =>
@@ -105,7 +115,7 @@ function Products() {
   }
 
   const CategoryTitle =
-    categories?.find((cat) => cat?.value === category[0])?.label || 'PRODUCTS'
+    categories?.find((cat) => cat?.value == category)?.label || 'PRODUCTS'
 
   return (
     <div className='w-full bg-[#f5f5f5] p-4 md:p-6 flex gap-5'>
