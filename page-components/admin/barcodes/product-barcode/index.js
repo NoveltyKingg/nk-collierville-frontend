@@ -22,21 +22,8 @@ function ProductBarcode({
   const [productBarcodes, setProductBarcodes] = useState([])
   const { data, getProduct, loading } = useGetProduct({ product })
 
-  const LICENSE_KEY =
-    'hP5f6pWjvwHwLm27qD5TxfGDkRnjZ7' +
-    'cqYv93WCJ7SVOvV7QkJcx6+smjJaDN' +
-    'Vwq7jJnXHas5i2E/BX2+qq9jAzHd52' +
-    'PPDAQOfgCT2d5gWT1CjP9aX0fPzkzU' +
-    'NNJU9p89yzne56i469yWdbhnQD+Hxt' +
-    '7LEn3bcI9qmLSWjuHsKQxrDdJcxEIx' +
-    '44FD4gMqXCSOOXhqlkU++56GD0+nR2' +
-    'QvrJ1ni8YsKkH9I2ZjX/14ZExh+J26' +
-    'U6eokZlURu7bvlNkSBzVZCt7iar60x' +
-    'A+yM5EaOsW4TQoLxs5a6wEy791TVdL' +
-    'kKP1ki/BeIjpxsqtSf69lwPv5vxrip' +
-    'OEOfU1Y/2aaA==\nU2NhbmJvdFNESw' +
-    'psb2NhbGhvc3QKMTc2MzE2NDc5OQo4' +
-    'Mzg4NjA3Cjg=\n'
+  const RAW_LICENSE_KEY = process.env.NEXT_PUBLIC_SCANNER_LICENSE_KEY
+  const LICENSE_KEY = RAW_LICENSE_KEY.replace(/\\n/g, '\n')
 
   const handlePlus = () => {
     if (barcode?.barcode)

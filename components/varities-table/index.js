@@ -191,7 +191,7 @@ function VarietiesTable({
         setAddedQuantity,
         record,
       })
-      getCartItems()
+      getCartItems({ storeId: profile?.storeId })
     } else if (isEditOrder) {
       addToOrder({
         storeId: profile?.storeId,

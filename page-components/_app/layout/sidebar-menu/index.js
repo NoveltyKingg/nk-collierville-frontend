@@ -18,7 +18,7 @@ import {
   MyOrdersIcon,
 } from '@/assets/header'
 import { NoveltyIcon } from '@/assets/common'
-import { DownOutlined } from '@ant-design/icons'
+import { CaretDownFilled } from '@ant-design/icons'
 
 const SideBarMenu = () => {
   const [collapsed, setCollapsed] = useState(false)
@@ -72,15 +72,39 @@ const SideBarMenu = () => {
 
   const menuItems = useMemo(() => {
     const items = [
-      { key: 'profile', icon: <ProfileIcon />, label: 'PROFILE' },
-      { key: 'cart', icon: <CartIcon />, label: 'CART' },
-      { key: 'addStore', icon: <AddNewStoreIcon />, label: 'ADD NEW STORE' },
-      { key: 'home', label: 'HOME', icon: <HomeIcon /> },
-      { key: 'myOrders', label: 'MY ORDERS', icon: <MyOrdersIcon /> },
+      {
+        key: 'profile',
+        icon: <ProfileIcon />,
+        label: <div className='!text-white'>PROFILE</div>,
+      },
+      {
+        key: 'cart',
+        icon: <CartIcon />,
+        label: <div className='!text-white'>CART</div>,
+      },
+      {
+        key: 'addStore',
+        icon: <AddNewStoreIcon />,
+        label: <div className='!text-white'>ADD NEW STORE</div>,
+      },
+      {
+        key: 'home',
+        label: <div className='!text-white'>HOME</div>,
+        icon: <HomeIcon />,
+      },
+      {
+        key: 'myOrders',
+        label: <div className='!text-white'>MY ORDERS</div>,
+        icon: <MyOrdersIcon />,
+      },
     ]
 
     if (profile?.status === 'ADMIN') {
-      items.unshift({ key: 'admin', icon: <AdminIcon />, label: 'ADMIN' })
+      items.unshift({
+        key: 'admin',
+        icon: <AdminIcon />,
+        label: <div className='!text-white'>ADMIN</div>,
+      })
     }
 
     return items
@@ -111,13 +135,19 @@ const SideBarMenu = () => {
   }
 
   const CATEGORY_ITEMS = general?.categories?.map((cat) => ({
-    label: cat?.label,
+    label: (
+      <div className='!text-white'>
+        {collapsed ? cat?.label[0] : cat?.label}
+      </div>
+    ),
     key: `category-${cat?.value}`,
     value: cat?.value,
     children: general?.subCategories
       ?.filter((sub) => sub?.cat_id === cat?.value)[0]
       ?.values?.map((item) => ({
-        label: item?.label,
+        label: (
+          <div className={collapsed ? '' : '!text-white'}>{item?.label}</div>
+        ),
         key: `subCategory-${item?.value}`,
         value: item?.value,
       })),
@@ -149,14 +179,15 @@ const SideBarMenu = () => {
         inlineCollapsed={collapsed}
         className='flex-1 overflow-auto !bg-[#38455e] !text-white'
         onClick={onMenuClick}
+        expandIcon={<CaretDownFilled style={{ color: '#ffffff' }} />}
       />
 
       <div className='px-3 py-6 bg-[#38455e] border-[#f5f5f5] border-t text-white cursor-pointer align-center'>
         {profile?.isLoggedIn ? (
           <Dropdown menu={{ items, onClick: onMenuClick }}>
             <Space>
-              {profile.storeName}
-              <DownOutlined />
+              {collapsed ? profile?.storeName[0] : profile?.storeName}
+              <CaretDownFilled style={{ color: '#ffffff' }} />
             </Space>
           </Dropdown>
         ) : (

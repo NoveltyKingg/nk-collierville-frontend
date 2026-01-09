@@ -1,18 +1,19 @@
 /* eslint-disable */
-import setCookie from "./set-cookie";
+import setCookie from './set-cookie'
 
 const setCookieAndRedirect = (token, ctx) => {
-  const { res, isServer } = ctx || {};
-  setCookie("nk-collierville-token", token, 2000, ctx);
+  const { res, isServer } = ctx || {}
+  setCookie('nk-collierville-token', token, 2000, ctx)
 
   if (isServer) {
-    res.redirect("/");
+    res.redirect('/')
   } else {
     if (window.history.back) {
-      window.history.back();
+      window.history.back()
+      return
     }
-    window.location.href = "/";
+    window.location.href = '/'
   }
-};
+}
 
-export default setCookieAndRedirect;
+export default setCookieAndRedirect

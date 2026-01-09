@@ -32,8 +32,7 @@ const Layout = ({ children, layout }) => {
 
   const { message } = App.useApp()
 
-  const { addToCartByBarcode, addToCartData, addToCartLoading } =
-    useAddToCartByBarcode()
+  const { addToCartByBarcode } = useAddToCartByBarcode()
 
   const handleOk = () => {
     sessionStorage.setItem('age_verified', true)
@@ -71,21 +70,8 @@ const Layout = ({ children, layout }) => {
     if (barcode?.barcode) setOpenQuantityModal((prev) => !prev)
   }, [barcode])
 
-  const LICENSE_KEY =
-    'n9/EMSn9/C3yJ+T01kNB0an8zzxuII' +
-    'bKQUWSjJfNi01zHZkOcQ7N43RWqz2g' +
-    'HSdKLfi2rK9AQWEiNUOAXZ/qAry+ei' +
-    'qWsE0ycikDbmcB9F0m4+zThGSTrvVt' +
-    '/JBdfVKxAkktw3A5PDMgkqCFkSwZ0G' +
-    'PWymf2Ewf6DuByY/GnTSr+BlAn22X1' +
-    'yu83s7U1EOvUcKqD2nDDfFkZNk90VH' +
-    'tiPjI1/vV27lUh8rXODmBTBHFdf+95' +
-    'qiiDLsL+L2YnPMP5hsasPG21kILhQy' +
-    '1797NSr8WUdTcVwy9H9o8q/5w3IHnz' +
-    'Dy7DcjMsvdhcoCkyzBdneHV4zye1Hn' +
-    'v9kWbDkZyNyw==\nU2NhbmJvdFNESw' +
-    'psb2NhbGhvc3QKMTc2NDg5Mjc5OQo4' +
-    'Mzg4NjA3Cjg=\n'
+  const RAW_LICENSE_KEY = process.env.NEXT_PUBLIC_SCANNER_LICENSE_KEY
+  const LICENSE_KEY = RAW_LICENSE_KEY.replace(/\\n/g, '\n')
 
   useEffect(() => {
     getAllWebCategories()

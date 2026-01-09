@@ -69,7 +69,7 @@ export default function Home() {
           )}
           {!homeLoading &&
             Object.entries(homeBanners || {}).map(([src], i) => (
-              <div key={i} className='relative h-full'>
+              <div key={i} className='relative '>
                 <Image
                   src={src}
                   alt={`Home banner ${i + 1}`}
