@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Skeleton, Image } from 'antd'
 import { Carousel } from 'antd'
-// import Image from 'next/image'
 import { useRouter } from 'next/router'
 import useGetPromotionalBanners from './hooks/useGetPromotionalBanners'
 import useGetClearenceBanners from './hooks/useGetClearenceBanners'
 import useGetHomeBanners from './hooks/useGetHomeBanners'
-import useGetContext from '@/common/context/useGetContext'
 import BannerCarousel from './banner-carousel'
 import NewArrivals from './new-arrivals'
 import { BestPriceIcon, ShippingIcon, TruckIcon } from '@/assets/home'
@@ -71,7 +69,7 @@ export default function Home() {
           )}
           {!homeLoading &&
             Object.entries(homeBanners || {}).map(([src], i) => (
-              <div key={i} className='relative h-full'>
+              <div key={i} className='relative '>
                 <Image
                   src={src}
                   alt={`Home banner ${i + 1}`}

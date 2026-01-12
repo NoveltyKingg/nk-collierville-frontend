@@ -10,9 +10,7 @@ export const theme = {
   components: {
     Menu: {
       itemActiveBg: '#ffffff',
-      itemHoverColor: '#FFFFFF',
       itemSelectedColor: '#FFFFFF',
-      itemColor: '#FFFFFF',
       subMenuItemSelectedColor: '#ffffff',
       subMenuItemBg: '#38455e',
     },

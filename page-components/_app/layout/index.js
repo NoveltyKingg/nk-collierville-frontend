@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FloatButton, Modal, Button, Image } from 'antd'
+import { FloatButton, Modal, Button, Image, App } from 'antd'
 import SideBarMenu from './sidebar-menu'
 import Footer from './footer'
 import useGetAllWebCategories from '../hooks/useGetAllWebCategories'
@@ -12,6 +12,8 @@ import { useRouter } from 'next/router'
 import useGetContext from '@/common/context/useGetContext'
 import { ScanOutlined } from '@ant-design/icons'
 import BarcodeScanner from '@/utils/barcode-scanner'
+import useAddToCartByBarcode from '../hooks/useAddToCartByBarcode'
+import AddQuantityModal from './add-quantity-modal'
 
 const Layout = ({ children, layout }) => {
   const { getAllWebCategories } = useGetAllWebCategories()
@@ -25,6 +27,12 @@ const Layout = ({ children, layout }) => {
   const [openModal, setOpenModal] = useState(
     !(sessionStorage.getItem('age_verified') || profile?.isLoggedIn),
   )
+  const [openQuantityModal, setOpenQuantityModal] = useState(false)
+  const [quantityAdded, setQuantityAdded] = useState(1)
+
+  const { message } = App.useApp()
+
+  const { addToCartByBarcode } = useAddToCartByBarcode()
 
   const handleOk = () => {
     sessionStorage.setItem('age_verified', true)
@@ -43,21 +51,27 @@ const Layout = ({ children, layout }) => {
     push('/login')
   }
 
-  const LICENSE_KEY =
-    'pjHhzYwVGOycuaz9Vr/IwOZNVFgMta' +
-    'RPPFoIGxdvIdzPST4qP9jnBFuEVIBo' +
-    'sKArmowREsUJxT3t9BpHkrzPIMJzoP' +
-    '/pUPf02JUImtOJtRQlaOS+x1sNIGhT' +
-    'mJIbJ+qYLSHOiGAVMTEwuOKebg+ed+' +
-    'tH2r72u49TztZjyt/sHrmDZBio2ARQ' +
-    'pFKOJIR/v4q6DEuBxNDKRa8Smp0Nan' +
-    'VHOqGPtOZOnIHogNffkvZMsEX8BCCa' +
-    'rqiIHW7pj3JXBiqjx823D62Rg3NTqa' +
-    'dGO/CSqosXiwSN1JCVZwKdZM01CyLw' +
-    '3JtXjD1UkvUu8tclo5Wl8Ph0oRJw+z' +
-    'mgYuD5MJIqhA==\nU2NhbmJvdFNESw' +
-    'psb2NhbGhvc3QKMTc2NDAyODc5OQo4' +
-    'Mzg4NjA3Cjg=\n'
+  const handleAddToCart = () => {
+    if (barcode?.barcode) {
+      addToCartByBarcode({
+        barcode: barcode?.barcode,
+        quantity: quantityAdded,
+        storeId: profile?.storeId,
+        setBarcode,
+        setQuantityAdded,
+      })
+      setOpenQuantityModal((prev) => !prev)
+    } else {
+      message.error('No Barcode Scanned')
+    }
+  }
+
+  useEffect(() => {
+    if (barcode?.barcode) setOpenQuantityModal((prev) => !prev)
+  }, [barcode])
+
+  const RAW_LICENSE_KEY = process.env.NEXT_PUBLIC_SCANNER_LICENSE_KEY
+  const LICENSE_KEY = RAW_LICENSE_KEY.replace(/\\n/g, '\n')
 
   useEffect(() => {
     getAllWebCategories()
@@ -76,10 +90,12 @@ const Layout = ({ children, layout }) => {
         <div className='flex-1 min-w-0'>
           <main>{children}</main>
           {layout && <Footer />}
-          <FloatButton
-            icon={<ScanOutlined />}
-            onClick={() => setOpenBarcodeScanner((prev) => !prev)}
-          />
+          {layout && profile?.isLoggedIn && (
+            <FloatButton
+              icon={<ScanOutlined />}
+              onClick={() => setOpenBarcodeScanner((prev) => !prev)}
+            />
+          )}
           {isMobile && layout && (
             <MobileFooter
               profile={profile}
@@ -120,12 +136,22 @@ const Layout = ({ children, layout }) => {
           </div>
         </Modal>
       )}
-      {openBarcodeScanner && (
+      {openBarcodeScanner && profile?.isLoggedIn && (
         <BarcodeScanner
           isModalOpen={openBarcodeScanner}
           setIsModalOpen={setOpenBarcodeScanner}
           setBarcode={setBarcode}
           licenseKey={LICENSE_KEY}
+        />
+      )}
+
+      {openQuantityModal && (
+        <AddQuantityModal
+          open={openQuantityModal}
+          onCancel={() => setOpenQuantityModal((prev) => !prev)}
+          quantityAdded={quantityAdded}
+          setQuantityAdded={setQuantityAdded}
+          handleOk={handleAddToCart}
         />
       )}
 

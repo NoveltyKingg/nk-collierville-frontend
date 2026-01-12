@@ -22,21 +22,8 @@ export default function VariationsTable({
     ? `barcode-scanner-${activeVariationId}`
     : 'barcode-scanner-idle'
 
-  const LICENSE_KEY =
-    'pjHhzYwVGOycuaz9Vr/IwOZNVFgMta' +
-    'RPPFoIGxdvIdzPST4qP9jnBFuEVIBo' +
-    'sKArmowREsUJxT3t9BpHkrzPIMJzoP' +
-    '/pUPf02JUImtOJtRQlaOS+x1sNIGhT' +
-    'mJIbJ+qYLSHOiGAVMTEwuOKebg+ed+' +
-    'tH2r72u49TztZjyt/sHrmDZBio2ARQ' +
-    'pFKOJIR/v4q6DEuBxNDKRa8Smp0Nan' +
-    'VHOqGPtOZOnIHogNffkvZMsEX8BCCa' +
-    'rqiIHW7pj3JXBiqjx823D62Rg3NTqa' +
-    'dGO/CSqosXiwSN1JCVZwKdZM01CyLw' +
-    '3JtXjD1UkvUu8tclo5Wl8Ph0oRJw+z' +
-    'mgYuD5MJIqhA==\nU2NhbmJvdFNESw' +
-    'psb2NhbGhvc3QKMTc2NDAyODc5OQo4' +
-    'Mzg4NjA3Cjg=\n'
+  const RAW_LICENSE_KEY = process.env.NEXT_PUBLIC_SCANNER_LICENSE_KEY
+  const LICENSE_KEY = RAW_LICENSE_KEY.replace(/\\n/g, '\n')
 
   const columns = useGetColumns({
     product: productId,

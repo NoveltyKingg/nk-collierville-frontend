@@ -26,7 +26,7 @@ const useCreateSignup = () => {
     }
   }
 
-  return { createSignup, loading, createSignupData: data }
+  return { createSignup, signupLoading: loading, createSignupData: data }
 }
 
 export default useCreateSignup

@@ -84,7 +84,6 @@ const BarcodeScanner = ({
             if (result.barcodes && result.barcodes.length > 0) {
               const barcode = result.barcodes[0]
               setBarcode((prev) => ({ ...prev, barcode: barcode?.text }))
-              message.success(`Barcode scanned: ${barcode.text}`)
               handleCloseModal()
             }
           },
